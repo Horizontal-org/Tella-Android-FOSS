@@ -3,7 +3,6 @@ package rs.readahead.washington.mobile.views.fragment.forms
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.hzontal.tella_vault.VaultFile
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -25,6 +24,7 @@ import rs.readahead.washington.mobile.domain.entity.collect.*
 import rs.readahead.washington.mobile.domain.exception.NoConnectivityException
 import rs.readahead.washington.mobile.domain.repository.IOpenRosaRepository
 import rs.readahead.washington.mobile.odk.FormController
+import timber.log.Timber
 
 class SharedFormsViewModel(private val mApplication: Application) : AndroidViewModel(mApplication) {
 
@@ -122,7 +122,7 @@ class SharedFormsViewModel(private val mApplication: Application) : AndroidViewM
                     }
                 },
                 { throwable: Throwable? ->
-                    FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                    Timber.e(throwable!!)//TODO Crahslytics removed
                     onFormDefError.postValue(throwable)
                 }
             )?.let {
@@ -157,7 +157,7 @@ class SharedFormsViewModel(private val mApplication: Application) : AndroidViewM
                     collectFormInstance?.let { maybeCloneInstance(it) }
                 )
             }) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 onFormDefError.postValue(throwable)
             }
         )
@@ -193,7 +193,7 @@ class SharedFormsViewModel(private val mApplication: Application) : AndroidViewM
                     )
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 onError.postValue(throwable)
             }
         )
@@ -211,7 +211,7 @@ class SharedFormsViewModel(private val mApplication: Application) : AndroidViewM
             .subscribe(
                 { onFormInstanceDeleteSuccess.postValue(true) }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 onError.postValue(throwable)
             }
         )
@@ -229,7 +229,7 @@ class SharedFormsViewModel(private val mApplication: Application) : AndroidViewM
                     )
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 onError.postValue(throwable)
             }
         )
@@ -284,7 +284,7 @@ class SharedFormsViewModel(private val mApplication: Application) : AndroidViewM
                 { listFormResult: ListFormResult ->
                     // log errors if any in result..
                     for (error in listFormResult.errors) {
-                        FirebaseCrashlytics.getInstance().recordException(error.exception)
+                        Timber.e(error.exception)//TODO Crahslytics removed
                     }
                     onBlankFormsListResult.postValue(listFormResult)
                 }
@@ -292,10 +292,10 @@ class SharedFormsViewModel(private val mApplication: Application) : AndroidViewM
                 if (throwable is NoConnectivityException) {
                     onNoConnectionAvailable.postValue(true)
                 } else {
-                    FirebaseCrashlytics.getInstance().recordException(
+                    Timber.e(
                         throwable
                             ?: throw NullPointerException("Expression 'throwable' must not be null")
-                    )
+                    )//TODO Crahslytics removed
                     onError.postValue(throwable)
                 }
             }
@@ -335,10 +335,10 @@ class SharedFormsViewModel(private val mApplication: Application) : AndroidViewM
             .subscribe(
                 { onBlankFormDefRemoved.postValue(true) }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(
+                Timber.e(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
-                )
+                )//TODO Crahslytics removed
                 onError.postValue(throwable)
             }
         )
@@ -374,10 +374,10 @@ class SharedFormsViewModel(private val mApplication: Application) : AndroidViewM
                     )
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(
+                Timber.e(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
-                )
+                )//TODO Crahslytics removed
                 onFormDefError.postValue(throwable)
             }
         )
@@ -416,7 +416,7 @@ class SharedFormsViewModel(private val mApplication: Application) : AndroidViewM
                     )
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 onFormDefError.postValue(throwable)
             }
         )
@@ -475,7 +475,7 @@ class SharedFormsViewModel(private val mApplication: Application) : AndroidViewM
             .subscribe(
                 { onFormCacheCleared.postValue(true) }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(
+                Timber.e(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
                 )

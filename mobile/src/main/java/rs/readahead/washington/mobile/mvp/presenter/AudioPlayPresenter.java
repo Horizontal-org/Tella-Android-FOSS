@@ -1,6 +1,5 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.hzontal.tella_vault.rx.RxVault;
 
 import io.reactivex.Single;
@@ -10,13 +9,14 @@ import io.reactivex.schedulers.Schedulers;
 import rs.readahead.washington.mobile.MyApplication;
 import rs.readahead.washington.mobile.domain.exception.NotFountException;
 import rs.readahead.washington.mobile.mvp.contract.IAudioPlayPresenterContract;
+import timber.log.Timber;
 
 
 public class AudioPlayPresenter implements
         IAudioPlayPresenterContract.IPresenter {
     private IAudioPlayPresenterContract.IView view;
-    private RxVault rxVault;
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final RxVault rxVault;
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
 
     public AudioPlayPresenter(IAudioPlayPresenterContract.IView view) {
@@ -41,7 +41,7 @@ public class AudioPlayPresenter implements
                         },
 
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onMediaFileError(throwable);
                         }));
     }

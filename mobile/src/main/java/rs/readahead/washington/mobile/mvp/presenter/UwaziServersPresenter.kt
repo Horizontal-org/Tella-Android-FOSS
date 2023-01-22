@@ -1,6 +1,5 @@
 package rs.readahead.washington.mobile.mvp.presenter
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -10,6 +9,7 @@ import rs.readahead.washington.mobile.data.database.UwaziDataSource
 import rs.readahead.washington.mobile.data.openrosa.OpenRosaService
 import rs.readahead.washington.mobile.domain.entity.UWaziUploadServer
 import rs.readahead.washington.mobile.mvp.contract.IUWAZIServersPresenterContract
+import timber.log.Timber
 
 class UwaziServersPresenter constructor(var view: IUWAZIServersPresenterContract.IView?) :
     IUWAZIServersPresenterContract.IPresenter {
@@ -31,7 +31,7 @@ class UwaziServersPresenter constructor(var view: IUWAZIServersPresenterContract
                     )
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 view?.onLoadUwaziServersError(throwable)
             }
         )
@@ -56,7 +56,7 @@ class UwaziServersPresenter constructor(var view: IUWAZIServersPresenterContract
                         )
                     },
                     { throwable: Throwable? ->
-                        FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                        Timber.e(throwable!!)//TODO Crahslytics removed
                         view?.onCreateUwaziServerError(throwable)
                     })
         )
@@ -74,7 +74,7 @@ class UwaziServersPresenter constructor(var view: IUWAZIServersPresenterContract
             .subscribe(
                 { server1 -> view?.onUpdatedUwaziServer(server1) }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 view?.onUpdateUwaziServerError(throwable)
             }
         )
@@ -95,7 +95,7 @@ class UwaziServersPresenter constructor(var view: IUWAZIServersPresenterContract
                     view?.onRemovedUwaziServer(server)
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 view?.onRemoveUwaziServerError(throwable)
             }
         )

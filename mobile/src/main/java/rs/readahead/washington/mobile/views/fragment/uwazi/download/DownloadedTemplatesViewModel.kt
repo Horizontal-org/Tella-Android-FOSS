@@ -3,7 +3,6 @@ package rs.readahead.washington.mobile.views.fragment.uwazi.download
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -18,6 +17,7 @@ import rs.readahead.washington.mobile.domain.entity.uwazi.ListTemplateResult
 import rs.readahead.washington.mobile.domain.exception.NoConnectivityException
 import rs.readahead.washington.mobile.views.fragment.uwazi.download.adapter.ViewTemplateItem
 import rs.readahead.washington.mobile.views.fragment.uwazi.mappers.toViewTemplateItem
+import timber.log.Timber
 import java.util.ArrayList
 
 class DownloadedTemplatesViewModel : ViewModel(){
@@ -61,7 +61,7 @@ class DownloadedTemplatesViewModel : ViewModel(){
             }
 
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(
+                Timber.e(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
                 )
@@ -94,7 +94,7 @@ class DownloadedTemplatesViewModel : ViewModel(){
                         }
                     }}
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)
                 error.postValue(throwable)
             }
         )
@@ -148,7 +148,7 @@ class DownloadedTemplatesViewModel : ViewModel(){
             if (throwable is NoConnectivityException) {
                 _connectionAvailable.postValue(true)
             } else {
-                FirebaseCrashlytics.getInstance().recordException(
+                Timber.e(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
                 )

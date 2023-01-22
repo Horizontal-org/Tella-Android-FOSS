@@ -1,6 +1,5 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.hzontal.tella_vault.Metadata;
 import com.hzontal.tella_vault.VaultFile;
 
@@ -9,6 +8,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import rs.readahead.washington.mobile.MyApplication;
 import rs.readahead.washington.mobile.mvp.contract.IMetadataAttachPresenterContract;
+import timber.log.Timber;
 
 
 public class MetadataAttacher implements IMetadataAttachPresenterContract.IPresenter {
@@ -26,7 +26,7 @@ public class MetadataAttacher implements IMetadataAttachPresenterContract.IPrese
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updatedVaultFile -> view.onMetadataAttached(updatedVaultFile), throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    Timber.e(throwable);//TODO Crahslytics removed
                     view.onMetadataAttachError(throwable);
                 }));
     }

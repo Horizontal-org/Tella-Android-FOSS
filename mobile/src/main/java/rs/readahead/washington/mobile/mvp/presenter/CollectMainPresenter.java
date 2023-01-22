@@ -1,7 +1,5 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import org.javarosa.core.model.FormDef;
 
 import io.reactivex.ObservableSource;
@@ -20,12 +18,13 @@ import rs.readahead.washington.mobile.domain.entity.collect.CollectFormInstanceS
 import rs.readahead.washington.mobile.domain.entity.collect.FormMediaFile;
 import rs.readahead.washington.mobile.domain.entity.collect.FormMediaFileStatus;
 import rs.readahead.washington.mobile.mvp.contract.ICollectMainPresenterContract;
+import timber.log.Timber;
 
 
 public class CollectMainPresenter implements ICollectMainPresenterContract.IPresenter {
     private ICollectMainPresenterContract.IView view;
-    private KeyDataSource keyDataSource;
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final KeyDataSource keyDataSource;
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
 
     public CollectMainPresenter(ICollectMainPresenterContract.IView view) {
@@ -45,7 +44,7 @@ public class CollectMainPresenter implements ICollectMainPresenterContract.IPres
                 .subscribe(
                         formDef -> view.onGetBlankFormDefSuccess(form, formDef),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onFormDefError(throwable);
                         }
                 )
@@ -62,7 +61,7 @@ public class CollectMainPresenter implements ICollectMainPresenterContract.IPres
                 ).subscribe(
                         instance -> view.onInstanceFormDefSuccess(maybeCloneInstance(instance)),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onFormDefError(throwable);
                         }
                 )
@@ -79,7 +78,7 @@ public class CollectMainPresenter implements ICollectMainPresenterContract.IPres
                 .subscribe(
                         form -> view.onToggleFavoriteSuccess(form),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onToggleFavoriteError(throwable);
                         }
                 )
@@ -95,7 +94,7 @@ public class CollectMainPresenter implements ICollectMainPresenterContract.IPres
                 .subscribe(
                         () -> view.onFormInstanceDeleteSuccess(),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onFormInstanceDeleteError(throwable);
                         }
                 )
@@ -111,7 +110,7 @@ public class CollectMainPresenter implements ICollectMainPresenterContract.IPres
                 .subscribe(
                         num -> view.onCountCollectServersEnded(num),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onCountCollectServersFailed(throwable);
                         }
                 )

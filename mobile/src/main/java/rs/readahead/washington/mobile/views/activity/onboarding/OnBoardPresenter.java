@@ -1,7 +1,5 @@
 package rs.readahead.washington.mobile.views.activity.onboarding;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -14,6 +12,7 @@ import rs.readahead.washington.mobile.data.database.UwaziDataSource;
 import rs.readahead.washington.mobile.domain.entity.TellaUploadServer;
 import rs.readahead.washington.mobile.domain.entity.UWaziUploadServer;
 import rs.readahead.washington.mobile.domain.entity.collect.CollectServer;
+import timber.log.Timber;
 
 public class OnBoardPresenter implements IOnBoardPresenterContract.IPresenter {
     private final KeyDataSource keyDataSource;
@@ -36,7 +35,7 @@ public class OnBoardPresenter implements IOnBoardPresenterContract.IPresenter {
                 .doFinally(() -> view.hideLoading())
                 .subscribe(server1 -> view.onCreatedTUServer(server1),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onCreateTUServerError(throwable);
                         })
         );
@@ -53,7 +52,7 @@ public class OnBoardPresenter implements IOnBoardPresenterContract.IPresenter {
                 .doFinally(() -> view.hideLoading())
                 .subscribe(server1 -> view.onCreatedServer(server1),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onCreateCollectServerError(throwable);
                         })
         );
@@ -68,7 +67,7 @@ public class OnBoardPresenter implements IOnBoardPresenterContract.IPresenter {
                         dataSource -> dataSource.createUWAZIServer(server))
                 .subscribe(server1 -> view.onCreatedUwaziServer(server1),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onCreateCollectServerError(throwable);
                         })
         );

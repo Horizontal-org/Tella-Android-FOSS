@@ -18,9 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -274,14 +271,17 @@ public class CollectServerDialogFragment extends AppCompatDialogFragment impleme
                 !securityProviderUpgradeAttempted && getContext() != null) {
             try {
                 ProviderInstaller.installIfNeeded(getContext());
-            } catch (GooglePlayServicesRepairableException e) {
+            } catch (Exception e) {
+                Timber.e(e);//TODO Crahslytics removed
+            }
+            /*(GooglePlayServicesRepairableException e) {
                 GoogleApiAvailability.getInstance()
                         .showErrorNotification(getContext(), e.getConnectionStatusCode());
                 securityProviderUpgradeAttempted = true;
                 return;
             } catch (GooglePlayServicesNotAvailableException e) {
                 Timber.d(e);
-            }
+            }*/
         }
 
         if (presenter != null) {
