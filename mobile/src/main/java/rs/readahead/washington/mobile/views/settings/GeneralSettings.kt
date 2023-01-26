@@ -69,14 +69,6 @@ class GeneralSettings : BaseFragment() {
             }
         }
 
-        val crashReportsSwitch = binding?.crashReportSwitch
-        if (crashReportsSwitch != null) {
-            crashReportsSwitch.mSwitch.setOnCheckedChangeListener { switch: CompoundButton?, isChecked: Boolean ->
-                Preferences.setSubmittingCrashReports(isChecked)
-            }
-            crashReportsSwitch.mSwitch.isChecked = Preferences.isSubmittingCrashReports()
-        }
-
         val verificationSwitch = binding?.verificationSwitch
         if (verificationSwitch != null) {
             verificationSwitch.mSwitch.setOnCheckedChangeListener { switch: CompoundButton?, isChecked: Boolean ->
