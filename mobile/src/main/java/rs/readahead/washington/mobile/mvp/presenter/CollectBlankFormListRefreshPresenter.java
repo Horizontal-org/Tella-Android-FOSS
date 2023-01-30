@@ -1,7 +1,5 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +19,15 @@ import rs.readahead.washington.mobile.domain.entity.collect.CollectServer;
 import rs.readahead.washington.mobile.domain.entity.collect.ListFormResult;
 import rs.readahead.washington.mobile.domain.repository.IOpenRosaRepository;
 import rs.readahead.washington.mobile.mvp.contract.ICollectBlankFormListRefreshPresenterContract;
+import timber.log.Timber;
 
 
 public class CollectBlankFormListRefreshPresenter implements
         ICollectBlankFormListRefreshPresenterContract.IPresenter {
-    private IOpenRosaRepository odkRepository;
+    private final IOpenRosaRepository odkRepository;
     private ICollectBlankFormListRefreshPresenterContract.IView view;
-    private CompositeDisposable disposables = new CompositeDisposable();
-    private KeyDataSource keyDataSource;
+    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final KeyDataSource keyDataSource;
 
 
     public CollectBlankFormListRefreshPresenter(ICollectBlankFormListRefreshPresenterContract.IView view) {
@@ -60,7 +59,6 @@ public class CollectBlankFormListRefreshPresenter implements
 
                         for (Object obj : objects) {
                             if (obj instanceof ListFormResult) {
-                                @SuppressWarnings("unchecked")
                                 List<CollectForm> forms = ((ListFormResult) obj).getForms();
                                 List<IErrorBundle> errors = ((ListFormResult) obj).getErrors();
 
@@ -78,10 +76,10 @@ public class CollectBlankFormListRefreshPresenter implements
                 .subscribe(listFormResult -> {
                     // log errors if any in result..
                     for (IErrorBundle error : listFormResult.getErrors()) {
-                        FirebaseCrashlytics.getInstance().recordException(error.getException());
+                        Timber.e(error.getException());//TODO Crahslytics removed
                     }
                 }, throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    Timber.e(throwable);//TODO Crahslytics removed
                     view.onRefreshBlankFormsError(throwable);
                 })
         );

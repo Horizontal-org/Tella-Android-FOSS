@@ -1,7 +1,5 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import java.util.List;
 
 import io.reactivex.SingleSource;
@@ -15,12 +13,13 @@ import rs.readahead.washington.mobile.data.database.KeyDataSource;
 import rs.readahead.washington.mobile.data.openrosa.OpenRosaService;
 import rs.readahead.washington.mobile.domain.entity.collect.CollectServer;
 import rs.readahead.washington.mobile.mvp.contract.ICollectServersPresenterContract;
+import timber.log.Timber;
 
 
 public class CollectServersPresenter implements ICollectServersPresenterContract.IPresenter {
-    private KeyDataSource keyDataSource;
+    private final KeyDataSource keyDataSource;
     private ICollectServersPresenterContract.IView view;
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     //@Inject
     public CollectServersPresenter(ICollectServersPresenterContract.IView view) {
@@ -38,7 +37,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                 .doFinally(() -> view.hideLoading())
                 .subscribe(list -> view.onServersLoaded(list),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onLoadServersError(throwable);
                         })
         );
@@ -54,7 +53,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                 .doFinally(() -> view.hideLoading())
                 .subscribe(server1 -> view.onCreatedServer(server1),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onCreateCollectServerError(throwable);
                         })
         );
@@ -73,7 +72,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                             view.onUpdatedServer(server1);
                         },
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onUpdateServerError(throwable);
                         })
         );
@@ -91,7 +90,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                             view.onRemovedServer(server);
                         },
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onRemoveServerError(throwable);
                         })
         );

@@ -1,12 +1,9 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'kotlin-android'
 
 ext {
     supportLibVersion = "28.0.3"
     permissionDispatcherVersion = "4.8.0"
-    googlePlayServicesVersion = "17.0.0"
     leakCanaryVersion = '2.4'
     butterknifeVersion = '10.1.0'
 }
@@ -18,16 +15,10 @@ android {
         minSdkVersion 19
         compileSdkVersion 31
         targetSdkVersion 32
-        versionCode 130
-        versionName "2.0.11"
+        versionCode 141
+        versionName "2.0.15-FOSS"
         multiDexEnabled true
         // vectorDrawables.useSupportLibrary = true // don't care about apk size, care about crashes
-    }
-
-    configurations.all {
-        // resolutionStrategy.force "com.android.support:exifinterface:${supportLibVersion}"
-        // resolutionStrategy.force "com.android.support:animated-vector-drawble:${supportLibVersion}"
-        // resolutionStrategy.force "com.android.support:support-v13:${supportLibVersion}"
     }
 
     buildTypes {
@@ -71,18 +62,12 @@ dependencies {
 
     // implementation 'com.madgag.spongycastle:pg:1.54.0.0'// needed for above
 
-    implementation platform('com.google.firebase:firebase-bom:26.1.0')
-    implementation 'com.google.firebase:firebase-crashlytics'
-
     api 'androidx.navigation:navigation-fragment-ktx:2.5.1'
     api 'androidx.navigation:navigation-ui-ktx:2.5.1'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.exifinterface:exifinterface:1.3.3'
-    implementation "com.google.android.gms:play-services-location:${googlePlayServicesVersion}"
-    implementation "com.google.android.gms:play-services-maps:${googlePlayServicesVersion}"
-    // implementation "com.google.android.gms:play-services-gcm:${googlePlayServicesVersion}" // android-job, optional
 
     implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     implementation "com.squareup.retrofit2:adapter-rxjava2:${retrofitVersion}"
@@ -120,8 +105,8 @@ dependencies {
     implementation 'com.burgstaller:okhttp-digest:1.15'
 
     // collect
-    //implementation group: 'org.getodk', name: 'javarosa', version: '3.4.1'
-    implementation "org.opendatakit:opendatakit-javarosa:2.4.0"
+    implementation group: 'org.getodk', name: 'javarosa', version: '3.5.0'
+    //implementation "org.opendatakit:opendatakit-javarosa:2.4.0"
     implementation 'net.sf.kxml:kxml2:2.3.0'
     implementation "commons-io:commons-io:2.6"
 
@@ -134,12 +119,11 @@ dependencies {
         exclude module: "animated-vector-drawble"
     }
 
-    implementation 'com.github.apl-devs:appintro:v4.2.3'
+    implementation 'org.osmdroid:osmdroid-android:6.1.13'
+
     implementation 'com.simplify:ink:1.0.2'
     implementation 'com.mikhaellopez:circularimageview:3.2.0'
     implementation 'org.apache.directory.studio:org.apache.commons.io:2.4'
-    implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:3.2.0'
-    implementation 'com.github.lzyzsd:circleprogress:1.2.1'
     implementation "com.github.ihsanbal:LoggingInterceptor:3.0.0"
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"

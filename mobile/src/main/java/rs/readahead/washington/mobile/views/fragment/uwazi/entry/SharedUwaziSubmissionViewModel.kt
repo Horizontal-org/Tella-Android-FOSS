@@ -3,7 +3,6 @@ package rs.readahead.washington.mobile.views.fragment.uwazi.entry
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.hzontal.tella_vault.VaultFile
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -60,10 +59,10 @@ class SharedUwaziSubmissionViewModel : ViewModel(){
             }
 
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(
+                Timber.e(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
-                )
+                )//TODO Crahslytics removed
                 error.postValue(throwable)
             })
     }
@@ -88,7 +87,7 @@ class SharedUwaziSubmissionViewModel : ViewModel(){
                     }
                 },
                 { throwable: Throwable? ->
-                    FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                    Timber.e(throwable!!)//TODO Crahslytics removed
                     error.postValue(throwable)
                 }
             )?.let {
@@ -117,10 +116,10 @@ class SharedUwaziSubmissionViewModel : ViewModel(){
                     progress.postValue(UwaziEntityStatus.SUBMITTED)
                 }
                 ) { throwable: Throwable? ->
-                    FirebaseCrashlytics.getInstance().recordException(
+                    Timber.e(
                         throwable
                             ?: throw NullPointerException("Expression 'throwable' must not be null")
-                    )
+                    )//TODO Crahslytics removed
                     error.postValue(throwable)
                     progress.postValue(UwaziEntityStatus.SUBMISSION_ERROR)
                 })
@@ -145,10 +144,10 @@ class SharedUwaziSubmissionViewModel : ViewModel(){
                     progress.postValue(UwaziEntityStatus.SUBMITTED)
                 }
                 ) { throwable: Throwable? ->
-                    FirebaseCrashlytics.getInstance().recordException(
+                    Timber.e(
                         throwable
                             ?: throw NullPointerException("Expression 'throwable' must not be null")
-                    )
+                    )//TODO Crahslytics removed
                     error.postValue(throwable)
                     progress.postValue(UwaziEntityStatus.SUBMISSION_ERROR)
                 })
@@ -204,7 +203,7 @@ class SharedUwaziSubmissionViewModel : ViewModel(){
             }
 
         } catch (e: Exception) {
-            Timber.d(e.message ?: "Error attaching files")
+            Timber.e(e.message ?: "Error attaching files")//TODO Crahslytics removed
         }
         return listAttachments.toList()
     }

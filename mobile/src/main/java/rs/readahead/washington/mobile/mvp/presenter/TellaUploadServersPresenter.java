@@ -1,7 +1,5 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import java.util.List;
 
 import io.reactivex.SingleSource;
@@ -15,12 +13,13 @@ import rs.readahead.washington.mobile.data.database.KeyDataSource;
 import rs.readahead.washington.mobile.data.openrosa.OpenRosaService;
 import rs.readahead.washington.mobile.domain.entity.TellaUploadServer;
 import rs.readahead.washington.mobile.mvp.contract.ITellaUploadServersPresenterContract;
+import timber.log.Timber;
 
 
 public class TellaUploadServersPresenter implements ITellaUploadServersPresenterContract.IPresenter {
-    private KeyDataSource keyDataSource;
+    private final KeyDataSource keyDataSource;
     private ITellaUploadServersPresenterContract.IView view;
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
 
     //@Inject
@@ -39,7 +38,7 @@ public class TellaUploadServersPresenter implements ITellaUploadServersPresenter
                 .doFinally(() -> view.hideLoading())
                 .subscribe(list -> view.onTUServersLoaded(list),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onLoadTUServersError(throwable);
                         })
         );
@@ -55,7 +54,7 @@ public class TellaUploadServersPresenter implements ITellaUploadServersPresenter
                 .doFinally(() -> view.hideLoading())
                 .subscribe(server1 -> view.onCreatedTUServer(server1),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onCreateTUServerError(throwable);
                         })
         );
@@ -74,7 +73,7 @@ public class TellaUploadServersPresenter implements ITellaUploadServersPresenter
                             view.onUpdatedTUServer(server1);
                         },
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onUpdateTUServerError(throwable);
                         })
         );
@@ -92,7 +91,7 @@ public class TellaUploadServersPresenter implements ITellaUploadServersPresenter
                             view.onRemovedTUServer(server);
                         },
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onRemoveTUServerError(throwable);
                         })
         );

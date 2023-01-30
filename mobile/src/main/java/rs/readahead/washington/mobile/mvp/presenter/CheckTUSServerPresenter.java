@@ -1,7 +1,5 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -11,12 +9,13 @@ import rs.readahead.washington.mobile.data.upload.TUSClient;
 import rs.readahead.washington.mobile.domain.entity.TellaUploadServer;
 import rs.readahead.washington.mobile.domain.entity.UploadProgressInfo;
 import rs.readahead.washington.mobile.mvp.contract.ICheckTUSServerContract;
+import timber.log.Timber;
 
 
 public class CheckTUSServerPresenter implements
         ICheckTUSServerContract.IPresenter {
     private ICheckTUSServerContract.IView view;
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
     private boolean saveAnyway = false;
 
 
@@ -59,7 +58,7 @@ public class CheckTUSServerPresenter implements
                         view.onServerCheckFailure(uploadProgressInfo.status);
                     }
                 }, throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    Timber.e(throwable);//TODO Crahslytics removed
                     view.onServerCheckError(throwable);
                 })
         );

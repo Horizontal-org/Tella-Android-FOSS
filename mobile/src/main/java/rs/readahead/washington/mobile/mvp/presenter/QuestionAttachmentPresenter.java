@@ -2,7 +2,6 @@ package rs.readahead.washington.mobile.mvp.presenter;
 
 import android.net.Uri;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.hzontal.tella_vault.VaultFile;
 
 import androidx.annotation.Nullable;
@@ -14,6 +13,7 @@ import rs.readahead.washington.mobile.MyApplication;
 import rs.readahead.washington.mobile.domain.repository.IMediaFileRecordRepository;
 import rs.readahead.washington.mobile.media.MediaFileHandler;
 import rs.readahead.washington.mobile.mvp.contract.IQuestionAttachmentPresenterContract;
+import timber.log.Timber;
 
 
 public class QuestionAttachmentPresenter implements IQuestionAttachmentPresenterContract.IPresenter {
@@ -67,7 +67,7 @@ public class QuestionAttachmentPresenter implements IQuestionAttachmentPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(vaultFile -> view.onMediaFileImported(vaultFile), throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    Timber.e(throwable);//TODO Crahslytics removed
                     view.onImportError(throwable);
                 })
         );
@@ -81,7 +81,7 @@ public class QuestionAttachmentPresenter implements IQuestionAttachmentPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(mediaHolder -> view.onMediaFileImported(mediaHolder), throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    Timber.e(throwable);//TODO Crahslytics removed
                     view.onImportError(throwable);
                 })
         );

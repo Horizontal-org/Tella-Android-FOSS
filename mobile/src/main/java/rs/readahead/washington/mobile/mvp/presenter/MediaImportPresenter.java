@@ -4,7 +4,6 @@ import android.net.Uri;
 
 import androidx.annotation.Nullable;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.hzontal.tella_vault.VaultFile;
 
 import io.reactivex.Observable;
@@ -13,6 +12,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import rs.readahead.washington.mobile.media.MediaFileHandler;
 import rs.readahead.washington.mobile.mvp.contract.IMediaImportPresenterContract;
+import timber.log.Timber;
 
 
 public class MediaImportPresenter implements IMediaImportPresenterContract.IPresenter {
@@ -34,7 +34,7 @@ public class MediaImportPresenter implements IMediaImportPresenterContract.IPres
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(vaultFile -> view.onMediaFileImported(vaultFile), throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    Timber.e(throwable);//TODO Crahslytics removed
                     view.onImportError(throwable);
                 })
         );
@@ -48,7 +48,7 @@ public class MediaImportPresenter implements IMediaImportPresenterContract.IPres
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(mediaHolder -> view.onMediaFileImported(mediaHolder), throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    Timber.e(throwable);//TODO Crahslytics removed
                     view.onImportError(throwable);
                 })
         );
@@ -82,7 +82,7 @@ public class MediaImportPresenter implements IMediaImportPresenterContract.IPres
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(vaultFile -> view.onMediaFileImported(vaultFile), throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    Timber.e(throwable);//TODO Crahslytics removed
                     view.onImportError(throwable);
                 })
         );

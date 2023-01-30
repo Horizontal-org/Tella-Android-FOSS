@@ -1,7 +1,5 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import java.util.List;
 
 import io.reactivex.SingleSource;
@@ -14,6 +12,7 @@ import rs.readahead.washington.mobile.data.database.DataSource;
 import rs.readahead.washington.mobile.data.database.KeyDataSource;
 import rs.readahead.washington.mobile.domain.entity.TellaUploadServer;
 import rs.readahead.washington.mobile.mvp.contract.ITellaUploadDialogPresenterContract;
+import timber.log.Timber;
 
 
 public class TellaUploadDialogPresenter implements ITellaUploadDialogPresenterContract.IPresenter {
@@ -35,7 +34,7 @@ public class TellaUploadDialogPresenter implements ITellaUploadDialogPresenterCo
                         DataSource::listTellaUploadServers)
                 .subscribe(list -> view.onServersLoaded(list),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onServersLoadError(throwable);
                         })
         );

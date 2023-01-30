@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import io.reactivex.Completable;
 import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -21,12 +19,13 @@ import rs.readahead.washington.mobile.data.sharedpref.Preferences;
 import rs.readahead.washington.mobile.data.sharedpref.SharedPrefs;
 import rs.readahead.washington.mobile.media.MediaFileHandler;
 import rs.readahead.washington.mobile.mvp.contract.IHomeScreenPresenterContract;
+import timber.log.Timber;
 
 
 public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresenter {
     private final Context appContext;
     private IHomeScreenPresenterContract.IView view;
-    private CompositeDisposable disposable;
+    private final CompositeDisposable disposable;
     private final KeyDataSource keyDataSource;
 
 
@@ -79,7 +78,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                 .subscribe(
                         num -> view.onCountTUServersEnded(num),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onCountTUServersFailed(throwable);
                         }
                 )
@@ -95,7 +94,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                 .subscribe(
                         num -> view.onCountCollectServersEnded(num),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);//TODO Crahslytics removed
                             view.onCountCollectServersFailed(throwable);
                         }
                 )
@@ -111,7 +110,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                 .subscribe(
                         num -> view.onCountUwaziServersEnded(num),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            Timber.e(throwable);
                             view.onCountUwaziServersFailed(throwable);
                         }
                 )

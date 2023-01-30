@@ -1,7 +1,6 @@
 package rs.readahead.washington.mobile.views.fragment.vault.attachements
 
 import android.net.Uri
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.hzontal.tella_vault.VaultFile
 import com.hzontal.tella_vault.filter.FilterType
 import com.hzontal.tella_vault.filter.Sort
@@ -14,6 +13,7 @@ import rs.readahead.washington.mobile.MyApplication
 import rs.readahead.washington.mobile.media.MediaFileHandler
 import rs.readahead.washington.mobile.media.MediaFileHandler.walkAllFiles
 import rs.readahead.washington.mobile.media.MediaFileHandler.walkAllFilesWithDirectories
+import timber.log.Timber
 
 class AttachmentsPresenter(var view: IAttachmentsPresenter.IView?) :
     IAttachmentsPresenter.IPresenter {
@@ -35,12 +35,12 @@ class AttachmentsPresenter(var view: IAttachmentsPresenter.IView?) :
                                 )
                             }
                         ) { throwable: Throwable? ->
-                            FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                            Timber.e(throwable!!)//TODO Crahslytics removed
                             view?.onGetFilesError(throwable)
                         })
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 view?.onGetRootIdError(throwable)
             }.dispose()
     }
@@ -61,7 +61,7 @@ class AttachmentsPresenter(var view: IAttachmentsPresenter.IView?) :
 
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 view?.onImportError(throwable)
             })
 
@@ -80,7 +80,7 @@ class AttachmentsPresenter(var view: IAttachmentsPresenter.IView?) :
             .subscribe(
                 { view?.onRenameFileSuccess() }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 view?.onRenameFileError(throwable)
             })
     }
@@ -104,7 +104,7 @@ class AttachmentsPresenter(var view: IAttachmentsPresenter.IView?) :
                 .subscribe(
                     { num: Int? -> view?.onMediaFilesDeleted(num!!) }
                 ) { throwable: Throwable? ->
-                    FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                    Timber.e(throwable!!)//TODO Crahslytics removed
                     view?.onMediaFilesDeletionError(throwable)
                 }
         )
@@ -125,9 +125,9 @@ class AttachmentsPresenter(var view: IAttachmentsPresenter.IView?) :
             ) { objects: Array<Any?> -> objects.size }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { view?.onMoveFilesSuccess() }
+                    { view?.onMoveFilesSuccess(vaultFiles.size) }
                 ) { throwable: Throwable? ->
-                    FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                    Timber.e(throwable!!)//TODO Crahslytics removed
                     view?.onMoveFilesError(throwable)
                 }
         )
@@ -152,7 +152,7 @@ class AttachmentsPresenter(var view: IAttachmentsPresenter.IView?) :
             .subscribe(
                 { view?.onMediaFileDeleted() }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 view?.onMediaFileDeletionError(throwable)
             })
     }
@@ -187,7 +187,7 @@ class AttachmentsPresenter(var view: IAttachmentsPresenter.IView?) :
                         }
                     }
                 ) { throwable: Throwable? ->
-                    FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                    Timber.e(throwable!!)//TODO Crahslytics removed
                     view?.onExportError(throwable)
                 }
         )
@@ -202,7 +202,7 @@ class AttachmentsPresenter(var view: IAttachmentsPresenter.IView?) :
             .subscribe(
                 { view?.onCreateFolderSuccess() }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 view?.onCountTUServersFailed(throwable)
             }.dispose()
 
@@ -213,7 +213,7 @@ class AttachmentsPresenter(var view: IAttachmentsPresenter.IView?) :
             ?.subscribe(
                 { vaultFile: VaultFile? -> view?.onGetRootIdSuccess(vaultFile) }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                Timber.e(throwable!!)//TODO Crahslytics removed
                 view?.onGetRootIdError(throwable)
             }?.dispose()
     }

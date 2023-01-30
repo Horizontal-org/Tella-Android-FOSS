@@ -138,7 +138,7 @@ public class Preferences {
     }
 
     public static boolean isSubmittingCrashReports() {
-        return getBoolean(SharedPrefs.SUBMIT_CRASH_REPORTS, true);
+        return getBoolean(SharedPrefs.SUBMIT_CRASH_REPORTS, false);
     }
 
     public static void setSubmittingCrashReports(boolean value) {
@@ -272,6 +272,14 @@ public class Preferences {
 
     public static void setExitTimeout(boolean value) {
         setBoolean(SharedPrefs.EXIT_TIMEOUT, value);
+    }
+
+    public static boolean isJavarosa3Upgraded() {
+        return getBoolean(SharedPrefs.JAVAROSA_3_UPGRADE, false);
+    }
+
+    public static void setJavarosa3Upgraded(boolean value) {
+        setBoolean(SharedPrefs.JAVAROSA_3_UPGRADE, value);
     }
 
     public static void setAutoUpload(boolean value) {

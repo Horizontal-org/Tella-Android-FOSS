@@ -5,8 +5,6 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,14 +34,15 @@ import rs.readahead.washington.mobile.odk.FormController;
 import rs.readahead.washington.mobile.util.C;
 import rs.readahead.washington.mobile.util.ThreadUtil;
 import rs.readahead.washington.mobile.util.Util;
+import timber.log.Timber;
 
 
 public class FormSubmitter implements IFormSubmitterContract.IFormSubmitter {
     private IFormSubmitterContract.IView view;
-    private CompositeDisposable disposables = new CompositeDisposable();
-    private IOpenRosaRepository openRosaRepository;
-    private Context context;
-    private KeyDataSource keyDataSource;
+    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final IOpenRosaRepository openRosaRepository;
+    private final Context context;
+    private final KeyDataSource keyDataSource;
 
 
     public FormSubmitter(IFormSubmitterContract.IView view) {
@@ -150,7 +149,7 @@ public class FormSubmitter implements IFormSubmitterContract.IFormSubmitter {
                                 // PendingFormSendJob.scheduleJob();
                                 view.formSubmitNoConnectivity();
                             } else {
-                                FirebaseCrashlytics.getInstance().recordException(throwable);
+                                Timber.e(throwable);//TODO Crahslytics removed
                                 view.formPartSubmitError(throwable);
                             }
                         },
