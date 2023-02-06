@@ -17,7 +17,6 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.multidex.MultiDexApplication;
 
 import com.bumptech.glide.Glide;
-import com.evernote.android.job.JobManager;
 import com.hzontal.tella_locking_ui.TellaKeysUI;
 import com.hzontal.tella_locking_ui.common.CredentialsCallback;
 import com.hzontal.tella_locking_ui.ui.AppCompatActivityUnlocker;
@@ -57,7 +56,6 @@ import rs.readahead.washington.mobile.util.C;
 import rs.readahead.washington.mobile.util.CleanInsightUtils;
 import rs.readahead.washington.mobile.util.LocaleManager;
 import rs.readahead.washington.mobile.util.TellaUpgrader;
-import rs.readahead.washington.mobile.util.jobs.TellaJobCreator;
 import rs.readahead.washington.mobile.views.activity.ExitActivity;
 import rs.readahead.washington.mobile.views.activity.MainActivity;
 import rs.readahead.washington.mobile.views.activity.onboarding.OnBoardingActivity;
@@ -188,10 +186,6 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
         // MediaFile init
         MediaFileHandler.init(this);
         MediaFileHandler.emptyTmp(this);
-
-        // evernote jobs
-        JobManager.create(this).addJobCreator(new TellaJobCreator());
-        //JobManager.instance().cancelAll(); // for testing, kill them all for now..
 
         // Collect
         PropertyManager mgr = new PropertyManager();

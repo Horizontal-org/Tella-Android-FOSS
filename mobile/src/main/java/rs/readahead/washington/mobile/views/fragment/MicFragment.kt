@@ -23,7 +23,6 @@ import rs.readahead.washington.mobile.data.sharedpref.Preferences
 import rs.readahead.washington.mobile.media.MediaFileHandler
 import rs.readahead.washington.mobile.mvp.contract.IAudioCapturePresenterContract
 import rs.readahead.washington.mobile.mvp.contract.IMetadataAttachPresenterContract
-import rs.readahead.washington.mobile.mvp.contract.ITellaFileUploadSchedulePresenterContract
 import rs.readahead.washington.mobile.mvp.presenter.AudioCapturePresenter
 import rs.readahead.washington.mobile.mvp.presenter.MetadataAttacher
 import rs.readahead.washington.mobile.util.C.RECORD_REQUEST_CODE
@@ -43,7 +42,6 @@ private const val COLLECT_ENTRY = "collect_entry"
 
 class MicFragment : MetadataBaseLockFragment(),
     IAudioCapturePresenterContract.IView,
-    ITellaFileUploadSchedulePresenterContract.IView,
     IMetadataAttachPresenterContract.IView {
     //var RECORDER_MODE = "rm"
 
@@ -287,25 +285,6 @@ class MicFragment : MetadataBaseLockFragment(),
             true
         )
     }
-
-    override fun onMediaFilesUploadScheduled() {
-    }
-
-    override fun onMediaFilesUploadScheduleError(throwable: Throwable?) {
-    }
-
-
-    override fun onGetMediaFilesSuccess(mediaFiles: MutableList<VaultFile>?) {
-    }
-
-    override fun onGetMediaFilesError(error: Throwable?) {
-    }
-
-    //    private void returnData() {
-    //        if (handlingMediaFile != null) {
-    //            presenter.addMediaFile(handlingMediaFile);
-    //        }
-    //    }
 
     private fun handleStop() {
         disablePause()
