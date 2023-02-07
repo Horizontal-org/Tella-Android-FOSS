@@ -60,6 +60,7 @@ import rs.readahead.washington.mobile.media.MediaFileHandler;
 import rs.readahead.washington.mobile.media.VaultFileUrlLoader;
 import rs.readahead.washington.mobile.mvp.contract.ICameraPresenterContract;
 import rs.readahead.washington.mobile.mvp.contract.IMetadataAttachPresenterContract;
+import rs.readahead.washington.mobile.mvp.contract.ITellaFileUploadSchedulePresenterContract;
 import rs.readahead.washington.mobile.mvp.presenter.CameraPresenter;
 import rs.readahead.washington.mobile.mvp.presenter.MetadataAttacher;
 import rs.readahead.washington.mobile.presentation.entity.VaultFileLoaderModel;
@@ -77,6 +78,7 @@ import timber.log.Timber;
 
 public class CameraActivity extends MetadataActivity implements
         ICameraPresenterContract.IView,
+        ITellaFileUploadSchedulePresenterContract.IView,
         IMetadataAttachPresenterContract.IView {
     public static final String MEDIA_FILE_KEY = "mfk";
     public static final String VAULT_CURRENT_ROOT_PARENT = "vcrf";
@@ -346,6 +348,22 @@ public class CameraActivity extends MetadataActivity implements
     @Override
     public Context getContext() {
         return this;
+    }
+
+    @Override
+    public void onMediaFilesUploadScheduled() {
+    }
+
+    @Override
+    public void onMediaFilesUploadScheduleError(Throwable throwable) {
+    }
+
+    @Override
+    public void onGetMediaFilesSuccess(List<VaultFile> mediaFiles) {
+    }
+
+    @Override
+    public void onGetMediaFilesError(Throwable error) {
     }
 
     @OnClick(R.id.captureButton)
