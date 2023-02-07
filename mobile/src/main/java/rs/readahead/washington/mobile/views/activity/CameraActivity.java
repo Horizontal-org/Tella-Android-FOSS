@@ -63,7 +63,6 @@ import rs.readahead.washington.mobile.mvp.contract.IMetadataAttachPresenterContr
 import rs.readahead.washington.mobile.mvp.contract.ITellaFileUploadSchedulePresenterContract;
 import rs.readahead.washington.mobile.mvp.presenter.CameraPresenter;
 import rs.readahead.washington.mobile.mvp.presenter.MetadataAttacher;
-import rs.readahead.washington.mobile.mvp.presenter.TellaFileUploadSchedulePresenter;
 import rs.readahead.washington.mobile.presentation.entity.VaultFileLoaderModel;
 import rs.readahead.washington.mobile.util.C;
 import rs.readahead.washington.mobile.util.DialogsUtil;
@@ -114,7 +113,6 @@ public class CameraActivity extends MetadataActivity implements
     @BindView(R.id.resolutionButton)
     CameraResolutionButton resolutionButton;
     private CameraPresenter presenter;
-    private TellaFileUploadSchedulePresenter uploadPresenter;
     private MetadataAttacher metadataAttacher;
     private CameraMode mode;
     private boolean modeLocked;
@@ -140,7 +138,6 @@ public class CameraActivity extends MetadataActivity implements
         ButterKnife.bind(this);
 
         presenter = new CameraPresenter(this);
-        uploadPresenter = new TellaFileUploadSchedulePresenter(this);
         metadataAttacher = new MetadataAttacher(this);
 
         mode = CameraMode.PHOTO;
@@ -355,24 +352,18 @@ public class CameraActivity extends MetadataActivity implements
 
     @Override
     public void onMediaFilesUploadScheduled() {
-        if (intentMode != IntentMode.STAND) {
-            finish();
-        }
     }
 
     @Override
     public void onMediaFilesUploadScheduleError(Throwable throwable) {
-
     }
 
     @Override
     public void onGetMediaFilesSuccess(List<VaultFile> mediaFiles) {
-
     }
 
     @Override
     public void onGetMediaFilesError(Throwable error) {
-
     }
 
     @OnClick(R.id.captureButton)
@@ -730,15 +721,6 @@ public class CameraActivity extends MetadataActivity implements
             cameraView.setVideoSize(videoSize);
             cameraView.close();
             cameraView.open();
-        }
-    }
-
-    private void scheduleFileUpload(VaultFile vaultFile) {
-        if (Preferences.isAutoUploadEnabled()) {
-            List<VaultFile> upload = Collections.singletonList(vaultFile);
-            uploadPresenter.scheduleUploadMediaFiles(upload);
-        } else {
-            onMediaFilesUploadScheduled();
         }
     }
 

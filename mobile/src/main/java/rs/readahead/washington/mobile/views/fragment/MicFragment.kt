@@ -27,14 +27,12 @@ import rs.readahead.washington.mobile.mvp.contract.ITellaFileUploadSchedulePrese
 import rs.readahead.washington.mobile.mvp.presenter.AudioCapturePresenter
 import rs.readahead.washington.mobile.mvp.presenter.MetadataAttacher
 import rs.readahead.washington.mobile.util.C.RECORD_REQUEST_CODE
-import rs.readahead.washington.mobile.util.DateUtil.getDateTimeString
 import rs.readahead.washington.mobile.util.StringUtils
 import rs.readahead.washington.mobile.views.activity.CameraActivity.VAULT_CURRENT_ROOT_PARENT
 import rs.readahead.washington.mobile.views.activity.MainActivity
 import rs.readahead.washington.mobile.views.base_ui.MetadataBaseLockFragment
 import rs.readahead.washington.mobile.views.fragment.vault.home.VAULT_FILTER
 import rs.readahead.washington.mobile.views.interfaces.ICollectEntryInterface
-
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -288,25 +286,6 @@ class MicFragment : MetadataBaseLockFragment(),
         )
     }
 
-    override fun onMediaFilesUploadScheduled() {
-    }
-
-    override fun onMediaFilesUploadScheduleError(throwable: Throwable?) {
-    }
-
-
-    override fun onGetMediaFilesSuccess(mediaFiles: MutableList<VaultFile>?) {
-    }
-
-    override fun onGetMediaFilesError(error: Throwable?) {
-    }
-
-    //    private void returnData() {
-    //        if (handlingMediaFile != null) {
-    //            presenter.addMediaFile(handlingMediaFile);
-    //        }
-    //    }
-
     private fun handleStop() {
         disablePause()
         notRecording = true
@@ -464,5 +443,17 @@ class MicFragment : MetadataBaseLockFragment(),
 
     private fun updateRecordingName() {
         recordingName.text = UUID.randomUUID().toString() + ".aac"
+    }
+
+    override fun onMediaFilesUploadScheduled() {
+    }
+
+    override fun onMediaFilesUploadScheduleError(throwable: Throwable?) {
+    }
+
+    override fun onGetMediaFilesSuccess(mediaFiles: MutableList<VaultFile>?) {
+    }
+
+    override fun onGetMediaFilesError(error: Throwable?) {
     }
 }

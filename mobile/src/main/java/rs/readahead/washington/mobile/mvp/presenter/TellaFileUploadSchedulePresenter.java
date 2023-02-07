@@ -10,7 +10,6 @@ import io.reactivex.schedulers.Schedulers;
 import rs.readahead.washington.mobile.MyApplication;
 import rs.readahead.washington.mobile.data.database.KeyDataSource;
 import rs.readahead.washington.mobile.mvp.contract.ITellaFileUploadSchedulePresenterContract;
-import rs.readahead.washington.mobile.util.jobs.TellaUploadJob;
 import timber.log.Timber;
 
 
@@ -39,7 +38,7 @@ public class TellaFileUploadSchedulePresenter implements ITellaFileUploadSchedul
                 .flatMapCompletable(dataSource -> dataSource.scheduleUploadMediaFiles(mediaFiles))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-                    TellaUploadJob.scheduleJob();
+                    //TODO Implement with work lib
                     view.onMediaFilesUploadScheduled();
                 }, throwable -> {
                     Timber.e(throwable);//TODO Crahslytics removed
@@ -56,8 +55,7 @@ public class TellaFileUploadSchedulePresenter implements ITellaFileUploadSchedul
                 .flatMapCompletable(dataSource -> dataSource.scheduleUploadMediaFilesWithPriority(mediaFiles, uploadServerId, metadata))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-                    TellaUploadJob.cancelJob();
-                    TellaUploadJob.scheduleJob();
+                    //TODO Implement with work lib
                     view.onMediaFilesUploadScheduled();
                 }, throwable -> {
                     Timber.e(throwable);//TODO Crahslytics removed
