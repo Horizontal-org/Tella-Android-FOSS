@@ -2,33 +2,47 @@ package rs.readahead.washington.mobile.views.activity
 
 import android.Manifest
 import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.SensorManager
+import android.hardware.display.DisplayManager
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
+import android.provider.MediaStore
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.OrientationEventListener
 import android.view.View
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.camera.core.*
+import androidx.camera.extensions.ExtensionMode
+import androidx.camera.extensions.ExtensionsManager
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
-import butterknife.OnClick
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager.ImageModelRequest
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.gson.Gson
 import com.hzontal.tella_vault.VaultFile
-import com.otaliastudios.cameraview.*
+/*import com.otaliastudios.cameraview.*
 import com.otaliastudios.cameraview.controls.Facing
 import com.otaliastudios.cameraview.controls.Flash
 import com.otaliastudios.cameraview.controls.Grid
 import com.otaliastudios.cameraview.controls.Mode
 import com.otaliastudios.cameraview.gesture.Gesture
 import com.otaliastudios.cameraview.gesture.GestureAction
-import com.otaliastudios.cameraview.size.SizeSelector
+import com.otaliastudios.cameraview.size.SizeSelector*/
 import rs.readahead.washington.mobile.MyApplication
 import rs.readahead.washington.mobile.R
 import rs.readahead.washington.mobile.bus.event.CaptureEvent
@@ -36,19 +50,23 @@ import rs.readahead.washington.mobile.data.sharedpref.Preferences
 import rs.readahead.washington.mobile.databinding.ActivityCameraBinding
 import rs.readahead.washington.mobile.media.MediaFileHandler
 import rs.readahead.washington.mobile.media.VaultFileUrlLoader
+import rs.readahead.washington.mobile.media.camera.LuminosityAnalyzer
+import rs.readahead.washington.mobile.media.camera.ThreadExecutor
 import rs.readahead.washington.mobile.mvp.contract.ICameraPresenterContract
 import rs.readahead.washington.mobile.mvp.contract.IMetadataAttachPresenterContract
 import rs.readahead.washington.mobile.mvp.contract.ITellaFileUploadSchedulePresenterContract
 import rs.readahead.washington.mobile.mvp.presenter.CameraPresenter
 import rs.readahead.washington.mobile.mvp.presenter.MetadataAttacher
 import rs.readahead.washington.mobile.presentation.entity.VaultFileLoaderModel
-import rs.readahead.washington.mobile.util.C
-import rs.readahead.washington.mobile.util.DialogsUtil
-import rs.readahead.washington.mobile.util.VideoResolutionManager
+import rs.readahead.washington.mobile.util.*
 import rs.readahead.washington.mobile.views.custom.*
 import rs.readahead.washington.mobile.views.fragment.uwazi.attachments.VAULT_FILE_KEY
 import timber.log.Timber
 import java.io.File
+import java.util.concurrent.ExecutionException
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 const val MEDIA_FILE_KEY = "mfk"
 const val VAULT_CURRENT_ROOT_PARENT = "vcrf"
@@ -57,7 +75,11 @@ private const val CLICK_MODE_DELAY = 2000
 
 class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     ITellaFileUploadSchedulePresenterContract.IView, IMetadataAttachPresenterContract.IView {
-    private lateinit var cameraView: CameraView
+
+    private val displayManager by lazy { context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager }
+    private var cameraProvider: ProcessCameraProvider? = null
+
+    private lateinit var viewFinder: PreviewView
     private lateinit var gridButton: CameraGridButton
     private lateinit var switchButton: CameraSwitchButton
     private lateinit var flashButton: CameraFlashButton
@@ -71,6 +93,10 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     private lateinit var videoModeText: TextView
     private lateinit var resolutionButton: CameraResolutionButton
     private lateinit var binding: ActivityCameraBinding
+
+    private var preview: Preview? = null
+    private var imageCapture: ImageCapture? = null
+    private var imageAnalyzer: ImageAnalysis? = null
 
     private var presenter: CameraPresenter? = null
     private var metadataAttacher: MetadataAttacher? = null
@@ -87,9 +113,12 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     private var lastClickTime = System.currentTimeMillis()
     private var glide: ImageModelRequest<VaultFileLoaderModel>? = null
     private var currentRootParent: String? = null
+
+    private var hdrCameraSelector: CameraSelector? = null
+    private var lensFacing = CameraSelector.DEFAULT_BACK_CAMERA
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        this.window?.fitSystemWindows()
         binding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(binding.getRoot())
         initView()
@@ -99,7 +128,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         presenter = CameraPresenter(this)
         metadataAttacher = MetadataAttacher(this)
         mode = CameraMode.PHOTO
-        if (intent.hasExtra(CAMERA_MODE)) {
+       /* if (intent.hasExtra(CAMERA_MODE)) {
             mode = CameraMode.valueOf(
                 intent.getStringExtra(CAMERA_MODE)!!
             )
@@ -110,7 +139,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             intentMode = IntentMode.valueOf(
                 intent.getStringExtra(INTENT_MODE)!!
             )
-        }
+        }*/
         if (intent.hasExtra(VAULT_CURRENT_ROOT_PARENT)) {
             currentRootParent = intent.getStringExtra(VAULT_CURRENT_ROOT_PARENT)
         }
@@ -128,11 +157,11 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
     override fun onResume() {
         super.onResume()
-        mOrientationEventListener!!.enable()
+        //mOrientationEventListener!!.enable()
         startLocationMetadataListening()
-        cameraView!!.open()
+        //cameraView!!.open()
         setVideoQuality()
-        mSeekBar!!.progress = zoomLevel
+        mSeekBar.progress = zoomLevel
         setCameraZoom()
         presenter!!.getLastMediaFile()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=
@@ -149,11 +178,11 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     override fun onPause() {
         super.onPause()
         stopLocationMetadataListening()
-        mOrientationEventListener!!.disable()
+//        mOrientationEventListener!!.disable()
         if (videoRecording) {
-            captureButton!!.performClick()
+            captureButton.performClick()
         }
-        cameraView!!.close()
+        //cameraView!!.close()
     }
 
     override fun onStop() {
@@ -165,7 +194,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         stopPresenter()
         hideProgressDialog()
         hideVideoResolutionDialog()
-        cameraView!!.destroy()
+       // cameraView!!.destroy()
     }
 
     override fun onBackPressed() {
@@ -181,7 +210,17 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
 
     private fun initView() {
-        cameraView = binding.camera
+       // cameraView = binding.camera
+        viewFinder = binding.viewFinder
+        /*viewFinder.addOnAttachStateChangeListener(object :
+                View.OnAttachStateChangeListener {
+                override fun onViewDetachedFromWindow(v: View) =
+                    displayManager.registerDisplayListener(displayListener, null)
+
+                override fun onViewAttachedToWindow(v: View) =
+                    displayManager.unregisterDisplayListener(displayListener)
+                })*/
+
         gridButton = binding.gridButton
         switchButton = binding.switchButton
         flashButton = binding.flashButton
@@ -204,7 +243,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 val mgr = getSystemService(AUDIO_SERVICE) as AudioManager
                 mgr.setStreamMute(AudioManager.STREAM_SYSTEM, true)
             }
-            if (cameraView.mode == Mode.PICTURE) {
+           /* if (cameraView.mode == Mode.PICTURE) {
                 cameraView.takePicture()
             } else {
                 gridButton.visibility = if (videoRecording) View.VISIBLE else View.GONE
@@ -229,7 +268,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                     switchButton.visibility = View.GONE
                     resolutionButton.visibility = View.GONE
                 }
-            }
+            }*/
         }
 
         binding.photoMode.setOnClickListener { onPhotoClicked() }
@@ -238,26 +277,27 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         binding.switchButton.setOnClickListener { onSwitchClicked() }
         binding.previewImage.setOnClickListener { onPreviewClicked() }
         binding.resolutionButton.setOnClickListener { chooseVideoResolution() }
+
     }
 
     fun onSwitchClicked() {
-        if (cameraView.facing == Facing.BACK) {
+        /*if (cameraView.facing == Facing.BACK) {
             cameraView.facing = Facing.FRONT
             switchButton.displayFrontCamera()
         } else {
             cameraView.facing = Facing.BACK
             switchButton.displayBackCamera()
-        }
+        }*/
     }
 
     fun onGridClicked() {
-        if (cameraView.grid == Grid.DRAW_3X3) {
+       /* if (cameraView.grid == Grid.DRAW_3X3) {
             cameraView.grid = Grid.OFF
             gridButton.displayGridOff()
         } else {
             cameraView.grid = Grid.DRAW_3X3
             gridButton.displayGridOn()
-        }
+        }*/
     }
 
     fun onPreviewClicked() {
@@ -268,12 +308,12 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     }
 
     fun chooseVideoResolution() {
-        if (videoResolutionManager != null) {
+        /*if (videoResolutionManager != null) {
             videoQualityDialog = DialogsUtil.showVideoResolutionDialog(
                 this,
                 { videoSize: SizeSelector -> setVideoSize(videoSize) }, videoResolutionManager
             )
-        }
+        }*/
     }
 
     fun onPhotoClicked() {
@@ -283,15 +323,15 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         if (System.currentTimeMillis() - lastClickTime < CLICK_MODE_DELAY) {
             return
         }
-        if (cameraView.mode == Mode.PICTURE) {
+       /* if (cameraView.mode == Mode.PICTURE) {
             return
         }
         if (cameraView.flash == Flash.TORCH) {
             cameraView.flash = Flash.AUTO
-        }
+        }*/
         setPhotoActive()
         captureButton.displayPhotoButton()
-        cameraView.mode = Mode.PICTURE
+        //cameraView.mode = Mode.PICTURE
         mode = CameraMode.PHOTO
         resetZoom()
         lastClickTime = System.currentTimeMillis()
@@ -304,10 +344,10 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         if (System.currentTimeMillis() - lastClickTime < CLICK_MODE_DELAY) {
             return
         }
-        if (cameraView.mode == Mode.VIDEO) {
+       /* if (cameraView.mode == Mode.VIDEO) {
             return
         }
-        cameraView.mode = Mode.VIDEO
+        cameraView.mode = Mode.VIDEO*/
         turnFlashDown()
         captureButton.displayVideoButton()
         setVideoActive()
@@ -421,13 +461,13 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
     private fun resetZoom() {
         zoomLevel = 0
-        mSeekBar!!.progress = 0
+        mSeekBar.progress = 0
         setCameraZoom()
     }
 
 
     private fun setCameraZoom() {
-        cameraView.zoom = zoomLevel.toFloat() / 100
+        //cameraView.zoom = zoomLevel.toFloat() / 100
     }
 
     private fun maybeStopVideoRecording(): Boolean {
@@ -453,15 +493,15 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
     private fun setupCameraView() {
         if (mode == CameraMode.PHOTO) {
-            cameraView.mode = Mode.PICTURE
+          //  cameraView.mode = Mode.PICTURE
             captureButton.displayPhotoButton()
         } else {
-            cameraView.mode = Mode.VIDEO
+           // cameraView.mode = Mode.VIDEO
             captureButton.displayVideoButton()
         }
 
         //cameraView.setEnabled(PermissionUtil.checkPermission(this, Manifest.permission.CAMERA));
-        cameraView.mapGesture(Gesture.TAP, GestureAction.AUTO_FOCUS)
+        /*cameraView.mapGesture(Gesture.TAP, GestureAction.AUTO_FOCUS)
         setOrientationListener()
         cameraView.addCameraListener(object : CameraListener() {
             override fun onPictureTaken(result: PictureResult) {
@@ -501,7 +541,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 // options object has info
                 super.onCameraOpened(options)
             }
-        })
+        })*/
         mSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 zoomLevel = i
@@ -511,30 +551,32 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
+
+        startCamera()
     }
 
     private fun setupCameraModeButton() {
-        if (cameraView.mode == Mode.PICTURE) {
+       /* if (cameraView.mode == Mode.PICTURE) {
             setPhotoActive()
         } else {
             setVideoActive()
-        }
+        }*/
     }
 
     private fun setUpCameraGridButton() {
-        if (cameraView.grid == Grid.DRAW_3X3) {
+       /* if (cameraView.grid == Grid.DRAW_3X3) {
             gridButton.displayGridOn()
         } else {
             gridButton.displayGridOff()
-        }
+        }*/
     }
 
     private fun setupCameraSwitchButton() {
-        if (cameraView.facing == Facing.FRONT) {
+       /* if (cameraView.facing == Facing.FRONT) {
             switchButton.displayFrontCamera()
         } else {
             switchButton.displayBackCamera()
-        }
+        }*/
     }
 
     private fun setupImagePreview() {
@@ -543,7 +585,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         }
     }
 
-    private fun setupCameraFlashButton(supported: Collection<Flash>) {
+   /* private fun setupCameraFlashButton(supported: Collection<Flash>) {
         if (cameraView.flash == Flash.AUTO) {
             flashButton.displayFlashAuto()
         } else if (cameraView.flash == Flash.OFF) {
@@ -577,11 +619,11 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 }
             }
         }
-    }
+    }*/
 
     private fun turnFlashDown() {
-        flashButton.displayFlashOff()
-        cameraView.flash = Flash.OFF
+      /*  flashButton.displayFlashOff()
+        cameraView.flash = Flash.OFF*/
     }
 
     private fun hideProgressDialog() {
@@ -629,21 +671,21 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     }
 
     private fun setVideoQuality() {
-        if (cameraView != null && videoResolutionManager != null) {
+      /*  if (cameraView != null && videoResolutionManager != null) {
             cameraView.setVideoSize(videoResolutionManager!!.videoSize)
-        }
+        }*/
     }
 
-    private fun setVideoSize(videoSize: SizeSelector) {
+    /*private fun setVideoSize(videoSize: SizeSelector) {
         if (cameraView != null) {
             cameraView.setVideoSize(videoSize)
             cameraView.close()
             cameraView.open()
         }
-    }
+    }*/
 
     private fun setupShutterSound() {
-        cameraView.playSounds = !Preferences.isShutterMute()
+       // cameraView.playSounds = !Preferences.isShutterMute()
     }
 
     enum class CameraMode {
@@ -660,5 +702,175 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
         @kotlin.jvm.JvmField
         var CAMERA_MODE = "cm"
+
+        private const val RATIO_4_3_VALUE = 4.0 / 3.0 // aspect ratio 4x3
+        private const val RATIO_16_9_VALUE = 16.0 / 9.0 // aspect ratio 16x9
+    }
+
+    private fun startCamera() {
+        // This is the CameraX PreviewView where the camera will be rendered
+
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+        cameraProviderFuture.addListener({
+            try {
+                cameraProvider = cameraProviderFuture.get()
+            } catch (e: InterruptedException) {
+                Toast.makeText(context, "Error starting camera", Toast.LENGTH_SHORT).show()
+                return@addListener
+            } catch (e: ExecutionException) {
+                Toast.makeText(context, "Error starting camera", Toast.LENGTH_SHORT).show()
+                return@addListener
+            }
+
+            // The display information
+            val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
+            // The ratio for the output image and preview
+            val aspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
+            // The display rotation
+            val rotation = viewFinder.display.rotation
+
+            val localCameraProvider = cameraProvider
+                ?: throw IllegalStateException("Camera initialization failed.")
+
+            // The Configuration of camera preview
+            preview = Preview.Builder()
+                .setTargetAspectRatio(aspectRatio) // set the camera aspect ratio
+                .setTargetRotation(rotation) // set the camera rotation
+                .build()
+
+            // The Configuration of image capture
+            imageCapture = ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY) // setting to have pictures with highest quality possible (may be slow)
+                .setFlashMode(ImageCapture.FLASH_MODE_OFF) // set capture flash
+                .setTargetAspectRatio(aspectRatio) // set the capture aspect ratio
+                .setTargetRotation(rotation) // set the capture rotation
+                .build()
+
+           // checkForHdrExtensionAvailability()
+
+            // The Configuration of image analyzing
+            imageAnalyzer = ImageAnalysis.Builder()
+                .setTargetAspectRatio(aspectRatio) // set the analyzer aspect ratio
+                .setTargetRotation(rotation) // set the analyzer rotation
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST) // in our analysis, we care about the latest image
+                .build()
+                .also { setLuminosityAnalyzer(it) }
+
+            // Unbind the use-cases before rebinding them
+            localCameraProvider.unbindAll()
+            // Bind all use cases to the camera with lifecycle
+            bindToLifecycle(localCameraProvider, viewFinder)
+        }, ContextCompat.getMainExecutor(context))
+    }
+
+    private fun aspectRatio(width: Int, height: Int): Int {
+        val previewRatio = max(width, height).toDouble() / min(width, height)
+        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
+            return AspectRatio.RATIO_4_3
+        }
+        return AspectRatio.RATIO_16_9
+    }
+
+    private fun setLuminosityAnalyzer(imageAnalysis: ImageAnalysis) {
+        // Use a worker thread for image analysis to prevent glitches
+        val analyzerThread = HandlerThread("LuminosityAnalysis").apply { start() }
+        imageAnalysis.setAnalyzer(
+            ThreadExecutor(Handler(analyzerThread.looper)),
+            LuminosityAnalyzer()
+        )
+    }
+
+    private fun bindToLifecycle(localCameraProvider: ProcessCameraProvider, viewFinder: PreviewView) {
+        try {
+            localCameraProvider.bindToLifecycle(
+                this, // current lifecycle owner
+                hdrCameraSelector ?: lensFacing, // either front or back facing
+                preview, // camera preview use case
+                imageCapture, // image capture use case
+                imageAnalyzer, // image analyzer use case
+            ).run {
+                // Init camera exposure control
+                cameraInfo.exposureState.run {
+                    val lower = exposureCompensationRange.lower
+                    val upper = exposureCompensationRange.upper
+
+                    /*binding.sliderExposure.run {
+                        valueFrom = lower.toFloat()
+                        valueTo = upper.toFloat()
+                        stepSize = 1f
+                        value = exposureCompensationIndex.toFloat()
+
+                        addOnChangeListener { _, value, _ ->
+                            cameraControl.setExposureCompensationIndex(value.toInt())
+                        }
+                    }*/
+                }
+            }
+
+            // Attach the viewfinder's surface provider to preview use case
+            preview?.setSurfaceProvider(viewFinder.surfaceProvider)
+        } catch (e: Exception) {
+            Timber.e("Failed to bind use cases")
+        }
+    }
+
+    private fun captureImage() {
+        val localImageCapture = imageCapture ?: throw IllegalStateException("Camera initialization failed.")
+
+        // Setup image capture metadata
+        val metadata = ImageCapture.Metadata().apply {
+            // Mirror image when using the front camera
+            isReversedHorizontal = lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA
+        }
+
+        //cameraView.addCameraListener(object : CameraListener() {
+          // override fun onPictureTaken(result: PictureResult) {
+                presenter!!.addJpegPhoto(result.data, currentRootParent)
+        //    }
+     //   MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        // Options fot the output image file
+        val outputOptions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, System.currentTimeMillis())
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, outputDirectory)
+            }
+
+            val contentResolver = requireContext().contentResolver
+
+            // Create the output uri
+            val contentUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+
+            ImageCapture.OutputFileOptions.Builder(contentResolver, contentUri, contentValues)
+        } else {
+            File(outputDirectory).mkdirs()
+            val file = File(outputDirectory, "${System.currentTimeMillis()}.jpg")
+
+            ImageCapture.OutputFileOptions.Builder(file)
+        }.setMetadata(metadata).build()
+
+        localImageCapture.takePicture(
+            outputOptions, // the options needed for the final image
+            requireContext().mainExecutor(), // the executor, on which the task will run
+            object : ImageCapture.OnImageSavedCallback { // the callback, about the result of capture process
+                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                    // This function is called if capture is successfully completed
+                    outputFileResults.savedUri
+                        ?.let { uri ->
+                            setGalleryThumbnail(uri)
+                            Timber.d("Photo saved in $uri")
+                        }
+                        ?: setLastPictureThumbnail()
+                }
+
+                override fun onError(exception: ImageCaptureException) {
+                    // This function is called if there is an errors during capture process
+                    val msg = "Photo capture failed: ${exception.message}"
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                    Timber.e(msg)
+                    exception.printStackTrace()
+                }
+            }
+        )
     }
 }
