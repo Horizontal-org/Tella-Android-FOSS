@@ -1,8 +1,15 @@
 package rs.readahead.washington.mobile.views.activity
 
+/*import com.otaliastudios.cameraview.*
+import com.otaliastudios.cameraview.controls.Facing
+import com.otaliastudios.cameraview.controls.Flash
+import com.otaliastudios.cameraview.controls.Grid
+import com.otaliastudios.cameraview.controls.Mode
+import com.otaliastudios.cameraview.gesture.Gesture
+import com.otaliastudios.cameraview.gesture.GestureAction
+import com.otaliastudios.cameraview.size.SizeSelector*/
 import android.Manifest
 import android.app.ProgressDialog
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,36 +20,24 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
-import android.provider.MediaStore
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.OrientationEventListener
 import android.view.View
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.camera.core.*
-import androidx.camera.extensions.ExtensionMode
-import androidx.camera.extensions.ExtensionsManager
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager.ImageModelRequest
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.gson.Gson
 import com.hzontal.tella_vault.VaultFile
-/*import com.otaliastudios.cameraview.*
-import com.otaliastudios.cameraview.controls.Facing
-import com.otaliastudios.cameraview.controls.Flash
-import com.otaliastudios.cameraview.controls.Grid
-import com.otaliastudios.cameraview.controls.Mode
-import com.otaliastudios.cameraview.gesture.Gesture
-import com.otaliastudios.cameraview.gesture.GestureAction
-import com.otaliastudios.cameraview.size.SizeSelector*/
 import rs.readahead.washington.mobile.MyApplication
 import rs.readahead.washington.mobile.R
 import rs.readahead.washington.mobile.bus.event.CaptureEvent
@@ -63,6 +58,8 @@ import rs.readahead.washington.mobile.views.custom.*
 import rs.readahead.washington.mobile.views.fragment.uwazi.attachments.VAULT_FILE_KEY
 import timber.log.Timber
 import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 import java.util.concurrent.ExecutionException
 import kotlin.math.abs
 import kotlin.math.max
@@ -116,6 +113,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
     private var hdrCameraSelector: CameraSelector? = null
     private var lensFacing = CameraSelector.DEFAULT_BACK_CAMERA
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.window?.fitSystemWindows()
@@ -209,6 +207,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun initView() {
        // cameraView = binding.camera
         viewFinder = binding.viewFinder
@@ -243,6 +242,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 val mgr = getSystemService(AUDIO_SERVICE) as AudioManager
                 mgr.setStreamMute(AudioManager.STREAM_SYSTEM, true)
             }
+            captureImage()
            /* if (cameraView.mode == Mode.PICTURE) {
                 cameraView.takePicture()
             } else {
@@ -814,6 +814,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun captureImage() {
         val localImageCapture = imageCapture ?: throw IllegalStateException("Camera initialization failed.")
 
@@ -823,44 +824,46 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             isReversedHorizontal = lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA
         }
 
+        val tempFile = MediaFileHandler.getTempFile()
         //cameraView.addCameraListener(object : CameraListener() {
           // override fun onPictureTaken(result: PictureResult) {
-                presenter!!.addJpegPhoto(result.data, currentRootParent)
+                //presenter!!.addJpegPhoto(result.data, currentRootParent)
         //    }
-     //   MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         // Options fot the output image file
         val outputOptions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val contentValues = ContentValues().apply {
+           /* val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, System.currentTimeMillis())
                 put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
                 put(MediaStore.MediaColumns.RELATIVE_PATH, outputDirectory)
             }
 
-            val contentResolver = requireContext().contentResolver
+            val contentResolver = context.contentResolver
 
             // Create the output uri
-            val contentUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            val contentUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)*/
 
-            ImageCapture.OutputFileOptions.Builder(contentResolver, contentUri, contentValues)
+            ImageCapture.OutputFileOptions.Builder(tempFile)
         } else {
-            File(outputDirectory).mkdirs()
-            val file = File(outputDirectory, "${System.currentTimeMillis()}.jpg")
+           /* File(outputDirectory).mkdirs()
+            val file = File(outputDirectory, "${System.currentTimeMillis()}.jpg")*/
 
-            ImageCapture.OutputFileOptions.Builder(file)
+            ImageCapture.OutputFileOptions.Builder(tempFile)
         }.setMetadata(metadata).build()
 
         localImageCapture.takePicture(
             outputOptions, // the options needed for the final image
-            requireContext().mainExecutor(), // the executor, on which the task will run
+            context.mainExecutor, // the executor, on which the task will run
             object : ImageCapture.OnImageSavedCallback { // the callback, about the result of capture process
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     // This function is called if capture is successfully completed
                     outputFileResults.savedUri
                         ?.let { uri ->
-                            setGalleryThumbnail(uri)
+                            val iStream = getContentResolver().openInputStream(uri)
+                            presenter!!.addJpegPhoto(MediaFileHandler.getBytes(iStream), currentRootParent)
+                            //setGalleryThumbnail(tempFile.toURI())
                             Timber.d("Photo saved in $uri")
                         }
-                        ?: setLastPictureThumbnail()
+                        //?: presenter?.getLastMediaFile()
                 }
 
                 override fun onError(exception: ImageCaptureException) {
