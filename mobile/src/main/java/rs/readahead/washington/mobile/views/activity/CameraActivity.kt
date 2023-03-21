@@ -1,13 +1,5 @@
 package rs.readahead.washington.mobile.views.activity
 
-/*import com.otaliastudios.cameraview.*
-import com.otaliastudios.cameraview.controls.Facing
-import com.otaliastudios.cameraview.controls.Flash
-import com.otaliastudios.cameraview.controls.Grid
-import com.otaliastudios.cameraview.controls.Mode
-import com.otaliastudios.cameraview.gesture.Gesture
-import com.otaliastudios.cameraview.gesture.GestureAction
-import com.otaliastudios.cameraview.size.SizeSelector*/
 import android.Manifest
 import android.app.ProgressDialog
 import android.content.Context
@@ -32,6 +24,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager.ImageModelRequest
@@ -58,8 +51,6 @@ import rs.readahead.washington.mobile.views.custom.*
 import rs.readahead.washington.mobile.views.fragment.uwazi.attachments.VAULT_FILE_KEY
 import timber.log.Timber
 import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
 import java.util.concurrent.ExecutionException
 import kotlin.math.abs
 import kotlin.math.max
@@ -73,7 +64,7 @@ private const val CLICK_MODE_DELAY = 2000
 class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     ITellaFileUploadSchedulePresenterContract.IView, IMetadataAttachPresenterContract.IView {
 
-    private val displayManager by lazy { context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager }
+    //private val displayManager by lazy { context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager }
     private var cameraProvider: ProcessCameraProvider? = null
 
     private lateinit var viewFinder: PreviewView
@@ -94,8 +85,8 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     private var preview: Preview? = null
     private var imageCapture: ImageCapture? = null
     private var imageAnalyzer: ImageAnalysis? = null
+    private val presenter by lazy { CameraPresenter(this) }
 
-    private var presenter: CameraPresenter? = null
     private var metadataAttacher: MetadataAttacher? = null
     private var mode: CameraMode? = null
     private var modeLocked = false
@@ -113,17 +104,17 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
     private var hdrCameraSelector: CameraSelector? = null
     private var lensFacing = CameraSelector.DEFAULT_BACK_CAMERA
+
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.window?.fitSystemWindows()
         binding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(binding.getRoot())
-        initView()
 
+        initView()
         overridePendingTransition(R.anim.slide_in_up, R.anim.fade_out)
 
-        presenter = CameraPresenter(this)
         metadataAttacher = MetadataAttacher(this)
         mode = CameraMode.PHOTO
        /* if (intent.hasExtra(CAMERA_MODE)) {
@@ -144,6 +135,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         val mediaFileHandler = MediaFileHandler()
         val glideLoader = VaultFileUrlLoader(context.applicationContext, mediaFileHandler)
         glide = Glide.with(context).using(glideLoader)
+
         setupCameraView()
         setupCameraModeButton()
         setupImagePreview()
@@ -161,7 +153,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         setVideoQuality()
         mSeekBar.progress = zoomLevel
         setCameraZoom()
-        presenter!!.getLastMediaFile()
+        presenter.getLastMediaFile()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=
             PackageManager.PERMISSION_GRANTED
         ) {
@@ -206,10 +198,15 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_up)
     }
 
-
     @RequiresApi(Build.VERSION_CODES.P)
     private fun initView() {
        // cameraView = binding.camera
+
+        if (!hastCameraPermissions(context)) {
+            maybeChangeTemporaryTimeout()
+            requestCameraPermissions(C.CAMERA_PERMISSION)
+        }
+
         viewFinder = binding.viewFinder
         /*viewFinder.addOnAttachStateChangeListener(object :
                 View.OnAttachStateChangeListener {
@@ -277,7 +274,6 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         binding.switchButton.setOnClickListener { onSwitchClicked() }
         binding.previewImage.setOnClickListener { onPreviewClicked() }
         binding.resolutionButton.setOnClickListener { chooseVideoResolution() }
-
     }
 
     fun onSwitchClicked() {
@@ -479,16 +475,16 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     }
 
     private fun stopPresenter() {
-        if (presenter != null) {
+        /*if (presenter != null) {
             presenter!!.destroy()
             presenter = null
-        }
+        }*/
     }
 
     private fun showConfirmVideoView(video: File) {
         captureButton.displayVideoButton()
         durationView.stop()
-        presenter!!.addMp4Video(video, currentRootParent)
+        presenter.addMp4Video(video, currentRootParent)
     }
 
     private fun setupCameraView() {
@@ -505,7 +501,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         setOrientationListener()
         cameraView.addCameraListener(object : CameraListener() {
             override fun onPictureTaken(result: PictureResult) {
-                presenter!!.addJpegPhoto(result.data, currentRootParent)
+                presenter.addJpegPhoto(result.data, currentRootParent)
             }
 
             override fun onVideoTaken(result: VideoResult) {
@@ -639,7 +635,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         ) {
             override fun onOrientationChanged(orientation: Int) {
                 if (orientation != ORIENTATION_UNKNOWN) {
-                    presenter!!.handleRotation(orientation)
+                    presenter.handleRotation(orientation)
                 }
             }
         }
@@ -825,30 +821,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         }
 
         val tempFile = MediaFileHandler.getTempFile()
-        //cameraView.addCameraListener(object : CameraListener() {
-          // override fun onPictureTaken(result: PictureResult) {
-                //presenter!!.addJpegPhoto(result.data, currentRootParent)
-        //    }
-        // Options fot the output image file
-        val outputOptions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-           /* val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, System.currentTimeMillis())
-                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-                put(MediaStore.MediaColumns.RELATIVE_PATH, outputDirectory)
-            }
-
-            val contentResolver = context.contentResolver
-
-            // Create the output uri
-            val contentUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)*/
-
-            ImageCapture.OutputFileOptions.Builder(tempFile)
-        } else {
-           /* File(outputDirectory).mkdirs()
-            val file = File(outputDirectory, "${System.currentTimeMillis()}.jpg")*/
-
-            ImageCapture.OutputFileOptions.Builder(tempFile)
-        }.setMetadata(metadata).build()
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(tempFile).setMetadata(metadata).build()
 
         localImageCapture.takePicture(
             outputOptions, // the options needed for the final image
@@ -859,11 +832,10 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                     outputFileResults.savedUri
                         ?.let { uri ->
                             val iStream = getContentResolver().openInputStream(uri)
-                            presenter!!.addJpegPhoto(MediaFileHandler.getBytes(iStream), currentRootParent)
+                            presenter.addJpegPhoto(MediaFileHandler.getBytes(iStream), currentRootParent)
                             //setGalleryThumbnail(tempFile.toURI())
                             Timber.d("Photo saved in $uri")
                         }
-                        //?: presenter?.getLastMediaFile()
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -874,6 +846,26 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                     exception.printStackTrace()
                 }
             }
+        )
+    }
+
+    fun hastCameraPermissions(context: Context): Boolean {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+            return true
+        return false
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun requestCameraPermissions(requestCode: Int) {
+        requestPermissions(
+            arrayOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO
+            ), requestCode
         )
     }
 }

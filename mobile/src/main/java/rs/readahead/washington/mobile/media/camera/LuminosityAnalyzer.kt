@@ -1,3 +1,4 @@
+/*Based upon com.robertlevonyan.demo.camerax.analyzer */
 package rs.readahead.washington.mobile.media.camera
 
 import android.util.Log
