@@ -1,6 +1,7 @@
 package rs.readahead.washington.mobile.views.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -22,7 +23,10 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.camera.core.*
+import androidx.camera.video.*
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.video.Recorder
+import androidx.camera.video.VideoCapture
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -60,7 +64,7 @@ const val MEDIA_FILE_KEY = "mfk"
 const val VAULT_CURRENT_ROOT_PARENT = "vcrf"
 private const val CLICK_DELAY = 1200
 private const val CLICK_MODE_DELAY = 2000
-
+@SuppressLint("RestrictedApi")
 class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     ITellaFileUploadSchedulePresenterContract.IView, IMetadataAttachPresenterContract.IView {
 
@@ -85,10 +89,11 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     private var preview: Preview? = null
     private var imageCapture: ImageCapture? = null
     private var imageAnalyzer: ImageAnalysis? = null
+    private var videoCapture: VideoCapture<Recorder>? = null
     private val presenter by lazy { CameraPresenter(this) }
 
     private var metadataAttacher: MetadataAttacher? = null
-    private var mode: CameraMode? = null
+    private var mode = CameraMode.PHOTO
     private var modeLocked = false
     private var intentMode: IntentMode? = null
     private var videoRecording = false
@@ -116,8 +121,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         overridePendingTransition(R.anim.slide_in_up, R.anim.fade_out)
 
         metadataAttacher = MetadataAttacher(this)
-        mode = CameraMode.PHOTO
-       /* if (intent.hasExtra(CAMERA_MODE)) {
+        /*if (intent.hasExtra(CAMERA_MODE)) {
             mode = CameraMode.valueOf(
                 intent.getStringExtra(CAMERA_MODE)!!
             )
@@ -552,11 +556,11 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     }
 
     private fun setupCameraModeButton() {
-       /* if (cameraView.mode == Mode.PICTURE) {
+        if (mode == CameraMode.PHOTO) {
             setPhotoActive()
         } else {
             setVideoActive()
-        }*/
+        }
     }
 
     private fun setUpCameraGridButton() {
