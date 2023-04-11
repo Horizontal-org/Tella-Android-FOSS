@@ -3,17 +3,21 @@ package rs.readahead.washington.mobile.views.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.SensorManager
 import android.hardware.display.DisplayManager
 import android.media.AudioManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
+import android.provider.MediaStore
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.OrientationEventListener
 import android.view.View
 import android.widget.ImageView
@@ -106,6 +110,8 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     private var lastClickTime = System.currentTimeMillis()
     private var glide: ImageModelRequest<VaultFileLoaderModel>? = null
     private var currentRootParent: String? = null
+    private var tempFile: File? = null
+    var recording: Recording? = null
 
     private var hdrCameraSelector: CameraSelector? = null
     private var lensFacing = CameraSelector.DEFAULT_BACK_CAMERA
@@ -206,7 +212,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     private fun initView() {
        // cameraView = binding.camera
 
-        if (!hastCameraPermissions(context)) {
+        if (!hasCameraPermissions(context)) {
             maybeChangeTemporaryTimeout()
             requestCameraPermissions(C.CAMERA_PERMISSION)
         }
@@ -243,33 +249,36 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 val mgr = getSystemService(AUDIO_SERVICE) as AudioManager
                 mgr.setStreamMute(AudioManager.STREAM_SYSTEM, true)
             }
-            captureImage()
-           /* if (cameraView.mode == Mode.PICTURE) {
-                cameraView.takePicture()
+
+           if (mode == CameraMode.PHOTO) {
+               captureImage()
             } else {
-                gridButton.visibility = if (videoRecording) View.VISIBLE else View.GONE
+                /*gridButton.visibility = if (videoRecording) View.VISIBLE else View.GONE
                 switchButton.visibility = if (videoRecording) View.VISIBLE else View.GONE
-                resolutionButton.visibility = if (videoRecording) View.VISIBLE else View.GONE
+                resolutionButton.visibility = if (videoRecording) View.VISIBLE else View.GONE*/
                 if (videoRecording) {
                     if (System.currentTimeMillis() - lastClickTime >= CLICK_DELAY) {
-                        cameraView.stopVideo()
+                        //cameraView.stopVideo()
                         videoRecording = false
-                        gridButton.visibility = View.VISIBLE
+                        recordVideo()
+                        /*gridButton.visibility = View.VISIBLE
                         switchButton.visibility = View.VISIBLE
-                        resolutionButton.visibility = View.VISIBLE
+                        resolutionButton.visibility = View.VISIBLE*/
                     }
                 } else {
+                    videoRecording = true
                     setVideoQuality()
                     lastClickTime = System.currentTimeMillis()
-                    cameraView.takeVideo(MediaFileHandler.getTempFile())
-                    captureButton.displayStopVideo()
+                    recordVideo()
                     durationView.start()
-                    videoRecording = true
+                    captureButton.displayStopVideo()
+                    /*
+                    cameraView.takeVideo(MediaFileHandler.getTempFile())
                     gridButton.visibility = View.GONE
                     switchButton.visibility = View.GONE
-                    resolutionButton.visibility = View.GONE
+                    resolutionButton.visibility = View.GONE*/
                 }
-            }*/
+            }
         }
 
         binding.photoMode.setOnClickListener { onPhotoClicked() }
@@ -824,8 +833,8 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             isReversedHorizontal = lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA
         }
 
-        val tempFile = MediaFileHandler.getTempFile()
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(tempFile).setMetadata(metadata).build()
+        val photoTempFile = MediaFileHandler.getTempFile()
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoTempFile).setMetadata(metadata).build()
 
         localImageCapture.takePicture(
             outputOptions, // the options needed for the final image
@@ -853,7 +862,67 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         )
     }
 
-    fun hastCameraPermissions(context: Context): Boolean {
+    private fun recordVideo() {
+        if (recording != null) {
+            //animateRecord.cancel()
+            recording?.stop()
+        } else {
+            tempFile = MediaFileHandler.getTempFile()
+        }
+        val name = "CameraX-recording-${System.currentTimeMillis()}.mp4"
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Video.Media.DISPLAY_NAME, name)
+        }
+        val mediaStoreOutput = MediaStoreOutputOptions.Builder(
+            context.contentResolver,
+            Uri.fromFile(tempFile)
+            //MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        )
+            .setContentValues(contentValues)
+            .build()
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        recording = videoCapture?.output
+            ?.prepareRecording(context, mediaStoreOutput)
+            ?.withAudioEnabled()
+            ?.start(ContextCompat.getMainExecutor(context)) { event ->
+                when (event) {
+                    is VideoRecordEvent.Start -> {
+                        //animateRecord.start()
+                    }
+                    is VideoRecordEvent.Finalize -> {
+                        if (!event.hasError()) {
+                            tempFile?.let { showConfirmVideoView(it) }
+                            val msg = "Video capture succeeded: " +
+                                    "${event.outputResults.outputUri}"
+                            Toast.makeText(context, msg, Toast.LENGTH_SHORT)
+                                .show()
+                            Timber.d(msg)
+                        } else {
+                            recording?.close()
+                            recording = null
+                            val msg = "Video capture ends with error: " + "${event.error}"
+                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                            Timber.e(msg)
+                        }
+                    }
+                }
+            }
+    }
+
+    fun hasCameraPermissions(context: Context): Boolean {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.CAMERA
