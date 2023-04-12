@@ -8,7 +8,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.SensorManager
-import android.hardware.display.DisplayManager
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraMetadata
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
@@ -26,10 +27,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.camera.camera2.interop.Camera2CameraInfo
 import androidx.camera.core.*
-import androidx.camera.video.*
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.video.Recorder
+import androidx.camera.video.*
 import androidx.camera.video.VideoCapture
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
@@ -68,6 +69,7 @@ const val MEDIA_FILE_KEY = "mfk"
 const val VAULT_CURRENT_ROOT_PARENT = "vcrf"
 private const val CLICK_DELAY = 1200
 private const val CLICK_MODE_DELAY = 2000
+
 @SuppressLint("RestrictedApi")
 class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     ITellaFileUploadSchedulePresenterContract.IView, IMetadataAttachPresenterContract.IView {
@@ -100,7 +102,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     private var mode = CameraMode.PHOTO
     private var modeLocked = false
     private var intentMode: IntentMode? = null
-    private var videoRecording = false
+
     private var progressDialog: ProgressDialog? = null
     private var mOrientationEventListener: OrientationEventListener? = null
     private var zoomLevel = 0
@@ -112,6 +114,9 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     private var currentRootParent: String? = null
     private var tempFile: File? = null
     var recording: Recording? = null
+    private var isRecording = false
+    private var videoRecording = false
+    private var camera: Camera? = null
 
     private var hdrCameraSelector: CameraSelector? = null
     private var lensFacing = CameraSelector.DEFAULT_BACK_CAMERA
@@ -194,7 +199,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         stopPresenter()
         hideProgressDialog()
         hideVideoResolutionDialog()
-       // cameraView!!.destroy()
+        // cameraView!!.destroy()
     }
 
     override fun onBackPressed() {
@@ -210,7 +215,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun initView() {
-       // cameraView = binding.camera
+        // cameraView = binding.camera
 
         if (!hasCameraPermissions(context)) {
             maybeChangeTemporaryTimeout()
@@ -250,8 +255,8 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 mgr.setStreamMute(AudioManager.STREAM_SYSTEM, true)
             }
 
-           if (mode == CameraMode.PHOTO) {
-               captureImage()
+            if (mode == CameraMode.PHOTO) {
+                captureImage()
             } else {
                 /*gridButton.visibility = if (videoRecording) View.VISIBLE else View.GONE
                 switchButton.visibility = if (videoRecording) View.VISIBLE else View.GONE
@@ -259,7 +264,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 if (videoRecording) {
                     if (System.currentTimeMillis() - lastClickTime >= CLICK_DELAY) {
                         //cameraView.stopVideo()
-                        videoRecording = false
+
                         recordVideo()
                         /*gridButton.visibility = View.VISIBLE
                         switchButton.visibility = View.VISIBLE
@@ -300,13 +305,13 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     }
 
     fun onGridClicked() {
-       /* if (cameraView.grid == Grid.DRAW_3X3) {
-            cameraView.grid = Grid.OFF
-            gridButton.displayGridOff()
-        } else {
-            cameraView.grid = Grid.DRAW_3X3
-            gridButton.displayGridOn()
-        }*/
+        /* if (cameraView.grid == Grid.DRAW_3X3) {
+             cameraView.grid = Grid.OFF
+             gridButton.displayGridOff()
+         } else {
+             cameraView.grid = Grid.DRAW_3X3
+             gridButton.displayGridOn()
+         }*/
     }
 
     fun onPreviewClicked() {
@@ -332,12 +337,12 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         if (System.currentTimeMillis() - lastClickTime < CLICK_MODE_DELAY) {
             return
         }
-       /* if (cameraView.mode == Mode.PICTURE) {
-            return
-        }
-        if (cameraView.flash == Flash.TORCH) {
-            cameraView.flash = Flash.AUTO
-        }*/
+        /* if (cameraView.mode == Mode.PICTURE) {
+             return
+         }
+         if (cameraView.flash == Flash.TORCH) {
+             cameraView.flash = Flash.AUTO
+         }*/
         setPhotoActive()
         captureButton.displayPhotoButton()
         //cameraView.mode = Mode.PICTURE
@@ -353,10 +358,11 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         if (System.currentTimeMillis() - lastClickTime < CLICK_MODE_DELAY) {
             return
         }
-       /* if (cameraView.mode == Mode.VIDEO) {
-            return
-        }
-        cameraView.mode = Mode.VIDEO*/
+        /* if (cameraView.mode == Mode.VIDEO) {
+             return
+         }
+         cameraView.mode = Mode.VIDEO*/
+        startVideo()
         turnFlashDown()
         captureButton.displayVideoButton()
         setVideoActive()
@@ -495,6 +501,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     }
 
     private fun showConfirmVideoView(video: File) {
+        Timber.d("+++++ showConfirmVideoView snimljen vidoje %s", video.absolutePath)
         captureButton.displayVideoButton()
         durationView.stop()
         presenter.addMp4Video(video, currentRootParent)
@@ -502,10 +509,10 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
     private fun setupCameraView() {
         if (mode == CameraMode.PHOTO) {
-          //  cameraView.mode = Mode.PICTURE
+            //  cameraView.mode = Mode.PICTURE
             captureButton.displayPhotoButton()
         } else {
-           // cameraView.mode = Mode.VIDEO
+            // cameraView.mode = Mode.VIDEO
             captureButton.displayVideoButton()
         }
 
@@ -573,19 +580,19 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     }
 
     private fun setUpCameraGridButton() {
-       /* if (cameraView.grid == Grid.DRAW_3X3) {
-            gridButton.displayGridOn()
-        } else {
-            gridButton.displayGridOff()
-        }*/
+        /* if (cameraView.grid == Grid.DRAW_3X3) {
+             gridButton.displayGridOn()
+         } else {
+             gridButton.displayGridOff()
+         }*/
     }
 
     private fun setupCameraSwitchButton() {
-       /* if (cameraView.facing == Facing.FRONT) {
-            switchButton.displayFrontCamera()
-        } else {
-            switchButton.displayBackCamera()
-        }*/
+        /* if (cameraView.facing == Facing.FRONT) {
+             switchButton.displayFrontCamera()
+         } else {
+             switchButton.displayBackCamera()
+         }*/
     }
 
     private fun setupImagePreview() {
@@ -594,45 +601,45 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         }
     }
 
-   /* private fun setupCameraFlashButton(supported: Collection<Flash>) {
-        if (cameraView.flash == Flash.AUTO) {
-            flashButton.displayFlashAuto()
-        } else if (cameraView.flash == Flash.OFF) {
-            flashButton.displayFlashOff()
-        } else {
-            flashButton.displayFlashOn()
-        }
-        flashButton.setOnClickListener { view: View? ->
-            if (cameraView.mode == Mode.VIDEO) {
-                if (cameraView.flash == Flash.OFF && supported.contains(
-                        Flash.TORCH
-                    )
-                ) {
-                    flashButton.displayFlashOn()
-                    cameraView.flash = Flash.TORCH
-                } else {
-                    turnFlashDown()
-                }
-            } else {
-                if (cameraView.flash == Flash.ON || cameraView.flash == Flash.TORCH) {
-                    turnFlashDown()
-                } else if (cameraView.flash == Flash.OFF && supported.contains(
-                        Flash.AUTO
-                    )
-                ) {
-                    flashButton.displayFlashAuto()
-                    cameraView.flash = Flash.AUTO
-                } else {
-                    flashButton.displayFlashOn()
-                    cameraView.flash = Flash.ON
-                }
-            }
-        }
-    }*/
+    /* private fun setupCameraFlashButton(supported: Collection<Flash>) {
+         if (cameraView.flash == Flash.AUTO) {
+             flashButton.displayFlashAuto()
+         } else if (cameraView.flash == Flash.OFF) {
+             flashButton.displayFlashOff()
+         } else {
+             flashButton.displayFlashOn()
+         }
+         flashButton.setOnClickListener { view: View? ->
+             if (cameraView.mode == Mode.VIDEO) {
+                 if (cameraView.flash == Flash.OFF && supported.contains(
+                         Flash.TORCH
+                     )
+                 ) {
+                     flashButton.displayFlashOn()
+                     cameraView.flash = Flash.TORCH
+                 } else {
+                     turnFlashDown()
+                 }
+             } else {
+                 if (cameraView.flash == Flash.ON || cameraView.flash == Flash.TORCH) {
+                     turnFlashDown()
+                 } else if (cameraView.flash == Flash.OFF && supported.contains(
+                         Flash.AUTO
+                     )
+                 ) {
+                     flashButton.displayFlashAuto()
+                     cameraView.flash = Flash.AUTO
+                 } else {
+                     flashButton.displayFlashOn()
+                     cameraView.flash = Flash.ON
+                 }
+             }
+         }
+     }*/
 
     private fun turnFlashDown() {
-      /*  flashButton.displayFlashOff()
-        cameraView.flash = Flash.OFF*/
+        /*  flashButton.displayFlashOff()
+          cameraView.flash = Flash.OFF*/
     }
 
     private fun hideProgressDialog() {
@@ -680,9 +687,9 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     }
 
     private fun setVideoQuality() {
-      /*  if (cameraView != null && videoResolutionManager != null) {
-            cameraView.setVideoSize(videoResolutionManager!!.videoSize)
-        }*/
+        /*  if (cameraView != null && videoResolutionManager != null) {
+              cameraView.setVideoSize(videoResolutionManager!!.videoSize)
+          }*/
     }
 
     /*private fun setVideoSize(videoSize: SizeSelector) {
@@ -694,7 +701,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     }*/
 
     private fun setupShutterSound() {
-       // cameraView.playSounds = !Preferences.isShutterMute()
+        // cameraView.playSounds = !Preferences.isShutterMute()
     }
 
     enum class CameraMode {
@@ -716,6 +723,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         private const val RATIO_16_9_VALUE = 16.0 / 9.0 // aspect ratio 16x9
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun startCamera() {
         // This is the CameraX PreviewView where the camera will be rendered
 
@@ -755,7 +763,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 .setTargetRotation(rotation) // set the capture rotation
                 .build()
 
-           // checkForHdrExtensionAvailability()
+            // checkForHdrExtensionAvailability()
 
             // The Configuration of image analyzing
             imageAnalyzer = ImageAnalysis.Builder()
@@ -764,11 +772,66 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST) // in our analysis, we care about the latest image
                 .build()
                 .also { setLuminosityAnalyzer(it) }
+        }, ContextCompat.getMainExecutor(context))
+    }
 
-            // Unbind the use-cases before rebinding them
-            localCameraProvider.unbindAll()
-            // Bind all use cases to the camera with lifecycle
-            bindToLifecycle(localCameraProvider, viewFinder)
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun startVideo() {
+        // This is the Texture View where the camera will be rendered
+        val viewFinder = binding.viewFinder
+
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+        cameraProviderFuture.addListener({
+            cameraProvider = cameraProviderFuture.get()
+
+            // The display information
+            val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
+            // The ratio for the output image and preview
+            val aspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
+            // The display rotation
+            val rotation = viewFinder.display.rotation
+
+            val localCameraProvider = cameraProvider
+                ?: throw IllegalStateException("Camera initialization failed.")
+
+            // The Configuration of camera preview
+            preview = Preview.Builder()
+                .setTargetAspectRatio(aspectRatio) // set the camera aspect ratio
+                .setTargetRotation(rotation) // set the camera rotation
+                .build()
+
+            val cameraInfo = localCameraProvider.availableCameraInfos.filter {
+                Camera2CameraInfo
+                    .from(it)
+                    .getCameraCharacteristic(CameraCharacteristics.LENS_FACING) == CameraMetadata.LENS_FACING_BACK
+            }
+
+            val supportedQualities = QualitySelector.getSupportedQualities(cameraInfo[0])
+            val qualitySelector = QualitySelector.fromOrderedList(
+                listOf(Quality.UHD, Quality.FHD, Quality.HD, Quality.SD),
+                FallbackStrategy.lowerQualityOrHigherThan(Quality.SD)
+            )
+            val recorder = Recorder.Builder()
+                .setExecutor(ContextCompat.getMainExecutor(context)).setQualitySelector(qualitySelector)
+                .build()
+            videoCapture = VideoCapture.withOutput(recorder)
+
+            localCameraProvider.unbindAll() // unbind the use-cases before rebinding them
+
+            try {
+                // Bind all use cases to the camera with lifecycle
+                camera = localCameraProvider.bindToLifecycle(
+                    this, // current lifecycle owner
+                    lensFacing, // either front or back facing
+                    preview, // camera preview use case
+                    videoCapture, // video capture use case
+                )
+
+                // Attach the viewfinder's surface provider to preview use case
+                preview?.setSurfaceProvider(viewFinder.surfaceProvider)
+            } catch (e: Exception) {
+                Timber.e("++++ Failed to bind use cases %s", e.message)
+            }
         }, ContextCompat.getMainExecutor(context))
     }
 
@@ -789,7 +852,10 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         )
     }
 
-    private fun bindToLifecycle(localCameraProvider: ProcessCameraProvider, viewFinder: PreviewView) {
+    private fun bindToLifecycle(
+        localCameraProvider: ProcessCameraProvider,
+        viewFinder: PreviewView
+    ) {
         try {
             localCameraProvider.bindToLifecycle(
                 this, // current lifecycle owner
@@ -819,13 +885,14 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             // Attach the viewfinder's surface provider to preview use case
             preview?.setSurfaceProvider(viewFinder.surfaceProvider)
         } catch (e: Exception) {
-            Timber.e("Failed to bind use cases")
+            Timber.e("++++ Failed to bind use cases")
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun captureImage() {
-        val localImageCapture = imageCapture ?: throw IllegalStateException("Camera initialization failed.")
+        val localImageCapture =
+            imageCapture ?: throw IllegalStateException("Camera initialization failed.")
 
         // Setup image capture metadata
         val metadata = ImageCapture.Metadata().apply {
@@ -834,18 +901,23 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         }
 
         val photoTempFile = MediaFileHandler.getTempFile()
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoTempFile).setMetadata(metadata).build()
+        val outputOptions =
+            ImageCapture.OutputFileOptions.Builder(photoTempFile).setMetadata(metadata).build()
 
         localImageCapture.takePicture(
             outputOptions, // the options needed for the final image
             context.mainExecutor, // the executor, on which the task will run
-            object : ImageCapture.OnImageSavedCallback { // the callback, about the result of capture process
+            object :
+                ImageCapture.OnImageSavedCallback { // the callback, about the result of capture process
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     // This function is called if capture is successfully completed
                     outputFileResults.savedUri
                         ?.let { uri ->
                             val iStream = getContentResolver().openInputStream(uri)
-                            presenter.addJpegPhoto(MediaFileHandler.getBytes(iStream), currentRootParent)
+                            presenter.addJpegPhoto(
+                                MediaFileHandler.getBytes(iStream),
+                                currentRootParent
+                            )
                             //setGalleryThumbnail(tempFile.toURI())
                             Timber.d("Photo saved in $uri")
                         }
@@ -863,63 +935,82 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     }
 
     private fun recordVideo() {
-        if (recording != null) {
-            //animateRecord.cancel()
-            recording?.stop()
-        } else {
+        try {
+            Timber.d("++++ recordVideo()")
+            if (recording != null) {
+                //animateRecord.cancel()
+                Timber.d("++++ recording stop")
+                recording?.stop()
+            } /*else {
+                tempFile = MediaFileHandler.getTempFile()
+                Timber.d("++++ recording start")
+            }*/
+            val name = "CameraX-recording-${System.currentTimeMillis()}.mp4"
+            val contentValues = ContentValues().apply {
+                put(MediaStore.Video.Media.DISPLAY_NAME, name)
+            }
+
             tempFile = MediaFileHandler.getTempFile()
-        }
-        val name = "CameraX-recording-${System.currentTimeMillis()}.mp4"
-        val contentValues = ContentValues().apply {
-            put(MediaStore.Video.Media.DISPLAY_NAME, name)
-        }
-        val mediaStoreOutput = MediaStoreOutputOptions.Builder(
-            context.contentResolver,
-            Uri.fromFile(tempFile)
-            //MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        )
-            .setContentValues(contentValues)
-            .build()
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        recording = videoCapture?.output
-            ?.prepareRecording(context, mediaStoreOutput)
-            ?.withAudioEnabled()
-            ?.start(ContextCompat.getMainExecutor(context)) { event ->
-                when (event) {
-                    is VideoRecordEvent.Start -> {
-                        //animateRecord.start()
-                    }
-                    is VideoRecordEvent.Finalize -> {
-                        if (!event.hasError()) {
-                            tempFile?.let { showConfirmVideoView(it) }
-                            val msg = "Video capture succeeded: " +
-                                    "${event.outputResults.outputUri}"
-                            Toast.makeText(context, msg, Toast.LENGTH_SHORT)
-                                .show()
-                            Timber.d(msg)
-                        } else {
-                            recording?.close()
-                            recording = null
-                            val msg = "Video capture ends with error: " + "${event.error}"
-                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                            Timber.e(msg)
+            val mediaStoreOutput = MediaStoreOutputOptions.Builder(
+                context.contentResolver,
+                //Uri.fromFile(tempFile)
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+            ).setContentValues(contentValues)
+                .build()
+
+
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.RECORD_AUDIO
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Timber.e("++++ No audio recording permission")
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                // return
+            }
+            recording = videoCapture?.output
+                ?.prepareRecording(context, mediaStoreOutput)
+                ?.withAudioEnabled()
+                ?.start(ContextCompat.getMainExecutor(context)) { event ->
+                    when (event) {
+                        is VideoRecordEvent.Start -> {
+                            Timber.d("+++ VideoRecordEvent.Start")
+                            //animateRecord.start()
+                        }
+                        is VideoRecordEvent.Finalize -> {
+                            Timber.d("+++ VideoRecordEvent.Finalize")
+
+                            if (!event.hasError()) {
+                                //tempFile?.let { showConfirmVideoView(it) }
+                                event.outputResults.outputUri.getPath()?.let { File(it) }?.let { showConfirmVideoView(it) }
+
+                                val msg = "++++ Video capture succeeded: " + "${event.outputResults.outputUri}"
+                                Toast.makeText(context, msg, Toast.LENGTH_SHORT)
+                                    .show()
+                                Timber.d(msg)
+                            } else {
+                                recording?.close()
+                                recording = null
+                                captureButton.displayVideoButton()
+                                durationView.stop()
+                                val msg = "+++++ Video capture ends with error: " + "${event.error}"
+                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                                Timber.e(msg)
+                            }
                         }
                     }
                 }
-            }
+            isRecording = !isRecording
+            videoRecording = !videoRecording
+        } catch (e: Exception) {
+            Timber.e("++++ error %s", e.message)
+        }
     }
 
     fun hasCameraPermissions(context: Context): Boolean {
