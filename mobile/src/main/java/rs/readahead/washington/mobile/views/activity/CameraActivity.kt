@@ -941,23 +941,11 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 //animateRecord.cancel()
                 Timber.d("++++ recording stop")
                 recording?.stop()
-            } /*else {
-                tempFile = MediaFileHandler.getTempFile()
-                Timber.d("++++ recording start")
-            }*/
-            val name = "CameraX-recording-${System.currentTimeMillis()}.mp4"
-            val contentValues = ContentValues().apply {
-                put(MediaStore.Video.Media.DISPLAY_NAME, name)
             }
 
             tempFile = MediaFileHandler.getTempFile()
-            val mediaStoreOutput = MediaStoreOutputOptions.Builder(
-                context.contentResolver,
-                //Uri.fromFile(tempFile)
-                MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-            ).setContentValues(contentValues)
-                .build()
 
+            val fileOutputOptions = FileOutputOptions.Builder(tempFile!!).build()
 
             if (ActivityCompat.checkSelfPermission(
                     this,
@@ -975,7 +963,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 // return
             }
             recording = videoCapture?.output
-                ?.prepareRecording(context, mediaStoreOutput)
+                ?.prepareRecording(context, fileOutputOptions)
                 ?.withAudioEnabled()
                 ?.start(ContextCompat.getMainExecutor(context)) { event ->
                     when (event) {
@@ -987,7 +975,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                             Timber.d("+++ VideoRecordEvent.Finalize")
 
                             if (!event.hasError()) {
-                                //tempFile?.let { showConfirmVideoView(it) }
+                                 //tempFile?.let { showConfirmVideoView(it) }
                                 event.outputResults.outputUri.getPath()?.let { File(it) }?.let { showConfirmVideoView(it) }
 
                                 val msg = "++++ Video capture succeeded: " + "${event.outputResults.outputUri}"
