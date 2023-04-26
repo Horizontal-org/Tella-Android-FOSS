@@ -222,7 +222,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             requestCameraPermissions(C.CAMERA_PERMISSION)
         }
 
-        viewFinder = binding.viewFinder
+       // viewFinder = binding.viewFinder
         /*viewFinder.addOnAttachStateChangeListener(object :
                 View.OnAttachStateChangeListener {
                 override fun onViewDetachedFromWindow(v: View) =
@@ -349,6 +349,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         mode = CameraMode.PHOTO
         resetZoom()
         lastClickTime = System.currentTimeMillis()
+        startCamera()
     }
 
     fun onVideoClicked() {
@@ -511,11 +512,13 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         if (mode == CameraMode.PHOTO) {
             //  cameraView.mode = Mode.PICTURE
             captureButton.displayPhotoButton()
+            startCamera()
         } else {
             // cameraView.mode = Mode.VIDEO
             captureButton.displayVideoButton()
+            startVideo()
         }
-
+       // startCamera()
         //cameraView.setEnabled(PermissionUtil.checkPermission(this, Manifest.permission.CAMERA));
         /*cameraView.mapGesture(Gesture.TAP, GestureAction.AUTO_FOCUS)
         setOrientationListener()
@@ -568,7 +571,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
 
-        startCamera()
+
     }
 
     private fun setupCameraModeButton() {
@@ -725,7 +728,9 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun startCamera() {
+        Timber.d("++++++ startCamera")
         // This is the CameraX PreviewView where the camera will be rendered
+        val viewFinder = binding.viewFinder
 
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         cameraProviderFuture.addListener({
@@ -772,11 +777,14 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST) // in our analysis, we care about the latest image
                 .build()
                 .also { setLuminosityAnalyzer(it) }
+
+            bindToLifecycle(localCameraProvider, viewFinder)
         }, ContextCompat.getMainExecutor(context))
     }
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun startVideo() {
+        Timber.d("++++++ startVideo")
         // This is the Texture View where the camera will be rendered
         val viewFinder = binding.viewFinder
 
@@ -891,6 +899,8 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun captureImage() {
+        Timber.d("++++ captureImage")
+
         val localImageCapture =
             imageCapture ?: throw IllegalStateException("Camera initialization failed.")
 
