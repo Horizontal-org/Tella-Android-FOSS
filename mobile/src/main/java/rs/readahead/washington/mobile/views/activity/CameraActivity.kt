@@ -3,7 +3,6 @@ package rs.readahead.washington.mobile.views.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ProgressDialog
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,14 +10,11 @@ import android.hardware.SensorManager
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraMetadata
 import android.media.AudioManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
-import android.provider.MediaStore
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.OrientationEventListener
 import android.view.View
 import android.widget.ImageView
@@ -77,7 +73,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     //private val displayManager by lazy { context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager }
     private var cameraProvider: ProcessCameraProvider? = null
 
-    private lateinit var viewFinder: PreviewView
+    //private lateinit var viewFinder: PreviewView
     private lateinit var gridButton: CameraGridButton
     private lateinit var switchButton: CameraSwitchButton
     private lateinit var flashButton: CameraFlashButton
@@ -176,10 +172,6 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     override fun onPause() {
         super.onPause()
         stopLocationMetadataListening()
@@ -264,7 +256,6 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 if (videoRecording) {
                     if (System.currentTimeMillis() - lastClickTime >= CLICK_DELAY) {
                         //cameraView.stopVideo()
-
                         recordVideo()
                         /*gridButton.visibility = View.VISIBLE
                         switchButton.visibility = View.VISIBLE
@@ -754,6 +745,8 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             val localCameraProvider = cameraProvider
                 ?: throw IllegalStateException("Camera initialization failed.")
 
+            localCameraProvider.unbindAll()
+
             // The Configuration of camera preview
             preview = Preview.Builder()
                 .setTargetAspectRatio(aspectRatio) // set the camera aspect ratio
@@ -929,13 +922,13 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                                 currentRootParent
                             )
                             //setGalleryThumbnail(tempFile.toURI())
-                            Timber.d("Photo saved in $uri")
+                            Timber.d("++++ Photo saved in $uri")
                         }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
                     // This function is called if there is an errors during capture process
-                    val msg = "Photo capture failed: ${exception.message}"
+                    val msg = "+++++  Photo capture failed: ${exception.message}"
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     Timber.e(msg)
                     exception.printStackTrace()
@@ -945,6 +938,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     }
 
     private fun recordVideo() {
+        checkMicPermission()
         try {
             Timber.d("++++ recordVideo()")
             if (recording != null) {
@@ -957,21 +951,6 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
             val fileOutputOptions = FileOutputOptions.Builder(tempFile!!).build()
 
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.RECORD_AUDIO
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                Timber.e("++++ No audio recording permission")
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                // return
-            }
             recording = videoCapture?.output
                 ?.prepareRecording(context, fileOutputOptions)
                 ?.withAudioEnabled()
@@ -985,20 +964,25 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                             Timber.d("+++ VideoRecordEvent.Finalize")
 
                             if (!event.hasError()) {
-                                 //tempFile?.let { showConfirmVideoView(it) }
-                                event.outputResults.outputUri.getPath()?.let { File(it) }?.let { showConfirmVideoView(it) }
+                                //tempFile?.let { showConfirmVideoView(it) }
+                                event.outputResults.outputUri.getPath()?.let { File(it) }
+                                    ?.let { showConfirmVideoView(it) }
 
-                                val msg = "++++ Video capture succeeded: " + "${event.outputResults.outputUri}"
-                                Toast.makeText(context, msg, Toast.LENGTH_SHORT)
-                                    .show()
+                                recording?.close()
+                                recording = null
+                                captureButton.displayVideoButton()
+                                durationView.stop()
+
+                                val msg =
+                                    "++++ Video capture succeeded: " + "${event.outputResults.outputUri}"
                                 Timber.d(msg)
                             } else {
                                 recording?.close()
                                 recording = null
                                 captureButton.displayVideoButton()
                                 durationView.stop()
+
                                 val msg = "+++++ Video capture ends with error: " + "${event.error}"
-                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                                 Timber.e(msg)
                             }
                         }
@@ -1029,5 +1013,23 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 Manifest.permission.RECORD_AUDIO
             ), requestCode
         )
+    }
+
+    fun checkMicPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Timber.e("++++ No audio recording permission")
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            // return
+        }
     }
 }
