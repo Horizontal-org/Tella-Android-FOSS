@@ -15,7 +15,7 @@ android {
         minSdkVersion 21
         compileSdkVersion 33
         targetSdkVersion 33
-        versionCode 142
+        versionCode 143
         versionName "2.0.15-FOSS"
         multiDexEnabled true
         // vectorDrawables.useSupportLibrary = true // don't care about apk size, care about crashes
@@ -48,6 +48,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
 }
 
 dependencies {
@@ -132,7 +133,6 @@ dependencies {
     implementation 'com.simplify:ink:1.0.2'
     implementation 'com.mikhaellopez:circularimageview:3.2.0'
     implementation 'org.apache.directory.studio:org.apache.commons.io:2.4'
-    implementation "com.github.ihsanbal:LoggingInterceptor:3.0.0"
 
    // debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
 

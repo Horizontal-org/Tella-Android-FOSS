@@ -4,8 +4,6 @@ import android.os.Build;
 
 import com.burgstaller.okhttp.AuthenticationCacheInterceptor;
 import com.burgstaller.okhttp.digest.CachingAuthenticator;
-import com.ihsanbal.logging.Level;
-import com.ihsanbal.logging.LoggingInterceptor;
 
 import java.net.CookieManager;
 import java.net.Proxy;
@@ -22,7 +20,6 @@ import okhttp3.CookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.TlsVersion;
-import okhttp3.internal.platform.Platform;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -74,10 +71,8 @@ public class UwaziService {
             }
         }
 
-
         builder.cookieJar(cookieJar)
                 .addInterceptor(new AuthenticationCacheInterceptor(authCache));
-
 
         return new UwaziService.Builder(builder).build();
     }
@@ -99,7 +94,6 @@ public class UwaziService {
         private final Retrofit.Builder retrofitBuilder;
         private final OkHttpClient.Builder okClientBuilder;
 
-
         public Builder() {
             this(new OkHttpClient.Builder());
         }
@@ -113,21 +107,9 @@ public class UwaziService {
                     .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                     .cookieJar(new UvCookieJar());
 
-
-            LoggingInterceptor logger = new LoggingInterceptor.Builder()
-                    .loggable(true)
-                    .setLevel(Level.BASIC)
-                    .log(Platform.INFO)
-                    .request("Request")
-                    .response("Response")
-                    .build();
-
-
             if (BuildConfig.DEBUG) {
                 okClientBuilder.addNetworkInterceptor(
-                        new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
-                .addInterceptor(logger);
-                // or BODY
+                        new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC));
             }
         }
 
@@ -135,19 +117,13 @@ public class UwaziService {
             // set client to baseRetrofit builder
             retrofitBuilder.client(okClientBuilder.build());
 
-
             // build them
             Retrofit retrofit = retrofitBuilder
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
-
                     .build();
-
-
 
             return new UwaziService(retrofit);
         }
     }
-
-
 }
