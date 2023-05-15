@@ -34,7 +34,7 @@ public class UwaziService {
     private static UwaziService instance;
     private final Retrofit retrofit;
     private final static Map<String, CachingAuthenticator> authCache = new ConcurrentHashMap<>();
-    private volatile static CookieJar cookieJar = new QuotePreservingCookieJar(new CookieManager());
+    private static final CookieJar cookieJar = new QuotePreservingCookieJar(new CookieManager());
 
     // todo: keep it like this for now, lets see what we need..
     public static synchronized UwaziService getInstance() {
@@ -75,11 +75,6 @@ public class UwaziService {
                 .addInterceptor(new AuthenticationCacheInterceptor(authCache));
 
         return new UwaziService.Builder(builder).build();
-    }
-
-    public static synchronized void clearCache() {
-        cookieJar = new QuotePreservingCookieJar(new CookieManager());
-        authCache.clear();
     }
 
     private UwaziService(Retrofit retrofit) {
@@ -126,4 +121,5 @@ public class UwaziService {
             return new UwaziService(retrofit);
         }
     }
+
 }
