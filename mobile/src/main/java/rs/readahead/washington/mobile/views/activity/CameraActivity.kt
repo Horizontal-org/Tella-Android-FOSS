@@ -70,10 +70,7 @@ private const val CLICK_MODE_DELAY = 2000
 class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     ITellaFileUploadSchedulePresenterContract.IView, IMetadataAttachPresenterContract.IView {
 
-    //private val displayManager by lazy { context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager }
     private var cameraProvider: ProcessCameraProvider? = null
-
-    //private lateinit var viewFinder: PreviewView
     private lateinit var gridButton: CameraGridButton
     private lateinit var switchButton: CameraSwitchButton
     private lateinit var flashButton: CameraFlashButton
@@ -128,7 +125,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         overridePendingTransition(R.anim.slide_in_up, R.anim.fade_out)
 
         metadataAttacher = MetadataAttacher(this)
-        /*if (intent.hasExtra(CAMERA_MODE)) {
+        if (intent.hasExtra(CAMERA_MODE)) {
             mode = CameraMode.valueOf(
                 intent.getStringExtra(CAMERA_MODE)!!
             )
@@ -139,7 +136,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             intentMode = IntentMode.valueOf(
                 intent.getStringExtra(INTENT_MODE)!!
             )
-        }*/
+        }
         if (intent.hasExtra(VAULT_CURRENT_ROOT_PARENT)) {
             currentRootParent = intent.getStringExtra(VAULT_CURRENT_ROOT_PARENT)
         }
@@ -182,13 +179,8 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         //cameraView!!.close()
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        stopPresenter()
         hideProgressDialog()
         hideVideoResolutionDialog()
         // cameraView!!.destroy()
@@ -485,15 +477,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         return false
     }
 
-    private fun stopPresenter() {
-        /*if (presenter != null) {
-            presenter!!.destroy()
-            presenter = null
-        }*/
-    }
-
     private fun showConfirmVideoView(video: File) {
-        Timber.d("+++++ showConfirmVideoView snimljen vidoje %s", video.absolutePath)
         captureButton.displayVideoButton()
         durationView.stop()
         presenter.addMp4Video(video, currentRootParent)
@@ -719,7 +703,6 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun startCamera() {
-        Timber.d("++++++ startCamera")
         // This is the CameraX PreviewView where the camera will be rendered
         val viewFinder = binding.viewFinder
 
@@ -777,7 +760,6 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun startVideo() {
-        Timber.d("++++++ startVideo")
         // This is the Texture View where the camera will be rendered
         val viewFinder = binding.viewFinder
 
@@ -831,7 +813,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 // Attach the viewfinder's surface provider to preview use case
                 preview?.setSurfaceProvider(viewFinder.surfaceProvider)
             } catch (e: Exception) {
-                Timber.e("++++ Failed to bind use cases %s", e.message)
+                Timber.e("Failed to bind use cases %s", e.message)
             }
         }, ContextCompat.getMainExecutor(context))
     }
@@ -886,14 +868,12 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             // Attach the viewfinder's surface provider to preview use case
             preview?.setSurfaceProvider(viewFinder.surfaceProvider)
         } catch (e: Exception) {
-            Timber.e("++++ Failed to bind use cases")
+            Timber.e("Failed to bind use cases")
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun captureImage() {
-        Timber.d("++++ captureImage")
-
         val localImageCapture =
             imageCapture ?: throw IllegalStateException("Camera initialization failed.")
 
@@ -921,15 +901,13 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                                 MediaFileHandler.getBytes(iStream),
                                 currentRootParent
                             )
-                            //setGalleryThumbnail(tempFile.toURI())
-                            Timber.d("++++ Photo saved in $uri")
+
                         }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
                     // This function is called if there is an errors during capture process
-                    val msg = "+++++  Photo capture failed: ${exception.message}"
-                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                    val msg = "Photo capture failed: ${exception.message}"
                     Timber.e(msg)
                     exception.printStackTrace()
                 }
@@ -940,10 +918,8 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     private fun recordVideo() {
         checkMicPermission()
         try {
-            Timber.d("++++ recordVideo()")
             if (recording != null) {
                 //animateRecord.cancel()
-                Timber.d("++++ recording stop")
                 recording?.stop()
             }
 
@@ -957,14 +933,11 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 ?.start(ContextCompat.getMainExecutor(context)) { event ->
                     when (event) {
                         is VideoRecordEvent.Start -> {
-                            Timber.d("+++ VideoRecordEvent.Start")
                             //animateRecord.start()
                         }
                         is VideoRecordEvent.Finalize -> {
-                            Timber.d("+++ VideoRecordEvent.Finalize")
 
                             if (!event.hasError()) {
-                                //tempFile?.let { showConfirmVideoView(it) }
                                 event.outputResults.outputUri.getPath()?.let { File(it) }
                                     ?.let { showConfirmVideoView(it) }
 
@@ -972,17 +945,13 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                                 recording = null
                                 captureButton.displayVideoButton()
                                 durationView.stop()
-
-                                val msg =
-                                    "++++ Video capture succeeded: " + "${event.outputResults.outputUri}"
-                                Timber.d(msg)
                             } else {
                                 recording?.close()
                                 recording = null
                                 captureButton.displayVideoButton()
                                 durationView.stop()
 
-                                val msg = "+++++ Video capture ends with error: " + "${event.error}"
+                                val msg = "Video capture ends with error: " + "${event.error}"
                                 Timber.e(msg)
                             }
                         }
@@ -991,7 +960,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             isRecording = !isRecording
             videoRecording = !videoRecording
         } catch (e: Exception) {
-            Timber.e("++++ error %s", e.message)
+            Timber.e("Error recording video %s", e.message)
         }
     }
 
@@ -1021,7 +990,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 Manifest.permission.RECORD_AUDIO
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Timber.e("++++ No audio recording permission")
+            Timber.e("No audio recording permission")
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding

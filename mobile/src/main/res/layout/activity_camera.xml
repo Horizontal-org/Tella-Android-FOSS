@@ -93,6 +93,7 @@
                 android:max="100"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
+                android:visibility="gone"
                 android:rotation="270" />
         </FrameLayout>
     </RelativeLayout>
