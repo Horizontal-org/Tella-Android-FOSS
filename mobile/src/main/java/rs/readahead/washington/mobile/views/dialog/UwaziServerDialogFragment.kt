@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 //import com.google.android.gms.common.GoogleApiAvailability
 //import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 //import com.google.android.gms.common.GooglePlayServicesRepairableException
-import com.google.android.gms.security.ProviderInstaller
+//import com.google.android.gms.security.ProviderInstaller
 import com.google.android.material.textfield.TextInputLayout
 import rs.readahead.washington.mobile.R
 import rs.readahead.washington.mobile.databinding.DialogCollectServerBinding
@@ -242,7 +242,7 @@ class UwaziServerDialogFragment  : AppCompatDialogFragment(), ICheckUwaziServerC
 
     private fun checkServer(server: UWaziUploadServer) {
         // lets go with sync solution as this will not influence UX too much here
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1 &&
+        /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1 &&
             !securityProviderUpgradeAttempted && context != null
         ) {
             try {
@@ -258,7 +258,7 @@ class UwaziServerDialogFragment  : AppCompatDialogFragment(), ICheckUwaziServerC
             } catch (e: GooglePlayServicesNotAvailableException) {
                 Timber.d(e)
             }*/
-        }
+        }*/
 
         presenter?.checkServer(server)
 

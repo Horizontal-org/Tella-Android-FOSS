@@ -17,9 +17,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.otaliastudios.cameraview.size.SizeSelector;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import rs.readahead.washington.mobile.R;
@@ -28,7 +25,6 @@ import rs.readahead.washington.mobile.domain.entity.Server;
 import rs.readahead.washington.mobile.domain.entity.TellaUploadServer;
 import rs.readahead.washington.mobile.domain.entity.collect.CollectFormInstanceStatus;
 import rs.readahead.washington.mobile.domain.entity.ServerType;
-import rs.readahead.washington.mobile.presentation.entity.VideoResolutionOption;
 import rs.readahead.washington.mobile.views.custom.CameraPreviewAnonymousButton;
 
 
@@ -283,7 +279,7 @@ public class DialogsUtil {
                 .setCancelable(true)
                 .show();
     }
-
+/*
     public interface VideoSizeConsumer {
         void accept(SizeSelector size);
     }
@@ -326,7 +322,7 @@ public class DialogsUtil {
 
         return alertDialog;
     }
-
+*/
     public interface autoUploadServerConsumer {
         void accept(Server server);
     }
