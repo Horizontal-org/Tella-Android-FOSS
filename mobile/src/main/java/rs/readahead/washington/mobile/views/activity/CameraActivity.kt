@@ -101,7 +101,8 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     private var zoomLevel = 0
     private var capturedMediaFile: VaultFile? = null
     private var videoQualityDialog: AlertDialog? = null
-    private var videoResolutionManager: VideoResolutionManager? = null
+
+    //private var videoResolutionManager: VideoResolutionManager? = null
     private var lastClickTime = System.currentTimeMillis()
     private var glide: ImageModelRequest<VaultFileLoaderModel>? = null
     private var currentRootParent: String? = null
@@ -206,7 +207,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             requestCameraPermissions(C.CAMERA_PERMISSION)
         }
 
-       // viewFinder = binding.viewFinder
+        // viewFinder = binding.viewFinder
         /*viewFinder.addOnAttachStateChangeListener(object :
                 View.OnAttachStateChangeListener {
                 override fun onViewDetachedFromWindow(v: View) =
@@ -493,7 +494,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
             captureButton.displayVideoButton()
             startVideo()
         }
-       // startCamera()
+        // startCamera()
         //cameraView.setEnabled(PermissionUtil.checkPermission(this, Manifest.permission.CAMERA));
         /*cameraView.mapGesture(Gesture.TAP, GestureAction.AUTO_FOCUS)
         setOrientationListener()
@@ -652,9 +653,9 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         photoLine.visibility = View.GONE
         videoModeText.alpha = 1f
         photoModeText.alpha = if (modeLocked) 0.1f else 0.5f
-        if (videoResolutionManager != null) {
-            resolutionButton.visibility = View.VISIBLE
-        }
+        /* if (videoResolutionManager != null) {
+             resolutionButton.visibility = View.VISIBLE
+         }*/
     }
 
     private fun hideVideoResolutionDialog() {
@@ -710,6 +711,43 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         cameraProviderFuture.addListener({
             try {
                 cameraProvider = cameraProviderFuture.get()
+                // The display information
+                val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
+                // The ratio for the output image and preview
+                val aspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
+                // The display rotation
+                val rotation = viewFinder.display.rotation
+
+                val localCameraProvider = cameraProvider
+                    ?: throw IllegalStateException("Camera initialization failed.")
+
+                localCameraProvider.unbindAll()
+
+                // The Configuration of camera preview
+                preview = Preview.Builder()
+                    .setTargetAspectRatio(aspectRatio) // set the camera aspect ratio
+                    .setTargetRotation(rotation) // set the camera rotation
+                    .build()
+
+                // The Configuration of image capture
+                imageCapture = ImageCapture.Builder()
+                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY) // setting to have pictures with highest quality possible (may be slow)
+                    .setFlashMode(ImageCapture.FLASH_MODE_OFF) // set capture flash
+                    .setTargetAspectRatio(aspectRatio) // set the capture aspect ratio
+                    .setTargetRotation(rotation) // set the capture rotation
+                    .build()
+
+                // checkForHdrExtensionAvailability()
+
+                // The Configuration of image analyzing
+                imageAnalyzer = ImageAnalysis.Builder()
+                    .setTargetAspectRatio(aspectRatio) // set the analyzer aspect ratio
+                    .setTargetRotation(rotation) // set the analyzer rotation
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST) // in our analysis, we care about the latest image
+                    .build()
+                    .also { setLuminosityAnalyzer(it) }
+
+                bindToLifecycle(localCameraProvider, viewFinder)
             } catch (e: InterruptedException) {
                 Toast.makeText(context, "Error starting camera", Toast.LENGTH_SHORT).show()
                 return@addListener
@@ -717,44 +755,6 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 Toast.makeText(context, "Error starting camera", Toast.LENGTH_SHORT).show()
                 return@addListener
             }
-
-            // The display information
-            val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
-            // The ratio for the output image and preview
-            val aspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
-            // The display rotation
-            val rotation = viewFinder.display.rotation
-
-            val localCameraProvider = cameraProvider
-                ?: throw IllegalStateException("Camera initialization failed.")
-
-            localCameraProvider.unbindAll()
-
-            // The Configuration of camera preview
-            preview = Preview.Builder()
-                .setTargetAspectRatio(aspectRatio) // set the camera aspect ratio
-                .setTargetRotation(rotation) // set the camera rotation
-                .build()
-
-            // The Configuration of image capture
-            imageCapture = ImageCapture.Builder()
-                .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY) // setting to have pictures with highest quality possible (may be slow)
-                .setFlashMode(ImageCapture.FLASH_MODE_OFF) // set capture flash
-                .setTargetAspectRatio(aspectRatio) // set the capture aspect ratio
-                .setTargetRotation(rotation) // set the capture rotation
-                .build()
-
-            // checkForHdrExtensionAvailability()
-
-            // The Configuration of image analyzing
-            imageAnalyzer = ImageAnalysis.Builder()
-                .setTargetAspectRatio(aspectRatio) // set the analyzer aspect ratio
-                .setTargetRotation(rotation) // set the analyzer rotation
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST) // in our analysis, we care about the latest image
-                .build()
-                .also { setLuminosityAnalyzer(it) }
-
-            bindToLifecycle(localCameraProvider, viewFinder)
         }, ContextCompat.getMainExecutor(context))
     }
 
@@ -766,7 +766,6 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         cameraProviderFuture.addListener({
             cameraProvider = cameraProviderFuture.get()
-
             // The display information
             val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
             // The ratio for the output image and preview
@@ -795,7 +794,8 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                 FallbackStrategy.lowerQualityOrHigherThan(Quality.SD)
             )
             val recorder = Recorder.Builder()
-                .setExecutor(ContextCompat.getMainExecutor(context)).setQualitySelector(qualitySelector)
+                .setExecutor(ContextCompat.getMainExecutor(context))
+                .setQualitySelector(qualitySelector)
                 .build()
             videoCapture = VideoCapture.withOutput(recorder)
 
@@ -935,6 +935,7 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                         is VideoRecordEvent.Start -> {
                             //animateRecord.start()
                         }
+
                         is VideoRecordEvent.Finalize -> {
 
                             if (!event.hasError()) {

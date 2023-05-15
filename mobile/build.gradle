@@ -106,19 +106,13 @@ dependencies {
     implementation 'com.burgstaller:okhttp-digest:1.15'
 
     // collect
-    implementation group: 'org.getodk', name: 'javarosa', version: '3.5.0'
-    //implementation "org.opendatakit:opendatakit-javarosa:2.4.0"
+  //  implementation group: 'org.getodk', name: 'javarosa', version: '3.5.0'
+    implementation "org.opendatakit:opendatakit-javarosa:2.6.0"
     implementation 'net.sf.kxml:kxml2:2.3.0'
     implementation "commons-io:commons-io:2.6"
 
     // exo
     implementation 'com.google.android.exoplayer:exoplayer:2.10.0'
-
-    // camera
-    implementation('com.otaliastudios:cameraview:2.7.2') {
-        exclude module: "exifinterface"
-        exclude module: "animated-vector-drawble"
-    }
 
     def camerax_version = '1.2.0-rc01'
     implementation "androidx.camera:camera-core:$camerax_version"
