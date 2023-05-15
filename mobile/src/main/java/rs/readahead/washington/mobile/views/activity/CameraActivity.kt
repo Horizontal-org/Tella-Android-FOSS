@@ -901,7 +901,6 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
                                 MediaFileHandler.getBytes(iStream),
                                 currentRootParent
                             )
-
                         }
                 }
 
