@@ -1,6 +1,6 @@
 package rs.readahead.washington.mobile.views.activity;
 
-import static rs.readahead.washington.mobile.views.activity.CameraActivity.MEDIA_FILE_KEY;
+import static rs.readahead.washington.mobile.views.activity.CameraActivityKt.MEDIA_FILE_KEY;
 
 import android.Manifest;
 import android.app.ProgressDialog;

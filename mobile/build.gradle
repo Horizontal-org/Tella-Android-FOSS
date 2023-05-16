@@ -9,13 +9,13 @@ ext {
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
     defaultConfig {
         applicationId "org.hzontal.tellaFOSS"
-        minSdkVersion 19
-        compileSdkVersion 31
-        targetSdkVersion 32
-        versionCode 142
+        minSdkVersion 21
+        compileSdkVersion 33
+        targetSdkVersion 33
+        versionCode 143
         versionName "2.0.15-FOSS"
         multiDexEnabled true
         // vectorDrawables.useSupportLibrary = true // don't care about apk size, care about crashes
@@ -48,6 +48,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
 }
 
 dependencies {
@@ -105,28 +106,29 @@ dependencies {
     implementation 'com.burgstaller:okhttp-digest:1.15'
 
     // collect
-    implementation group: 'org.getodk', name: 'javarosa', version: '3.5.0'
-    //implementation "org.opendatakit:opendatakit-javarosa:2.4.0"
+  //  implementation group: 'org.getodk', name: 'javarosa', version: '3.5.0'
+    implementation "org.opendatakit:opendatakit-javarosa:2.6.0"
     implementation 'net.sf.kxml:kxml2:2.3.0'
     implementation "commons-io:commons-io:2.6"
 
     // exo
     implementation 'com.google.android.exoplayer:exoplayer:2.10.0'
 
-    // camera
-    implementation('com.otaliastudios:cameraview:2.7.2') {
-        exclude module: "exifinterface"
-        exclude module: "animated-vector-drawble"
-    }
+    def camerax_version = '1.2.0-rc01'
+    implementation "androidx.camera:camera-core:$camerax_version"
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+    implementation "androidx.camera:camera-video:$camerax_version"
+    implementation "androidx.camera:camera-extensions:$camerax_version"
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+    implementation "androidx.camera:camera-view:$camerax_version"
 
     implementation 'org.osmdroid:osmdroid-android:6.1.13'
 
     implementation 'com.simplify:ink:1.0.2'
     implementation 'com.mikhaellopez:circularimageview:3.2.0'
     implementation 'org.apache.directory.studio:org.apache.commons.io:2.4'
-    implementation "com.github.ihsanbal:LoggingInterceptor:3.0.0"
 
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
+   // debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
 
     testImplementation 'junit:junit:4.13'
 }
