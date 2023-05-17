@@ -20,8 +20,8 @@ import rs.readahead.washington.mobile.databinding.FragmentAttachmentsSelectorBin
 import rs.readahead.washington.mobile.media.MediaFileHandler
 import rs.readahead.washington.mobile.util.setMargins
 import rs.readahead.washington.mobile.views.activity.AudioPlayActivity
-import rs.readahead.washington.mobile.views.activity.CameraActivity
 import rs.readahead.washington.mobile.views.activity.PhotoViewerActivity
+import rs.readahead.washington.mobile.views.activity.QuestionAttachmentActivity.MEDIA_FILE_KEY
 import rs.readahead.washington.mobile.views.activity.VideoViewerActivity
 import rs.readahead.washington.mobile.views.base_ui.BaseActivity
 
@@ -243,7 +243,7 @@ class AttachmentsActivitySelector : BaseActivity(), ISelectorVaultHandler, View.
             setResult(
                 RESULT_OK,
                 Intent().putExtra(
-                    CameraActivity.MEDIA_FILE_KEY,
+                    MEDIA_FILE_KEY,
                     attachmentsAdapter.selectedMediaFiles[0]
                 )
             )
