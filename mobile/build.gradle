@@ -48,6 +48,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    namespace 'rs.readahead.washington.mobile'
 
 }
 
