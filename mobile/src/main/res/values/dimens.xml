@@ -9,7 +9,6 @@
 
     <dimen name="activity_vertical_tiny_margin">4dp</dimen>
     <dimen name="activity_vertical_small_margin">8dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="activity_vertical_large_margin">24dp</dimen>
     <dimen name="activity_vertical_larger_margin">32dp</dimen>
 
