@@ -20,15 +20,6 @@
 # tella
 -keep class rs.readahead.washington.mobile.data.entity.** { *; }
 
-# evernote android-job
--dontwarn com.evernote.android.job.gcm.**
--dontwarn com.evernote.android.job.util.GcmAvailableHelper
--keep public class com.evernote.android.job.v21.PlatformJobService
--keep public class com.evernote.android.job.v14.PlatformAlarmService
--keep public class com.evernote.android.job.v14.PlatformAlarmReceiver
--keep public class com.evernote.android.job.JobBootReceiver
--keep public class com.evernote.android.job.JobRescheduleService
-
 # okhttp
 -dontwarn okhttp3.**
 -dontwarn okio.**
@@ -102,17 +93,6 @@
 -dontwarn org.xmlpull.v1.**
 -dontnote org.xmlpull.v1.**
 -keep class org.xmlpull.** { *; }
-
-
-# android job
--dontwarn com.evernote.android.job.v24.**
--dontwarn com.evernote.android.job.gcm.**
--dontwarn com.evernote.android.job.util.GcmAvailableHelper
--keep public class com.evernote.android.job.v21.PlatformJobService
--keep public class com.evernote.android.job.v14.PlatformAlarmService
--keep public class com.evernote.android.job.v14.PlatformAlarmReceiver
--keep public class com.evernote.android.job.JobBootReceiver
--keep public class com.evernote.android.job.JobRescheduleService
 
 
 # crashalytics
@@ -215,26 +195,6 @@
 -keep class android.support.v7.widget.** { *; }
 
 -dontobfuscate
-
-# proofmode
--keep class org.witness.proofmode.** { *; }
--keep class org.spongycastle.** { *; }
--dontwarn org.spongycastle.**
-
-# bitcoinj
--keep,includedescriptorclasses class org.bitcoinj.wallet.Protos$** { *; }
--keepclassmembers class org.bitcoinj.wallet.Protos { com.google.protobuf.Descriptors$FileDescriptor descriptor; }
--keep,includedescriptorclasses class org.bitcoin.protocols.payments.Protos$** { *; }
--keepclassmembers class org.bitcoin.protocols.payments.Protos { com.google.protobuf.Descriptors$FileDescriptor descriptor; }
--dontwarn org.bitcoinj.store.WindowsMMapHack
--dontwarn org.bitcoinj.store.LevelDBBlockStore
--dontnote org.bitcoinj.crypto.DRMWorkaround
--dontnote org.bitcoinj.crypto.TrustStoreLoader$DefaultTrustStoreLoader
--dontnote com.subgraph.orchid.crypto.PRNGFixes
--dontwarn okio.DeflaterSink
--dontwarn okio.Okio
--dontnote com.squareup.okhttp.internal.Platform
--dontwarn org.bitcoinj.store.LevelDBFullPrunedBlockStore**
 
 # slf4j
 -keep class org.slf4j.** { *; }
