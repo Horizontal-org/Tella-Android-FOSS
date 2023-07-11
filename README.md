@@ -1,4 +1,4 @@
-<img src="https://github.com/Horizontal-org/Tella-Android/blob/master/Tella-02-feature-B.png" alt="Tella" width="350"/>
+<img src="https://github.com/Horizontal-org/Tella-Android/blob/master/docs/feature_image.png" alt="Tella" width="350"/>
 
 ## Table of Contents
 
@@ -22,7 +22,7 @@
 
 Tella is a documentation app for Android. In challenging environments--with limited or no internet connectivity or in the face of repression--Tella makes it easier and safer to document events, whether that’s violence, human rights violations, corruption, or electoral fraud.
 
-| [![Camouflage](docs/Camouflage.gif)](https://hzontal.org/tella)  | [![Encrypting](docs/Encrypting.gif)](https://hzontal.org/tella) | [![Collecting data](docs/data_collection.gif)](https://hzontal.org/tella) |
+| [![Camouflage](https://github.com/Horizontal-org/Tella-Android/blob/master/docs/camouflage.gif)](https://tella-app.org/)  | [![Encrypting](https://github.com/Horizontal-org/Tella-Android/blob/master/docs/encrypting.gif)](https://tella-app.org/) | [![Collecting data](https://github.com/Horizontal-org/Tella-Android/blob/master/docs/data_collection.gif)](https://tella-app.org/) |
 |:---:|:---:|:---:|
 | Tella camouflaged as a calculator | Taking and encrypting a photo | Collecting data |
 
@@ -33,7 +33,10 @@ Tella:
 - allows users to quickly delete all files in Tella's encrypted Gallery
 - enables users working with a group or organization to collect and send data to a server without relying on third-party apps or servers
 
-You can watch a [short video demonstrating Tella's main features here](https://vimeo.com/344220220/8c7f2fba67)
+You can watch video tutorials about Tella [here](https://docs.tella-app.org/video-tutorials). 
+
+And a short demo on how to collect information in Tella: https://vimeo.com/817029720
+
 
 ## Why Tella? <a id="why-tella"></a>
 
@@ -54,6 +57,8 @@ Tella is used by:
 - Research institutions and international organizations to conduct research, interviews or surveys in challenging environments, particularly in conflict areas
 
 ## Detailed list of features <a id="features"></a>
+
+The full list of Tella features available for the different platforms is here: https://docs.tella-app.org/features
 
 ### Encrypted container
 All of the content and data stored in Tella are encrypted. This means that unless the app is unlocked (using the 6-point pattern set up by the user upon installation), all the data will remain inaccessible to someone seizing or searching the device. Even if it is plugged into a computer and all of the device's data is extracted to be analyzed, all Tella content and data will look like gibberish and will be useless. Unlocking the app by entering the correct pattern is the only way to decrypt, and therefore read, the content stored in Tella.
@@ -77,7 +82,7 @@ In the Tella settings, users can activate "Verification Mode". When activated, e
 
 ## How to get Tella and start using it? <a id="use-tella"></a>
 
-Tella is currently available only on Android. You can download it from [Google Play](https://play.google.com/store/apps/details?id=org.hzontal.tella) or from [F-Droid](https://f-droid.org/packages/org.hzontal.tellaFOSS/) or [get the APK from here](https://web.tresorit.com/l/7737s#WKoGVN82C0lQK8KSL30CuA) to install manually on your device.
+Tella is available on Android and iOS . You can download it from [Google Play](https://play.google.com/store/apps/details?id=org.hzontal.tella) or from [F-Droid](https://f-droid.org/packages/org.hzontal.tellaFOSS/) or [get the APK from here](https://web.tresorit.com/l/7737s#WKoGVN82C0lQK8KSL30CuA) to install manually on your device. Tella for iOS can be downloaded [from the App Store](https://apps.apple.com/us/app/tella-document-protect/id1598152580).
 
 ## Tech & frameworks used <a id="tech-used"></a>
 
@@ -104,10 +109,10 @@ This software uses the following open source packages:
 ## Translating the app <a id="translating"></a>
 Tella is currently available in Belarusian, English, French, Portuguese, Russian, and Spanish. We are always looking to translate Tella into more languages. 
 
-If you are interested in adding a new language, or if you noticed a mistake in our translation, you can join [the Tella project on Transifex](https://www.transifex.com/otf/tella/dashboard/) and contribute from there. 
+If you are interested in adding a new language, or if you noticed a mistake in our translation, you can join [the Tella project on Lokalize](https://app.lokalise.com/public/9394139661a3d89da6fa91.77098206/) and contribute from there. 
 
 ## Contact us <a id="contact"></a>
 We love hearing from users, designers, and developers! If you have any question, ideas or suggestions on how we can improve or what new features we should add, or if you need support deploying Tella, don't hesitate to reach out!
 
-You can create an issue [here on our Github](https://github.com/H0rizontal/Tella/issues) or email us at contact@tella-app.org. 
+You can create an issue [in any of our Github repositories](https://github.com/Horizontal-org), [contact us](https://docs.tella-app.org/contact-us) or join a [Community Call](https://docs.tella-app.org/community-meetings).
 
