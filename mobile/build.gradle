@@ -3,8 +3,8 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
-    id 'com.google.firebase.crashlytics'
-    id 'com.google.gms.google-services'
+ //  id 'com.google.firebase.crashlytics'
+ //  id 'com.google.gms.google-services'
 }
 
 android {
@@ -88,8 +88,8 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycleExtensions"
 
-    implementation platform("com.google.firebase:firebase-bom:$versions.firebaseBom")
-    implementation 'com.google.firebase:firebase-crashlytics'
+  /*  implementation platform("com.google.firebase:firebase-bom:$versions.firebaseBom")
+    implementation 'com.google.firebase:firebase-crashlytics'*/
 
     api "androidx.navigation:navigation-fragment-ktx:$versions.navigationFragmentKtx"
     api "androidx.navigation:navigation-ui-ktx:$versions.navigationUI"
@@ -97,8 +97,8 @@ dependencies {
     implementation "androidx.cardview:cardview:$versions.cardview"
     implementation "androidx.legacy:legacy-support-v4:$versions.legacyV4"
     implementation "androidx.exifinterface:exifinterface:$versions.exifinterface"
-    implementation "com.google.android.gms:play-services-location:$versions.googlePlayServices"
-    implementation "com.google.android.gms:play-services-maps:$versions.googlePlayServices"
+  /*  implementation "com.google.android.gms:play-services-location:$versions.googlePlayServices"
+    implementation "com.google.android.gms:play-services-maps:$versions.googlePlayServices"*/
     // implementation "com.google.android.gms:play-services-gcm:$versions.googlePlayServices" // android-job, optional
 
     implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
@@ -146,10 +146,10 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer:$versions.exoplayer"
 
     // camera
-    implementation("com.otaliastudios:cameraview:$versions.cameraview") {
+ /*   implementation("com.otaliastudios:cameraview:$versions.cameraview") {
         exclude module: "exifinterface"
         exclude module: "animated-vector-drawble"
-    }
+    }*/
 
     //hilt
     implementation "com.google.dagger:hilt-android:$versions.hilt_android"
