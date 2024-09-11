@@ -3,7 +3,7 @@ package rs.readahead.washington.mobile.views.fragment.uwazi.entry
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.google.gson.Gson
 import com.google.gson.internal.LinkedTreeMap
 import com.hzontal.tella_vault.VaultFile
@@ -70,7 +70,7 @@ class SharedUwaziSubmissionViewModel : ViewModel() {
                 // _instance.postValue(savedInstance)
             }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(
+                CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
                 )
@@ -98,7 +98,7 @@ class SharedUwaziSubmissionViewModel : ViewModel() {
                     }
                 },
                 { throwable: Throwable? ->
-                    FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                    CrashlyticsUtil.handleThrowable(throwable)!!)
                     error.postValue(throwable)
                 }
             )?.let {
@@ -136,7 +136,7 @@ class SharedUwaziSubmissionViewModel : ViewModel() {
                     progress.postValue(EntityStatus.SUBMITTED)
                 }
                 ) { throwable: Throwable? ->
-                    FirebaseCrashlytics.getInstance().recordException(
+                    CrashlyticsUtil.handleThrowable(
                         throwable
                             ?: throw NullPointerException("Expression 'throwable' must not be null")
                     )
@@ -173,7 +173,7 @@ class SharedUwaziSubmissionViewModel : ViewModel() {
                     progress.postValue(EntityStatus.SUBMITTED)
                 }
                 ) { throwable: Throwable? ->
-                    FirebaseCrashlytics.getInstance().recordException(
+                    CrashlyticsUtil.handleThrowable(
                         throwable
                             ?: throw NullPointerException("Expression 'throwable' must not be null")
                     )
@@ -359,7 +359,7 @@ class SharedUwaziSubmissionViewModel : ViewModel() {
                 if (throwable is NoConnectivityException) {
                     _connectionAvailable.postValue(true)
                 } else {
-                    FirebaseCrashlytics.getInstance().recordException(
+                    CrashlyticsUtil.handleThrowable(
                         throwable
                             ?: throw NullPointerException("Expression 'throwable' must not be null")
                     )

@@ -4,8 +4,9 @@ import android.net.Uri;
 
 import androidx.annotation.Nullable;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.hzontal.tella_vault.VaultFile;
+
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -34,7 +35,7 @@ public class MediaImportPresenter implements IMediaImportPresenterContract.IPres
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(vaultFile -> view.onMediaFileImported(vaultFile), throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    CrashlyticsUtil.Companion.handleThrowable(throwable);
                     view.onImportError(throwable);
                 })
         );
@@ -48,7 +49,7 @@ public class MediaImportPresenter implements IMediaImportPresenterContract.IPres
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(mediaHolder -> view.onMediaFileImported(mediaHolder), throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    CrashlyticsUtil.Companion.handleThrowable(throwable);
                     view.onImportError(throwable);
                 })
         );
@@ -82,7 +83,7 @@ public class MediaImportPresenter implements IMediaImportPresenterContract.IPres
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(vaultFile -> view.onMediaFileImported(vaultFile), throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    CrashlyticsUtil.Companion.handleThrowable(throwable);
                     view.onImportError(throwable);
                 })
         );

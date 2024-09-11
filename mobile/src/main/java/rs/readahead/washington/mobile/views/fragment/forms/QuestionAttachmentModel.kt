@@ -4,7 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.hzontal.tella_vault.VaultFile
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -107,7 +107,7 @@ class QuestionAttachmentModel @Inject constructor(private val mApplication: Appl
                     )
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _onImportError.postValue(throwable)
             }
         )
@@ -132,7 +132,7 @@ class QuestionAttachmentModel @Inject constructor(private val mApplication: Appl
                     )
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _onImportError.postValue(throwable)
             }
         )

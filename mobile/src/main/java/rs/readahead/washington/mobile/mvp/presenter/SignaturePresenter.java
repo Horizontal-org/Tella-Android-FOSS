@@ -1,6 +1,6 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.VaultFile;
 
 import io.reactivex.Observable;
@@ -32,7 +32,7 @@ public class SignaturePresenter implements ISignaturePresenterContract.IPresente
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally(() -> view.onAddingEnd())
                         .subscribe(mediaFile -> view.onAddSuccess(mediaFile), throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onAddError(throwable);
                         })
         );

@@ -1,7 +1,6 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -59,7 +58,7 @@ public class CheckTUSServerPresenter implements
                         view.onServerCheckFailure(uploadProgressInfo.status);
                     }
                 }, throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    CrashlyticsUtil.Companion.handleThrowable(throwable);
                     view.onServerCheckError(throwable);
                 })
         );

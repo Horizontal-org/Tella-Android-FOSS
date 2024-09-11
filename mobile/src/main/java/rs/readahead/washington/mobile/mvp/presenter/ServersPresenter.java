@@ -1,6 +1,6 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -32,7 +32,7 @@ public class ServersPresenter implements IServersPresenterContract.IPresenter {
                 .subscribe(
                         () -> view.onServersDeleted(),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onServersDeletedError(throwable);
                         }
                 )

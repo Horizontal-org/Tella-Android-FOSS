@@ -3,7 +3,7 @@ package rs.readahead.washington.mobile.views.fragment.uwazi.attachments
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.hzontal.tella_vault.VaultFile
 import com.hzontal.tella_vault.filter.FilterType
 import com.hzontal.tella_vault.filter.Sort
@@ -44,12 +44,12 @@ class AttachmentsSelectorViewModel : ViewModel() {
                                 _vaultFiles.postValue(result ?: emptyList())
                             }
                         ) { throwable: Throwable? ->
-                            FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                            CrashlyticsUtil.handleThrowable(throwable)!!)
                             _error.postValue(throwable)
                         })
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _error.postValue(throwable)
             }.dispose()
     }
@@ -59,7 +59,7 @@ class AttachmentsSelectorViewModel : ViewModel() {
             ?.subscribe(
                 { vaultFile: VaultFile? -> _rootVaultFile.postValue(vaultFile) }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _error.postValue(throwable)
             }?.dispose()
     }
@@ -72,7 +72,7 @@ class AttachmentsSelectorViewModel : ViewModel() {
                     _selectVaultFiles.postValue(vaultFiles)
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _error.postValue(throwable)
             }.dispose()
     }

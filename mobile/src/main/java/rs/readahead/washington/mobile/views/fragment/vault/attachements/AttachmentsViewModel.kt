@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.hzontal.tella_vault.VaultFile
 import com.hzontal.tella_vault.filter.FilterType
 import com.hzontal.tella_vault.filter.Sort
@@ -81,11 +81,11 @@ class AttachmentsViewModel @Inject constructor(
                     }.subscribe({ vaultFiles: List<VaultFile?> ->
                         _filesData.postValue(vaultFiles)
                     }) { throwable: Throwable? ->
-                        FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                        CrashlyticsUtil.handleThrowable(throwable)!!)
                         _error.postValue(throwable)
                     })
             }) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _error.postValue(throwable)
             }.dispose()
     }
@@ -103,7 +103,7 @@ class AttachmentsViewModel @Inject constructor(
             completable
         ) { objects: Array<Any?> -> objects.size }.observeOn(AndroidSchedulers.mainThread())
             .subscribe({ _filesSize.postValue(it) }) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _moveFilesError.postValue(throwable)
             })
     }
@@ -128,7 +128,7 @@ class AttachmentsViewModel @Inject constructor(
             completable
         ) { objects: Array<Any?> -> objects.size }.observeOn(AndroidSchedulers.mainThread())
             .subscribe({ num: Int? -> _deletedFiles.postValue(num!!) }) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _error.postValue(throwable)
             })
     }
@@ -137,7 +137,7 @@ class AttachmentsViewModel @Inject constructor(
         disposables.add(rxVault.delete(vaultFile).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ _deletedFile.postValue(vaultFile) }) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _deletedFileError.postValue(throwable)
             })
     }
@@ -151,7 +151,7 @@ class AttachmentsViewModel @Inject constructor(
         MyApplication.rxVault.builder().setName(folderName).setType(VaultFile.Type.DIRECTORY)
             .build(parent)
             .subscribe({ vaultFile -> _folderCreated.postValue(vaultFile) }) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _error.postValue(throwable)
             }.dispose()
     }
@@ -160,7 +160,7 @@ class AttachmentsViewModel @Inject constructor(
         MyApplication.rxVault?.root?.subscribe({ vaultFile: VaultFile ->
             _rootId.postValue(vaultFile)
         }) { throwable: Throwable? ->
-            FirebaseCrashlytics.getInstance().recordException(throwable!!)
+            CrashlyticsUtil.handleThrowable(throwable)!!)
             _error.postValue(throwable)
         }?.dispose()
     }
@@ -201,7 +201,7 @@ class AttachmentsViewModel @Inject constructor(
                 }
 
             }) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _error.postValue(throwable)
             })
     }
@@ -223,7 +223,7 @@ class AttachmentsViewModel @Inject constructor(
         disposables.add(MyApplication.rxVault.rename(id, name).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ _renameFileSuccess.postValue(it) }) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _error.postValue(throwable)
             })
     }
@@ -251,7 +251,7 @@ class AttachmentsViewModel @Inject constructor(
                     _mediaExported.postValue(num!!)
                 }
             }) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 _error.postValue(throwable)
             })
     }
@@ -268,7 +268,7 @@ class AttachmentsViewModel @Inject constructor(
                 _onConfirmDeleteFiles.postValue(Pair(vaultFiles, doesFileExist))
             }) { throwable: Throwable? ->
                 if (throwable != null) {
-                    FirebaseCrashlytics.getInstance().recordException(throwable)
+                    CrashlyticsUtil.handleThrowable(throwable)
                 }
                 _error.postValue(throwable)
             })

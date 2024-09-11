@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 
 import io.reactivex.Completable;
 import io.reactivex.SingleSource;
@@ -78,7 +78,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                 .subscribe(
                         num -> view.onCountTUServersEnded(num),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onCountTUServersFailed(throwable);
                         }
                 )
@@ -94,7 +94,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                 .subscribe(
                         num -> view.onCountCollectServersEnded(num),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onCountCollectServersFailed(throwable);
                         }
                 )
@@ -110,7 +110,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                 .subscribe(
                         num -> view.onCountUwaziServersEnded(num),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onCountUwaziServersFailed(throwable);
                         }
                 )

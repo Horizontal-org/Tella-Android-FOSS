@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.hzontal.tella_vault.VaultFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Single
@@ -123,7 +123,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                     }
                 },
                 { throwable: Throwable? ->
-                    FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                    CrashlyticsUtil.handleThrowable(throwable)!!)
                     onFormDefError.postValue(throwable)
                 }
             )?.let {
@@ -158,7 +158,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                     collectFormInstance?.let { maybeCloneInstance(it) }
                 )
             }) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 onFormDefError.postValue(throwable)
             }
         )
@@ -194,7 +194,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                     )
                 }
             ) { throwable: Throwable ->
-                FirebaseCrashlytics.getInstance().recordException(throwable)
+                CrashlyticsUtil.handleThrowable(throwable)
                 onError.postValue(throwable)
             }
         )
@@ -212,7 +212,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
             .subscribe(
                 { onFormInstanceDeleteSuccess.postValue(true) }
             ) { throwable: Throwable ->
-                FirebaseCrashlytics.getInstance().recordException(throwable)
+                CrashlyticsUtil.handleThrowable(throwable)
                 onError.postValue(throwable)
             }
         )
@@ -230,7 +230,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                     )
                 }
             ) { throwable: Throwable ->
-                FirebaseCrashlytics.getInstance().recordException(throwable)
+                CrashlyticsUtil.handleThrowable(throwable)
                 onError.postValue(throwable)
             }
         )
@@ -285,7 +285,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                 { listFormResult: ListFormResult ->
                     // log errors if any in result..
                     for (error in listFormResult.errors) {
-                        FirebaseCrashlytics.getInstance().recordException(error.exception)
+                        CrashlyticsUtil.handleThrowable(error.exception)
                     }
                     onBlankFormsListResult.postValue(listFormResult)
                 }
@@ -293,7 +293,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                 if (throwable is NoConnectivityException) {
                     onNoConnectionAvailable.postValue(true)
                 } else {
-                    FirebaseCrashlytics.getInstance().recordException(
+                    CrashlyticsUtil.handleThrowable(
                         throwable
                             ?: throw NullPointerException("Expression 'throwable' must not be null")
                     )
@@ -336,7 +336,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
             .subscribe(
                 { onBlankFormDefRemoved.postValue(true) }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(
+                CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
                 )
@@ -375,7 +375,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                     )
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(
+                CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
                 )
@@ -417,7 +417,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                     )
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 onFormDefError.postValue(throwable)
             }
         )
@@ -496,7 +496,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
             .subscribe(
                 { onFormCacheCleared.postValue(true) }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(
+                CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
                 )
@@ -524,7 +524,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                     collectFormInstance?.setCollectInstanceAttachments(vaultFiles)
                 _collectFormInstance.postValue(collectFormInstance)}
             }) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 onError.postValue(throwable)
             }
         )

@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.hzontal.tella_vault.VaultFile
 import com.hzontal.tella_vault.filter.FilterType
 import com.hzontal.tella_vault.filter.Sort
@@ -56,7 +56,7 @@ class AttachmentsViewModelTest {
     lateinit var rxVault: RxVault
 
     @Mock
-    private lateinit var firebaseCrashlytics: FirebaseCrashlytics
+    private lateinit var firebaseCrashlytics: CrashlyticsUtil
 
     @Before
     fun setUp() {

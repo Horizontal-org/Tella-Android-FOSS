@@ -1,6 +1,6 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,10 +78,10 @@ public class CollectBlankFormListRefreshPresenter implements
                 .subscribe(listFormResult -> {
                     // log errors if any in result..
                     for (IErrorBundle error : listFormResult.getErrors()) {
-                        FirebaseCrashlytics.getInstance().recordException(error.getException());
+                        CrashlyticsUtil.Companion.handleThrowable(error.getException());
                     }
                 }, throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    CrashlyticsUtil.Companion.handleThrowable(throwable);
                     view.onRefreshBlankFormsError(throwable);
                 })
         );

@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.VaultFile;
 import com.simplify.ink.InkView;
 
@@ -110,7 +110,7 @@ public class SignatureActivity extends BaseLockActivity implements
                 presenter.addPngImage(stream.toByteArray());
             }
         } catch (Exception exception) {
-            FirebaseCrashlytics.getInstance().recordException(exception);
+            CrashlyticsUtil.Companion.handleThrowable(exception);
         }
     }
 

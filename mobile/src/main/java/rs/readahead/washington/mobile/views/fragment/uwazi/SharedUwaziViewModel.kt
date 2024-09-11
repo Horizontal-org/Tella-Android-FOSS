@@ -3,7 +3,7 @@ package rs.readahead.washington.mobile.views.fragment.uwazi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.hzontal.tella_vault.VaultFile
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -193,7 +193,7 @@ class SharedUwaziViewModel : ViewModel() {
             .flatMapSingle { dataSource: UwaziDataSource -> dataSource.toggleFavorite(template) }
             .subscribe({ listTemplates() }
             ) { throwable: Throwable ->
-                FirebaseCrashlytics.getInstance().recordException(throwable)
+                CrashlyticsUtil.handleThrowable(throwable)
                 error.postValue(throwable)
             }
         )
@@ -213,7 +213,7 @@ class SharedUwaziViewModel : ViewModel() {
             .subscribe(
                 { listTemplates() }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 error.postValue(throwable)
             }
         )
@@ -235,7 +235,7 @@ class SharedUwaziViewModel : ViewModel() {
                     _instanceDeleteD.postValue(true)
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)!!)
                 error.postValue(throwable)
             }
         )
@@ -273,7 +273,7 @@ class SharedUwaziViewModel : ViewModel() {
                     uwaziEntityInstance?.let { maybeCloneInstance(it) }
                 )
             }) { throwable: Throwable ->
-                FirebaseCrashlytics.getInstance().recordException(throwable)
+                CrashlyticsUtil.handleThrowable(throwable)
                 onGetInstanceError.postValue(throwable)
             }
         )

@@ -1,6 +1,6 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                 .doFinally(() -> view.hideLoading())
                 .subscribe(list -> view.onServersLoaded(list),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onLoadServersError(throwable);
                         })
         );
@@ -54,7 +54,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                 .doFinally(() -> view.hideLoading())
                 .subscribe(server1 -> view.onCreatedServer(server1),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onCreateCollectServerError(throwable);
                         })
         );
@@ -73,7 +73,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                             view.onUpdatedServer(server1);
                         },
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onUpdateServerError(throwable);
                         })
         );
@@ -91,7 +91,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                             view.onRemovedServer(server);
                         },
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onRemoveServerError(throwable);
                         })
         );

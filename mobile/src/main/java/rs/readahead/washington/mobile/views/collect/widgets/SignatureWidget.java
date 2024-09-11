@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.VaultFile;
 
 import org.javarosa.form.api.FormEntryPrompt;
@@ -127,7 +127,7 @@ public class SignatureWidget extends MediaFileBinaryWidget implements ICollectAt
                     C.MEDIA_FILE_ID
             );
         } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
+            CrashlyticsUtil.Companion.handleThrowable(e);
             FormController.getActive().setIndexWaitingForData(null);
         }
     }
@@ -200,7 +200,7 @@ public class SignatureWidget extends MediaFileBinaryWidget implements ICollectAt
                     .putExtra(PhotoViewerActivity.VIEW_PHOTO, vaultFile)
                     .putExtra(PhotoViewerActivity.NO_ACTIONS, true));
         } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
+            CrashlyticsUtil.Companion.handleThrowable(e);
         }
     }
 
