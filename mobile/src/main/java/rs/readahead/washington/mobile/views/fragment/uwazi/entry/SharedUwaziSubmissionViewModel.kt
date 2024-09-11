@@ -98,7 +98,7 @@ class SharedUwaziSubmissionViewModel : ViewModel() {
                     }
                 },
                 { throwable: Throwable? ->
-                    CrashlyticsUtil.handleThrowable(throwable)!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                     error.postValue(throwable)
                 }
             )?.let {

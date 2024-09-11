@@ -61,7 +61,7 @@ class SendFeedbackViewModel @Inject constructor(private val feedbackRepository: 
                     }
                 }) { throwable: Throwable? ->
                     Timber.d(throwable)
-                    CrashlyticsUtil.handleThrowable(throwable)!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                     val exceptionType = ExceptionHandler.handleException(throwable)
                     handleException(exceptionType)
                 })
@@ -78,7 +78,7 @@ class SendFeedbackViewModel @Inject constructor(private val feedbackRepository: 
                     }
                 }) { throwable: Throwable? ->
                     Timber.d(throwable)
-                    CrashlyticsUtil.handleThrowable(throwable)!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                 })
     }
 
@@ -93,7 +93,7 @@ class SendFeedbackViewModel @Inject constructor(private val feedbackRepository: 
                     }
                 }) { throwable: Throwable? ->
                     Timber.d(throwable)
-                    CrashlyticsUtil.handleThrowable(throwable)!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                 })
     }
 
@@ -106,7 +106,7 @@ class SendFeedbackViewModel @Inject constructor(private val feedbackRepository: 
                     _draftFeedBackInstance.postValue(draft)
                 }) { throwable: Throwable? ->
                     Timber.d(throwable)
-                    CrashlyticsUtil.handleThrowable(throwable)!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                 })
     }
 

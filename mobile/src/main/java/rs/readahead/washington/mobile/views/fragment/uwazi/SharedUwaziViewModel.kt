@@ -213,7 +213,7 @@ class SharedUwaziViewModel : ViewModel() {
             .subscribe(
                 { listTemplates() }
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 error.postValue(throwable)
             }
         )
@@ -235,7 +235,7 @@ class SharedUwaziViewModel : ViewModel() {
                     _instanceDeleteD.postValue(true)
                 }
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 error.postValue(throwable)
             }
         )

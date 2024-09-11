@@ -44,12 +44,12 @@ class AttachmentsSelectorViewModel : ViewModel() {
                                 _vaultFiles.postValue(result ?: emptyList())
                             }
                         ) { throwable: Throwable? ->
-                            CrashlyticsUtil.handleThrowable(throwable)!!)
+                            CrashlyticsUtil.handleThrowable(throwable)
                             _error.postValue(throwable)
                         })
                 }
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 _error.postValue(throwable)
             }.dispose()
     }
@@ -59,7 +59,7 @@ class AttachmentsSelectorViewModel : ViewModel() {
             ?.subscribe(
                 { vaultFile: VaultFile? -> _rootVaultFile.postValue(vaultFile) }
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 _error.postValue(throwable)
             }?.dispose()
     }
@@ -72,7 +72,7 @@ class AttachmentsSelectorViewModel : ViewModel() {
                     _selectVaultFiles.postValue(vaultFiles)
                 }
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 _error.postValue(throwable)
             }.dispose()
     }

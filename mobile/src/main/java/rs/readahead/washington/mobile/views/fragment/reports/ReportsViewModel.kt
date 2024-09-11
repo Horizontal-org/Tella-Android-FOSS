@@ -318,7 +318,7 @@ class ReportsViewModel @Inject constructor(
                     _reportInstance.postValue(resultInstance)
                 }) { throwable: Throwable? ->
                     Timber.d(throwable)
-                    CrashlyticsUtil.handleThrowable(throwable)!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                 }
             )
 

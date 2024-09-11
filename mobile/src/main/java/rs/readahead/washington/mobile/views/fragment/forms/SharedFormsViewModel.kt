@@ -123,7 +123,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                     }
                 },
                 { throwable: Throwable? ->
-                    CrashlyticsUtil.handleThrowable(throwable)!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                     onFormDefError.postValue(throwable)
                 }
             )?.let {
@@ -158,7 +158,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                     collectFormInstance?.let { maybeCloneInstance(it) }
                 )
             }) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 onFormDefError.postValue(throwable)
             }
         )
@@ -417,7 +417,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                     )
                 }
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 onFormDefError.postValue(throwable)
             }
         )
@@ -524,7 +524,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                     collectFormInstance?.setCollectInstanceAttachments(vaultFiles)
                 _collectFormInstance.postValue(collectFormInstance)}
             }) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 onError.postValue(throwable)
             }
         )

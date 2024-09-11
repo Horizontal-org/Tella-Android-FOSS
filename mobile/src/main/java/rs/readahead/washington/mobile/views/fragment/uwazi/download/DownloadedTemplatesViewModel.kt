@@ -94,7 +94,7 @@ class DownloadedTemplatesViewModel : ViewModel(){
                         }
                     }}
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 error.postValue(throwable)
             }
         )

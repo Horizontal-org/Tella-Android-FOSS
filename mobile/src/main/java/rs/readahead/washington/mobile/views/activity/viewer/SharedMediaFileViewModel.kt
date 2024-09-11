@@ -90,7 +90,7 @@ class SharedMediaFileViewModel @Inject constructor(
                     { _onMediaFileExportStatus.postValue(MediaFileExportStatus.EXPORT_PROGRESS) }
                 ) { throwable: Throwable? ->
                     // Handle any errors that occurred during the export process
-                    CrashlyticsUtil.handleThrowable(throwable)!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                     _error.postValue(R.string.gallery_toast_fail_exporting_to_device)
 
                 }
@@ -115,7 +115,7 @@ class SharedMediaFileViewModel @Inject constructor(
                 }
             ) { throwable: Throwable? ->
                 // Handle any errors that occurred during the renaming process
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 _error.postValue(R.string.gallery_toast_fail_deleting_files)
             })
     }
@@ -134,7 +134,7 @@ class SharedMediaFileViewModel @Inject constructor(
                 { isDeleted: Boolean? -> _onMediaFileDeleted.postValue(isDeleted) }
             ) { throwable: Throwable? ->
                 // Handle any errors that occurred during the deletion process
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 _error.postValue(R.string.gallery_toast_fail_deleting_files)
 
             })
@@ -172,7 +172,7 @@ class SharedMediaFileViewModel @Inject constructor(
                     }
                 }, { throwable: Throwable? ->
                     // Handle any errors that occurred during data retrieval
-                    CrashlyticsUtil.handleThrowable(throwable)!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                     _error.postValue(R.string.gallery_toast_fail_deleting_files)
                 })
         )
@@ -200,7 +200,7 @@ class SharedMediaFileViewModel @Inject constructor(
                         }
                     }
                 ) { throwable: Throwable? ->
-                    CrashlyticsUtil.handleThrowable(throwable)!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                     _error.postValue(R.string.default_error_msg)
                 })
     }

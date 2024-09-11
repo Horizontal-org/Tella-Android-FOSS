@@ -165,7 +165,7 @@ class SubmitFormsViewModel @Inject constructor(private val mApplication: Applica
                         // PendingFormSendJob.scheduleJob();
                         _formSubmitNoConnectivity.postValue(true)
                     } else {
-                        CrashlyticsUtil.handleThrowable(throwable)!!)
+                        CrashlyticsUtil.handleThrowable(throwable)
                         _formPartSubmitError.postValue(throwable)
                     }
                 },
@@ -455,7 +455,7 @@ class SubmitFormsViewModel @Inject constructor(private val mApplication: Applica
                         // PendingFormSendJob.scheduleJob();
                         _formReSubmitNoConnectivity.postValue(true)
                     } else {
-                        CrashlyticsUtil.handleThrowable(throwable)!!)
+                        CrashlyticsUtil.handleThrowable(throwable)
                         _formPartReSubmitError.postValue(throwable)
                     }
                 },

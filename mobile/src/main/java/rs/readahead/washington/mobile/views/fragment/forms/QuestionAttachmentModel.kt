@@ -107,7 +107,7 @@ class QuestionAttachmentModel @Inject constructor(private val mApplication: Appl
                     )
                 }
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 _onImportError.postValue(throwable)
             }
         )
@@ -132,7 +132,7 @@ class QuestionAttachmentModel @Inject constructor(private val mApplication: Appl
                     )
                 }
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 _onImportError.postValue(throwable)
             }
         )

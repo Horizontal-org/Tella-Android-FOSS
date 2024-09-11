@@ -78,7 +78,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                     view?.onCountTUServersEnded(servers)
                 }
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onCountUwaziServersFailed(throwable)
             }
         )
@@ -94,7 +94,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                     view?.onCountCollectServersEnded(servers)
                 }
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onCountCollectServersFailed(throwable)
             }
         )
@@ -110,7 +110,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                     view?.onCountUwaziServersEnded(servers)
                 }
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onCountUwaziServersFailed(throwable)
             }
         )
@@ -134,7 +134,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                 .subscribe(
                     { num: Int? -> view?.onMediaExported(num!!) }
                 ) { throwable: Throwable? ->
-                    CrashlyticsUtil.handleThrowable(throwable)!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                     view?.onExportError(throwable)
                 }
         )
@@ -152,7 +152,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                     )
                 }
             ) { throwable: Throwable? ->
-                CrashlyticsUtil.handleThrowable(throwable)!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onGetFilesError(throwable)
             }?.let { disposables.add(it) }
     }
