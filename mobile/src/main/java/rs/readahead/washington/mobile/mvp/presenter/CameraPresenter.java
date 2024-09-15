@@ -1,7 +1,6 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.hzontal.tella_vault.VaultFile;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 
 import java.io.File;
 
@@ -30,7 +29,7 @@ public class CameraPresenter implements ICameraPresenterContract.IPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onAddingEnd())
                 .subscribe(bundle -> view.onAddSuccess(bundle.blockingGet()), throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    CrashlyticsUtil.Companion.handleThrowable(throwable);
                     view.onAddError(throwable);
                 })
         );
@@ -44,7 +43,7 @@ public class CameraPresenter implements ICameraPresenterContract.IPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onAddingEnd())
                 .subscribe(vaultFile -> view.onAddSuccess(vaultFile), throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    CrashlyticsUtil.Companion.handleThrowable(throwable);
                     view.onAddError(throwable);
                 })
         );

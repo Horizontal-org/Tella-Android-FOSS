@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.VaultFile;
 import com.hzontal.tella_vault.filter.FilterType;
 
@@ -123,7 +123,7 @@ public class VideoWidget extends MediaFileBinaryWidget {
                     C.MEDIA_FILE_ID
             );
         } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
+            CrashlyticsUtil.Companion.handleThrowable(e);
             FormController.getActive().setIndexWaitingForData(null);
         }
     }
@@ -206,7 +206,7 @@ public class VideoWidget extends MediaFileBinaryWidget {
                     C.MEDIA_FILE_ID);
 
         } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
+            CrashlyticsUtil.Companion.handleThrowable(e);
             FormController.getActive().setIndexWaitingForData(null);
         }
     }

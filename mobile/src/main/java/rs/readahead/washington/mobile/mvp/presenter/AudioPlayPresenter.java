@@ -1,6 +1,6 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.rx.RxVault;
 
 import io.reactivex.Single;
@@ -41,7 +41,7 @@ public class AudioPlayPresenter implements
                         },
 
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onMediaFileError(throwable);
                         }));
     }

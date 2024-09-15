@@ -20,7 +20,6 @@ import androidx.work.Configuration;
 //import androidx.work.Configuration;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.hzontal.tella_locking_ui.TellaKeysUI;
 import com.hzontal.tella_locking_ui.common.CredentialsCallback;
 import com.hzontal.tella_locking_ui.ui.AppCompatActivityUnlocker;
@@ -35,6 +34,7 @@ import org.hzontal.shared_ui.data.CommonPrefs;
 
 import net.zetetic.database.sqlcipher.SQLiteDatabase;
 
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import org.hzontal.tella.keys.MainKeyStore;
 import org.hzontal.tella.keys.TellaKeys;
 import org.hzontal.tella.keys.config.IUnlockRegistryHolder;
@@ -189,7 +189,7 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
             @Override
             public void accept(Throwable throwable) {
                 Timber.d(throwable, getClass().getName());
-                FirebaseCrashlytics.getInstance().recordException(throwable);
+                CrashlyticsUtil.Companion.handleThrowable(throwable);
             }
         });
         bus = TellaBus.create();
@@ -218,10 +218,10 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
     private void configureCrashlytics() {
         boolean enabled = (!BuildConfig.DEBUG && Preferences.isSubmittingCrashReports());
 
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(enabled);
+        //FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(enabled);
 
         if (!enabled) {
-            FirebaseCrashlytics.getInstance().deleteUnsentReports();
+            //FirebaseCrashlytics.getInstance().deleteUnsentReports();
         }
     }
 
@@ -291,7 +291,7 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
 
     @Override
     public void onUnSuccessfulUnlock(String tag, Throwable throwable) {
-        // FirebaseCrashlytics.getInstance().recordException(throwable);
+        // CrashlyticsUtil.Companion.handleThrowable(throwable);
     }
 
     @Override

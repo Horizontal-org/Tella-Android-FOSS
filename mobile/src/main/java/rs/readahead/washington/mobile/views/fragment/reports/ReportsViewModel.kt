@@ -3,7 +3,7 @@ package rs.readahead.washington.mobile.views.fragment.reports
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.hzontal.tella_vault.VaultFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -318,7 +318,7 @@ class ReportsViewModel @Inject constructor(
                     _reportInstance.postValue(resultInstance)
                 }) { throwable: Throwable? ->
                     Timber.d(throwable)
-                    FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                 }
             )
 

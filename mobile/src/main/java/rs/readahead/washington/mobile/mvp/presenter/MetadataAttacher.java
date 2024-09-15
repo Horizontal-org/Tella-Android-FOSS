@@ -1,6 +1,6 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.Metadata;
 import com.hzontal.tella_vault.VaultFile;
 
@@ -26,7 +26,7 @@ public class MetadataAttacher implements IMetadataAttachPresenterContract.IPrese
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updatedVaultFile -> view.onMetadataAttached(updatedVaultFile), throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    CrashlyticsUtil.Companion.handleThrowable(throwable);
                     view.onMetadataAttachError(throwable);
                 }));
     }

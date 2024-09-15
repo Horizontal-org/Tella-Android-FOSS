@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.VaultFile;
 import com.hzontal.tella_vault.filter.FilterType;
 
@@ -122,7 +122,7 @@ public class ImageWidget extends MediaFileBinaryWidget {
                     C.MEDIA_FILE_ID
             );
         } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
+            CrashlyticsUtil.Companion.handleThrowable(e);
             FormController.getActive().setIndexWaitingForData(null);
         }
     }
@@ -205,7 +205,7 @@ public class ImageWidget extends MediaFileBinaryWidget {
                     C.MEDIA_FILE_ID);
 
         } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
+            CrashlyticsUtil.Companion.handleThrowable(e);
             FormController.getActive().setIndexWaitingForData(null);
         }
     }

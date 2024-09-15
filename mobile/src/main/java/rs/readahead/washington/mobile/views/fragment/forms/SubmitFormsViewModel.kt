@@ -4,7 +4,7 @@ import android.app.Application
 import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
@@ -165,7 +165,7 @@ class SubmitFormsViewModel @Inject constructor(private val mApplication: Applica
                         // PendingFormSendJob.scheduleJob();
                         _formSubmitNoConnectivity.postValue(true)
                     } else {
-                        FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                        CrashlyticsUtil.handleThrowable(throwable)
                         _formPartSubmitError.postValue(throwable)
                     }
                 },
@@ -455,7 +455,7 @@ class SubmitFormsViewModel @Inject constructor(private val mApplication: Applica
                         // PendingFormSendJob.scheduleJob();
                         _formReSubmitNoConnectivity.postValue(true)
                     } else {
-                        FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                        CrashlyticsUtil.handleThrowable(throwable)
                         _formPartReSubmitError.postValue(throwable)
                     }
                 },

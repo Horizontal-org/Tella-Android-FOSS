@@ -16,7 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hzontal.tella_vault.VaultFile;
@@ -154,7 +154,7 @@ public class UwaziImageWidget extends UwaziFileBinaryWidget {
                     C.MEDIA_FILE_ID);
 
         } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
+            CrashlyticsUtil.Companion.handleThrowable(e);
         }
     }
 
@@ -169,7 +169,7 @@ public class UwaziImageWidget extends UwaziFileBinaryWidget {
                     C.MEDIA_FILE_ID
             );
         } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
+            CrashlyticsUtil.Companion.handleThrowable(e);
         }
     }
 

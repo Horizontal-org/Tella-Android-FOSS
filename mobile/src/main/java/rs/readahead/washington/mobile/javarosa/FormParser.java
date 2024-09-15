@@ -2,7 +2,7 @@ package rs.readahead.washington.mobile.javarosa;
 
 import android.text.TextUtils;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.Metadata;
 import com.hzontal.tella_vault.VaultFile;
 
@@ -240,7 +240,7 @@ public class FormParser implements IFormParserContract.IFormParser {
     }
 
     private void viewFormParseError(Throwable throwable) {
-        FirebaseCrashlytics.getInstance().recordException(throwable);
+        CrashlyticsUtil.Companion.handleThrowable(throwable);
         view.formParseError(throwable);
     }
 

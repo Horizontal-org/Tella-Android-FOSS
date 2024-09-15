@@ -6,7 +6,7 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.VaultFile;
 
 import org.hzontal.tella.keys.key.LifecycleMainKey;
@@ -51,7 +51,7 @@ public class TellaFileUploadSchedulePresenter implements ITellaFileUploadSchedul
                     TellaUploadJob.scheduleJob();
                     view.onMediaFilesUploadScheduled();
                 }, throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    CrashlyticsUtil.Companion.handleThrowable(throwable);
                     view.onMediaFilesUploadScheduleError(throwable);
                 })
         );
@@ -69,7 +69,7 @@ public class TellaFileUploadSchedulePresenter implements ITellaFileUploadSchedul
                     TellaUploadJob.scheduleJob();
                     view.onMediaFilesUploadScheduled();
                 }, throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    CrashlyticsUtil.Companion.handleThrowable(throwable);
                     view.onMediaFilesUploadScheduleError(throwable);
                 })
         );
@@ -94,7 +94,7 @@ public class TellaFileUploadSchedulePresenter implements ITellaFileUploadSchedul
                     MyApplication.getMainKeyHolder().setTimeout(LifecycleMainKey.NO_TIMEOUT);
                     view.onMediaFilesUploadScheduled();
                 }, throwable -> {
-                    FirebaseCrashlytics.getInstance().recordException(throwable);
+                    CrashlyticsUtil.Companion.handleThrowable(throwable);
                     view.onMediaFilesUploadScheduleError(throwable);
                 })
         );

@@ -3,7 +3,7 @@ package rs.readahead.washington.mobile.views.fragment.vault.home
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.hzontal.tella_vault.VaultFile
 import com.hzontal.tella_vault.filter.FilterType
 import com.hzontal.tella_vault.filter.Limits
@@ -78,7 +78,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                     view?.onCountTUServersEnded(servers)
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onCountUwaziServersFailed(throwable)
             }
         )
@@ -94,7 +94,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                     view?.onCountCollectServersEnded(servers)
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onCountCollectServersFailed(throwable)
             }
         )
@@ -110,7 +110,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                     view?.onCountUwaziServersEnded(servers)
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onCountUwaziServersFailed(throwable)
             }
         )
@@ -134,7 +134,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                 .subscribe(
                     { num: Int? -> view?.onMediaExported(num!!) }
                 ) { throwable: Throwable? ->
-                    FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                    CrashlyticsUtil.handleThrowable(throwable)
                     view?.onExportError(throwable)
                 }
         )
@@ -152,7 +152,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                     )
                 }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onGetFilesError(throwable)
             }?.let { disposables.add(it) }
     }

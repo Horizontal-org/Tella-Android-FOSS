@@ -1,6 +1,6 @@
 package rs.readahead.washington.mobile.views.activity.onboarding;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 
 import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -36,7 +36,7 @@ public class OnBoardPresenter implements IOnBoardPresenterContract.IPresenter {
                 .doFinally(() -> view.hideLoading())
                 .subscribe(server1 -> view.onCreatedTUServer(server1),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onCreateTUServerError(throwable);
                         })
         );
@@ -53,7 +53,7 @@ public class OnBoardPresenter implements IOnBoardPresenterContract.IPresenter {
                 .doFinally(() -> view.hideLoading())
                 .subscribe(server1 -> view.onCreatedServer(server1),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onCreateCollectServerError(throwable);
                         })
         );
@@ -68,7 +68,7 @@ public class OnBoardPresenter implements IOnBoardPresenterContract.IPresenter {
                         dataSource -> dataSource.createUWAZIServer(server))
                 .subscribe(server1 -> view.onCreatedUwaziServer(server1),
                         throwable -> {
-                            FirebaseCrashlytics.getInstance().recordException(throwable);
+                            CrashlyticsUtil.Companion.handleThrowable(throwable);
                             view.onCreateCollectServerError(throwable);
                         })
         );

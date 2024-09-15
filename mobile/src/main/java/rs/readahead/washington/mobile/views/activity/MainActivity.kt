@@ -17,7 +17,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.google.gson.Gson
 import com.hzontal.tella_vault.VaultFile
 import com.hzontal.tella_vault.filter.FilterType
@@ -206,11 +206,11 @@ class MainActivity : MetadataActivity(), IHomeScreenPresenterContract.IView,
         } catch (e: NullPointerException) {
             // Handle null pointer exception
             showToast(R.string.gallery_toast_fail_importing_file)
-            FirebaseCrashlytics.getInstance().recordException(e)
+            CrashlyticsUtil.handleThrowable(e)
             Timber.e(e, "NullPointerException occurred: ${e.message}")
         } catch (e: Exception) {
             // Handle other exceptions
-            FirebaseCrashlytics.getInstance().recordException(e)
+            CrashlyticsUtil.handleThrowable(e)
             Timber.e(e, "NullPointerException occurred: ${e.message}")
         }
     }

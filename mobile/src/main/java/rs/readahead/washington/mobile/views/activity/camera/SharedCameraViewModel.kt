@@ -2,7 +2,7 @@ package rs.readahead.washington.mobile.views.activity.camera
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.hzontal.tella_vault.VaultFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
@@ -116,7 +116,7 @@ class SharedCameraViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun handleAddError(throwable: Throwable) {
-        FirebaseCrashlytics.getInstance().recordException(throwable)
+        CrashlyticsUtil.handleThrowable(throwable)
         _addError.postValue(throwable)
     }
 

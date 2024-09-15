@@ -3,7 +3,7 @@ package rs.readahead.washington.mobile.views.dialog.uwazi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -51,7 +51,7 @@ class UwaziConnectFlowViewModel : ViewModel() {
                 _isPublic.postValue(true)
             }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(
+                CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
                 )
@@ -79,7 +79,7 @@ class UwaziConnectFlowViewModel : ViewModel() {
                     }
                 }
             }) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(
+                CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
                 )
@@ -100,7 +100,7 @@ class UwaziConnectFlowViewModel : ViewModel() {
                 _settings.postValue(Pair(it.serverName, list))
             }
             ) { throwable: Throwable? ->
-                FirebaseCrashlytics.getInstance().recordException(
+                CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
                 )
