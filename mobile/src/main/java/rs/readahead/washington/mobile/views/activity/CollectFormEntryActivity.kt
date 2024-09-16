@@ -56,8 +56,8 @@ import rs.readahead.washington.mobile.views.fragment.forms.SubmitFormsViewModel
 import rs.readahead.washington.mobile.views.fragment.forms.viewpager.OUTBOX_LIST_PAGE_INDEX
 import rs.readahead.washington.mobile.views.fragment.recorder.MicFragment
 import rs.readahead.washington.mobile.views.fragment.uwazi.SharedLiveData
-import rs.readahead.washington.mobile.views.fragment.uwazi.viewpager.SUBMITTED_LIST_PAGE_INDEX
 import rs.readahead.washington.mobile.views.fragment.uwazi.viewpager.DRAFT_LIST_PAGE_INDEX
+import rs.readahead.washington.mobile.views.fragment.uwazi.viewpager.SUBMITTED_LIST_PAGE_INDEX
 import rs.readahead.washington.mobile.views.interfaces.ICollectEntryInterface
 import rs.readahead.washington.mobile.views.interfaces.IMainNavigationInterface
 import timber.log.Timber
@@ -357,9 +357,10 @@ class CollectFormEntryActivity : MetadataActivity(), ICollectEntryInterface,IMai
     }*/
     @NeedsPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     fun startPermissionProcess() {
-        manageLocationSettings(
-            C.GPS_PROVIDER
-        ) {}
+        checkLocationSettings(C.GPS_PROVIDER) {}
+        /* manageLocationSettings(
+             C.GPS_PROVIDER
+         ) {}*/
     }
 
     @OnShowRationale(Manifest.permission.ACCESS_FINE_LOCATION)

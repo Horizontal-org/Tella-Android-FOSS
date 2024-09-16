@@ -17,7 +17,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.otaliastudios.cameraview.size.SizeSelector;
+//import com.otaliastudios.cameraview.size.SizeSelector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,6 @@ import rs.readahead.washington.mobile.domain.entity.Server;
 import rs.readahead.washington.mobile.domain.entity.reports.TellaReportServer;
 import rs.readahead.washington.mobile.domain.entity.collect.CollectFormInstanceStatus;
 import rs.readahead.washington.mobile.domain.entity.ServerType;
-import rs.readahead.washington.mobile.presentation.entity.VideoResolutionOption;
 import rs.readahead.washington.mobile.views.custom.CameraPreviewAnonymousButton;
 
 
@@ -285,10 +284,10 @@ public class DialogsUtil {
     }
 
     public interface VideoSizeConsumer {
-        void accept(SizeSelector size);
+    //    void accept(SizeSelector size);
     }
 
-    public static AlertDialog showVideoResolutionDialog(Context context, VideoSizeConsumer consumer, VideoResolutionManager videoResolutionManager) {
+  /*  public static AlertDialog showVideoResolutionDialog(Context context, VideoSizeConsumer consumer, VideoResolutionManager videoResolutionManager) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.BrightBackgroundDarkLettersDialogTheme);
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -325,7 +324,7 @@ public class DialogsUtil {
         alertDialog.show();
 
         return alertDialog;
-    }
+    }*/
 
     public interface autoUploadServerConsumer {
         void accept(Server server);

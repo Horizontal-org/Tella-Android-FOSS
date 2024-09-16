@@ -18,10 +18,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GoogleApiAvailability;
+/*import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.security.ProviderInstaller;
+import com.google.android.gms.security.ProviderInstaller;*/
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.jetbrains.annotations.NotNull;
@@ -253,7 +253,7 @@ public class CollectServerDialogFragment extends AppCompatDialogFragment impleme
 
     private void checkServer(@NonNull CollectServer server,  boolean connectionRequired) {
         // lets go with sync solution as this will not influence UX too much here
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1 &&
+      /*  if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1 &&
                 !securityProviderUpgradeAttempted && getContext() != null) {
             try {
                 ProviderInstaller.installIfNeeded(getContext());
@@ -265,7 +265,7 @@ public class CollectServerDialogFragment extends AppCompatDialogFragment impleme
             } catch (GooglePlayServicesNotAvailableException e) {
                 Timber.d(e);
             }
-        }
+        }*/
 
         if (presenter != null) {
             presenter.checkServer(server, connectionRequired);

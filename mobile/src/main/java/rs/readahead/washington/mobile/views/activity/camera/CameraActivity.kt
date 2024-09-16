@@ -12,19 +12,17 @@ import android.view.OrientationEventListener
 import android.view.View
 import android.widget.ImageView
 import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.google.gson.Gson
 import com.hzontal.tella_vault.VaultFile
 import com.hzontal.tella_vault.filter.FilterType
 import com.hzontal.utils.MediaFile
-import com.otaliastudios.cameraview.CameraException
+/*import com.otaliastudios.cameraview.CameraException
 import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.CameraOptions
 import com.otaliastudios.cameraview.CameraView
@@ -36,7 +34,7 @@ import com.otaliastudios.cameraview.controls.Grid
 import com.otaliastudios.cameraview.controls.Mode
 import com.otaliastudios.cameraview.gesture.Gesture
 import com.otaliastudios.cameraview.gesture.GestureAction
-import com.otaliastudios.cameraview.size.SizeSelector
+import com.otaliastudios.cameraview.size.SizeSelector*/
 import dagger.hilt.android.AndroidEntryPoint
 import org.hzontal.shared_ui.bottomsheet.BottomSheetUtils
 import org.hzontal.shared_ui.utils.DialogUtils
@@ -45,13 +43,10 @@ import rs.readahead.washington.mobile.R
 import rs.readahead.washington.mobile.bus.event.CaptureEvent
 import rs.readahead.washington.mobile.data.sharedpref.Preferences
 import rs.readahead.washington.mobile.databinding.ActivityCameraBinding
-import rs.readahead.washington.mobile.media.MediaFileHandler
 import rs.readahead.washington.mobile.mvp.contract.IMetadataAttachPresenterContract
 import rs.readahead.washington.mobile.mvp.presenter.MetadataAttacher
 import rs.readahead.washington.mobile.mvvm.viewmodel.TellaFileUploadSchedulerViewModel
 import rs.readahead.washington.mobile.util.C
-import rs.readahead.washington.mobile.util.DialogsUtil
-import rs.readahead.washington.mobile.util.VideoResolutionManager
 import rs.readahead.washington.mobile.views.activity.MainActivity
 import rs.readahead.washington.mobile.views.activity.MetadataActivity
 import rs.readahead.washington.mobile.views.activity.viewer.PhotoViewerActivity
@@ -67,7 +62,7 @@ import java.io.File
 
 @AndroidEntryPoint
 class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IView {
-    private lateinit var cameraView: CameraView
+    //private lateinit var cameraView: CameraView
     private lateinit var gridButton: CameraGridButton
     private lateinit var switchButton: CameraSwitchButton
     private lateinit var flashButton: CameraFlashButton
@@ -86,12 +81,12 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
     private var intentMode: IntentMode? = null
     private var videoRecording = false
     private var progressDialog: ProgressDialog? = null
-    private lateinit var mOrientationEventListener: OrientationEventListener
+    private var mOrientationEventListener: OrientationEventListener? = null
     private var zoomLevel = 0
     private var capturedMediaFile: VaultFile? = null
     private var lastMediaFile: VaultFile? = null
     private var videoQualityDialog: AlertDialog? = null
-    private var videoResolutionManager: VideoResolutionManager? = null
+   // private var videoResolutionManager: VideoResolutionManager? = null
     private var lastClickTime = System.currentTimeMillis()
     private var currentRootParent: String? = null
     private lateinit var binding: ActivityCameraBinding
@@ -176,9 +171,9 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
 
     override fun onResume() {
         super.onResume()
-        mOrientationEventListener.enable()
+       // mOrientationEventListener.enable()
         startLocationMetadataListening()
-        cameraView.open()
+        //cameraView.open()
         setVideoQuality()
         mSeekBar.progress = zoomLevel
         setCameraZoom()
@@ -194,18 +189,18 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
     override fun onPause() {
         super.onPause()
         stopLocationMetadataListening()
-        mOrientationEventListener.disable()
+      //  mOrientationEventListener.disable()
         if (videoRecording) {
             captureButton.performClick()
         }
-        cameraView.close()
+      //  cameraView.close()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         hideProgressDialog()
         hideVideoResolutionDialog()
-        cameraView.destroy()
+      //  cameraView.destroy()
     }
 
     @Deprecated("Deprecated in Java")
@@ -382,7 +377,7 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
             val mgr = getSystemService(AUDIO_SERVICE) as AudioManager
             mgr.setStreamMute(AudioManager.STREAM_SYSTEM, true)
         }
-        if (cameraView.mode == Mode.PICTURE) {
+       /* if (cameraView.mode == Mode.PICTURE) {
             cameraView.takePicture()
         } else {
             gridButton.visibility = if (videoRecording) View.VISIBLE else View.GONE
@@ -407,7 +402,7 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
                 switchButton.visibility = View.GONE
                 resolutionButton.visibility = View.GONE
             }
-        }
+        }*/
     }
 
     private fun onPhotoClicked() {
@@ -417,16 +412,16 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
         if (System.currentTimeMillis() - lastClickTime < CLICK_MODE_DELAY) {
             return
         }
-        if (cameraView.mode == Mode.PICTURE) {
+      /*  if (cameraView.mode == Mode.PICTURE) {
             return
         }
         if (cameraView.flash == Flash.TORCH) {
             cameraView.flash = Flash.AUTO
-        }
+        }*/
         setPhotoActive()
         captureButton.displayPhotoButton()
         captureButton.contentDescription = context.getString(R.string.Uwazi_WidgetMedia_Take_Photo)
-        cameraView.mode = Mode.PICTURE
+       // cameraView.mode = Mode.PICTURE
         mode = CameraMode.PHOTO
         resetZoom()
         lastClickTime = System.currentTimeMillis()
@@ -439,10 +434,10 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
         if (System.currentTimeMillis() - lastClickTime < CLICK_MODE_DELAY) {
             return
         }
-        if (cameraView.mode == Mode.VIDEO) {
+      /*  if (cameraView.mode == Mode.VIDEO) {
             return
         }
-        cameraView.mode = Mode.VIDEO
+        cameraView.mode = Mode.VIDEO*/
         turnFlashDown()
         captureButton.displayVideoButton()
         captureButton.contentDescription = context.getString(R.string.Uwazi_WidgetMedia_Take_Video)
@@ -453,7 +448,7 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
     }
 
     private fun onGridClicked() {
-        if (cameraView.grid == Grid.DRAW_3X3) {
+      /*  if (cameraView.grid == Grid.DRAW_3X3) {
             cameraView.grid = Grid.OFF
             gridButton.displayGridOff()
             gridButton.contentDescription = getString(R.string.action_show_gridview)
@@ -461,22 +456,22 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
             cameraView.grid = Grid.DRAW_3X3
             gridButton.displayGridOn()
             gridButton.contentDescription = getString(R.string.action_hide_gridview)
-        }
+        }*/
     }
 
     fun onSwitchClicked() {
-        if (cameraView.facing == Facing.BACK) {
+    /*    if (cameraView.facing == Facing.BACK) {
             switchCamera(Facing.FRONT, R.string.action_switch_to_back_camera)
         } else {
             switchCamera(Facing.BACK, R.string.action_switch_to_front_camera)
-        }
+        }*/
     }
 
-    private fun switchCamera(facing: Facing, contentDescriptionResId: Int) {
+    /*private fun switchCamera(facing: Facing, contentDescriptionResId: Int) {
         cameraView.facing = facing
         switchButton.displayCamera(facing)
         switchButton.contentDescription = getString(contentDescriptionResId)
-    }
+    }*/
 
     private fun onPreviewClicked() {
         val intent: Intent? = createIntentForMediaFile()
@@ -518,15 +513,15 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
     }
 
     fun chooseVideoResolution() {
-        if (videoResolutionManager != null) {
-            videoQualityDialog = DialogsUtil.showVideoResolutionDialog(
-                this, { videoSize: SizeSelector -> setVideoSize(videoSize) }, videoResolutionManager
-            )
-        }
+        /* if (videoResolutionManager != null) {
+             videoQualityDialog = DialogsUtil.showVideoResolutionDialog(
+                 this, { videoSize: SizeSelector -> setVideoSize(videoSize) }, videoResolutionManager
+             )
+        }*/
     }
 
     private fun setCameraZoom() {
-        cameraView.zoom = zoomLevel.toFloat() / 100
+      /*  cameraView.zoom = zoomLevel.toFloat() / 100*/
     }
 
     private fun maybeStopVideoRecording(): Boolean {
@@ -550,7 +545,7 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
     }
 
     private fun setupCameraView() {
-        if (mode == CameraMode.PHOTO) {
+     /*   if (mode == CameraMode.PHOTO) {
             setCameraMode(Mode.PICTURE)
             displayPhotoCaptureButton()
         } else {
@@ -608,13 +603,13 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
-        })
+        })*/
     }
 
     /* handle the behavior of setting the camera mode.*/
-    private fun setCameraMode(mode: Mode) {
+  /*  private fun setCameraMode(mode: Mode) {
         cameraView.mode = mode
-    }
+    }*/
 
     /* handle display settings for the photo capture button.*/
     private fun displayPhotoCaptureButton() {
@@ -623,29 +618,29 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
     }
 
     private fun setupCameraModeButton() {
-        if (cameraView.mode == Mode.PICTURE) {
+    /*    if (cameraView.mode == Mode.PICTURE) {
             setPhotoActive()
         } else {
             setVideoActive()
-        }
+        }*/
     }
 
     private fun setUpCameraGridButton() {
-        if (cameraView.grid == Grid.DRAW_3X3) {
+     /*   if (cameraView.grid == Grid.DRAW_3X3) {
             gridButton.displayGridOn()
             gridButton.contentDescription = getString(R.string.action_hide_gridview)
         } else {
             gridButton.displayGridOff()
             gridButton.contentDescription = getString(R.string.action_show_gridview)
-        }
+        }*/
     }
 
     private fun setupCameraSwitchButton() {
-        if (cameraView.facing == Facing.FRONT) {
+      /*  if (cameraView.facing == Facing.FRONT) {
             switchCamera(Facing.FRONT, R.string.action_switch_to_back_camera)
         } else {
             switchCamera(Facing.BACK, R.string.action_switch_to_front_camera)
-        }
+        }*/
     }
 
     private fun setupImagePreview() {
@@ -654,7 +649,7 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
         }
     }
 
-    private fun setupCameraFlashButton(supported: Collection<Flash>) {
+   /* private fun setupCameraFlashButton(supported: Collection<Flash>) {
         when (cameraView.flash) {
             Flash.AUTO -> {
                 flashButton.displayFlashAuto()
@@ -690,11 +685,11 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
                 }
             }
         }
-    }
+    }*/
 
     private fun turnFlashDown() {
-        flashButton.displayFlashOff()
-        cameraView.flash = Flash.OFF
+      /*  flashButton.displayFlashOff()
+        cameraView.flash = Flash.OFF*/
     }
 
     private fun hideProgressDialog() {
@@ -728,9 +723,9 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
         photoLine.visibility = View.GONE
         videoModeText.alpha = 1f
         photoModeText.alpha = if (modeLocked) 0.1f else 0.5f
-        if (videoResolutionManager != null) {
+       /* if (videoResolutionManager != null) {
             resolutionButton.visibility = View.VISIBLE
-        }
+        }*/
     }
 
     private fun hideVideoResolutionDialog() {
@@ -741,16 +736,16 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
     }
 
     private fun setVideoQuality() {
-        if (videoResolutionManager != null) {
+      /*  if (videoResolutionManager != null) {
             cameraView.setVideoSize(videoResolutionManager!!.videoSize)
-        }
+        }*/
     }
 
-    private fun setVideoSize(videoSize: SizeSelector) {
+  /*  private fun setVideoSize(videoSize: SizeSelector) {
         cameraView.setVideoSize(videoSize)
         cameraView.close()
         cameraView.open()
-    }
+    }*/
 
     private fun scheduleFileUpload(vaultFile: VaultFile) {
         if (Preferences.isAutoUploadEnabled()) {
@@ -761,11 +756,11 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
     }
 
     private fun setupShutterSound() {
-        cameraView.playSounds = !Preferences.isShutterMute()
+       // cameraView.playSounds = !Preferences.isShutterMute()
     }
 
     private fun initView() {
-        cameraView = binding.camera
+      //  cameraView = binding.camera
         gridButton = binding.gridButton
         switchButton = binding.switchButton
         flashButton = binding.flashButton

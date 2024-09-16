@@ -25,7 +25,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.common.api.ApiException;
+/*import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -37,7 +37,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Task;*/
 import com.hzontal.tella_vault.Metadata;
 import com.hzontal.tella_vault.MyLocation;
 import com.hzontal.tella_vault.VaultFile;
@@ -77,8 +77,8 @@ public abstract class MetaDataFragment extends BaseFragment implements
     private SensorManager mSensorManager;
     private Sensor mLight;
     private Sensor mAmbientTemperature;
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private LocationCallback locationCallback;
+    //private FusedLocationProviderClient fusedLocationProviderClient;
+   // private LocationCallback locationCallback;
     private WifiManager wifiManager;
     private BroadcastReceiver wifiScanResultReceiver;
     private boolean locationListenerRegistered = false;
@@ -112,8 +112,8 @@ public abstract class MetaDataFragment extends BaseFragment implements
 
         // Location
         locationManager = (LocationManager) baseActivity.getSystemService(Context.LOCATION_SERVICE);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(baseActivity);
-        locationCallback = new MetadataLocationCallback();
+        //fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(baseActivity);
+       // locationCallback = new MetadataLocationCallback();
 
         // Wifi
         wifiManager = (WifiManager) baseActivity.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -175,7 +175,7 @@ public abstract class MetaDataFragment extends BaseFragment implements
         }
 
         // google services way..
-        fusedLocationProviderClient.requestLocationUpdates(createLocationRequest(), locationCallback, null);
+       // fusedLocationProviderClient.requestLocationUpdates(createLocationRequest(), locationCallback, null);
         locationListenerRegistered = true;
 
         // get last known location to start with..
@@ -192,12 +192,12 @@ public abstract class MetaDataFragment extends BaseFragment implements
             return;
         }
 
-        fusedLocationProviderClient.getLastLocation()
+       /* fusedLocationProviderClient.getLastLocation()
                 .addOnSuccessListener(location -> {
                     if (location != null) {
                         acceptBetterLocation(location);
                     }
-                });
+                });*/
     }
 
     private synchronized void startWifiListening() {
@@ -258,8 +258,8 @@ public abstract class MetaDataFragment extends BaseFragment implements
             return;
         }
 
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-                .addOnCompleteListener(task -> locationListenerRegistered = false);
+      /*  fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+                .addOnCompleteListener(task -> locationListenerRegistered = false);*/
     }
 
     private synchronized void stopWifiListening() {
@@ -325,13 +325,13 @@ public abstract class MetaDataFragment extends BaseFragment implements
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
-    private LocationRequest createLocationRequest() {
+   /* private LocationRequest createLocationRequest() {
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(LOCATION_REQUEST_INTERVAL);
         locationRequest.setFastestInterval(LOCATION_REQUEST_INTERVAL);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         return locationRequest;
-    }
+    }*/
 
     protected void checkLocationSettings(final int requestCode, final MetadataActivity.LocationSettingsCheckDoneListener listener) {
         if (isFineLocationPermissionDenied()) {
@@ -347,7 +347,7 @@ public abstract class MetaDataFragment extends BaseFragment implements
     }
 
     protected void manageLocationSettings(final int requestCode, final MetadataActivity.LocationSettingsCheckDoneListener listener) {
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+     /*   LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(createLocationRequest());
 
         SettingsClient client = LocationServices.getSettingsClient(baseActivity);
@@ -373,7 +373,7 @@ public abstract class MetaDataFragment extends BaseFragment implements
                     }
                     break;
             }
-        });
+        });*/
     }
 
     private void showGpsMetadataDialog(final int requestCode, final MetadataActivity.LocationSettingsCheckDoneListener listener) {
@@ -562,13 +562,13 @@ public abstract class MetaDataFragment extends BaseFragment implements
         void onContinue();
     }
 
-    private static class MetadataLocationCallback extends LocationCallback {
+   /* private static class MetadataLocationCallback extends LocationCallback {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             Location location = locationResult.getLastLocation();
             acceptBetterLocation(location);
         }
-    }
+    }*/
 
     public static boolean isAirplaneModeOn(Context context) {
         return Settings.Global.getInt(context.getContentResolver(),
