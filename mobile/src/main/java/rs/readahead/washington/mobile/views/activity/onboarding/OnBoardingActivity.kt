@@ -350,5 +350,4 @@ class OnBoardingActivity : BaseActivity(), OnBoardActivityInterface,
 
     }
 
-
 }

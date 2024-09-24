@@ -51,7 +51,7 @@ public class TellaFileUploadSchedulePresenter implements ITellaFileUploadSchedul
                     TellaUploadJob.scheduleJob();
                     view.onMediaFilesUploadScheduled();
                 }, throwable -> {
-                    CrashlyticsUtil.Companion.handleThrowable(throwable);
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onMediaFilesUploadScheduleError(throwable);
                 })
         );
@@ -69,7 +69,7 @@ public class TellaFileUploadSchedulePresenter implements ITellaFileUploadSchedul
                     TellaUploadJob.scheduleJob();
                     view.onMediaFilesUploadScheduled();
                 }, throwable -> {
-                    CrashlyticsUtil.Companion.handleThrowable(throwable);
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onMediaFilesUploadScheduleError(throwable);
                 })
         );
@@ -94,7 +94,7 @@ public class TellaFileUploadSchedulePresenter implements ITellaFileUploadSchedul
                     MyApplication.getMainKeyHolder().setTimeout(LifecycleMainKey.NO_TIMEOUT);
                     view.onMediaFilesUploadScheduled();
                 }, throwable -> {
-                    CrashlyticsUtil.Companion.handleThrowable(throwable);
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onMediaFilesUploadScheduleError(throwable);
                 })
         );

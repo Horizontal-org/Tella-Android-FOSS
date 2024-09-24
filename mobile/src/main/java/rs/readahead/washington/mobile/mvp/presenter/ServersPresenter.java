@@ -32,7 +32,7 @@ public class ServersPresenter implements IServersPresenterContract.IPresenter {
                 .subscribe(
                         () -> view.onServersDeleted(),
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onServersDeletedError(throwable);
                         }
                 )

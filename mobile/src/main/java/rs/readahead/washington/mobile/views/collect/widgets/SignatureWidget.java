@@ -127,7 +127,7 @@ public class SignatureWidget extends MediaFileBinaryWidget implements ICollectAt
                     C.MEDIA_FILE_ID
             );
         } catch (Exception e) {
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
             FormController.getActive().setIndexWaitingForData(null);
         }
     }
@@ -200,7 +200,7 @@ public class SignatureWidget extends MediaFileBinaryWidget implements ICollectAt
                     .putExtra(PhotoViewerActivity.VIEW_PHOTO, vaultFile)
                     .putExtra(PhotoViewerActivity.NO_ACTIONS, true));
         } catch (Exception e) {
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
         }
     }
 

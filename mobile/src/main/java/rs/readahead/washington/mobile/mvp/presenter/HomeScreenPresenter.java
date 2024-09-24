@@ -78,7 +78,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                 .subscribe(
                         num -> view.onCountTUServersEnded(num),
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onCountTUServersFailed(throwable);
                         }
                 )
@@ -94,7 +94,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                 .subscribe(
                         num -> view.onCountCollectServersEnded(num),
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onCountCollectServersFailed(throwable);
                         }
                 )
@@ -110,7 +110,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                 .subscribe(
                         num -> view.onCountUwaziServersEnded(num),
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onCountUwaziServersFailed(throwable);
                         }
                 )

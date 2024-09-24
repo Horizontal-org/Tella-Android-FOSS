@@ -33,7 +33,7 @@ public class TellaUploadDialogPresenter implements ITellaUploadDialogPresenterCo
                         DataSource::listTellaUploadServers)
                 .subscribe(list -> view.onServersLoaded(list),
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onServersLoadError(throwable);
                         })
         );

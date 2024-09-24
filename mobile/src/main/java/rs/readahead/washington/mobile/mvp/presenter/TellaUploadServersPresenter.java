@@ -39,7 +39,7 @@ public class TellaUploadServersPresenter implements ITellaUploadServersPresenter
                 .doFinally(() -> view.hideLoading())
                 .subscribe(list -> view.onTUServersLoaded(list),
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onLoadTUServersError(throwable);
                         })
         );
@@ -55,7 +55,7 @@ public class TellaUploadServersPresenter implements ITellaUploadServersPresenter
                 .doFinally(() -> view.hideLoading())
                 .subscribe(server1 -> view.onCreatedTUServer(server1),
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onCreateTUServerError(throwable);
                         })
         );
@@ -74,7 +74,7 @@ public class TellaUploadServersPresenter implements ITellaUploadServersPresenter
                             view.onUpdatedTUServer(server1);
                         },
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onUpdateTUServerError(throwable);
                         })
         );
@@ -92,7 +92,7 @@ public class TellaUploadServersPresenter implements ITellaUploadServersPresenter
                             view.onRemovedTUServer(server);
                         },
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onRemoveTUServerError(throwable);
                         })
         );

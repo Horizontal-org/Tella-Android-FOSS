@@ -35,7 +35,7 @@ public class MediaImportPresenter implements IMediaImportPresenterContract.IPres
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(vaultFile -> view.onMediaFileImported(vaultFile), throwable -> {
-                    CrashlyticsUtil.Companion.handleThrowable(throwable);
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onImportError(throwable);
                 })
         );
@@ -49,7 +49,7 @@ public class MediaImportPresenter implements IMediaImportPresenterContract.IPres
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(mediaHolder -> view.onMediaFileImported(mediaHolder), throwable -> {
-                    CrashlyticsUtil.Companion.handleThrowable(throwable);
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onImportError(throwable);
                 })
         );
@@ -83,7 +83,7 @@ public class MediaImportPresenter implements IMediaImportPresenterContract.IPres
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(vaultFile -> view.onMediaFileImported(vaultFile), throwable -> {
-                    CrashlyticsUtil.Companion.handleThrowable(throwable);
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onImportError(throwable);
                 })
         );

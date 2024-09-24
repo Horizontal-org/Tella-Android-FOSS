@@ -110,7 +110,7 @@ public class SignatureActivity extends BaseLockActivity implements
                 presenter.addPngImage(stream.toByteArray());
             }
         } catch (Exception exception) {
-            CrashlyticsUtil.Companion.handleThrowable(exception);
+            CrashlyticsUtil.handleThrowable(exception);
         }
     }
 

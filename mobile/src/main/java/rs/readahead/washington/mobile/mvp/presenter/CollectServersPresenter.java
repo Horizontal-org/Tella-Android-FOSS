@@ -38,7 +38,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                 .doFinally(() -> view.hideLoading())
                 .subscribe(list -> view.onServersLoaded(list),
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onLoadServersError(throwable);
                         })
         );
@@ -54,7 +54,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                 .doFinally(() -> view.hideLoading())
                 .subscribe(server1 -> view.onCreatedServer(server1),
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onCreateCollectServerError(throwable);
                         })
         );
@@ -73,7 +73,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                             view.onUpdatedServer(server1);
                         },
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onUpdateServerError(throwable);
                         })
         );
@@ -91,7 +91,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                             view.onRemovedServer(server);
                         },
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onRemoveServerError(throwable);
                         })
         );

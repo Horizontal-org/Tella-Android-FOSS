@@ -41,7 +41,7 @@ public class AudioPlayPresenter implements
                         },
 
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onMediaFileError(throwable);
                         }));
     }

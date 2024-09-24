@@ -1,12 +1,9 @@
 package org.hzontal.shared_ui.utils
 
-class CrashlyticsUtil {
+object CrashlyticsUtil {
 
-    companion object {
-        fun handleThrowable(throwable: Throwable?) {
-
-            throwable?.let { /*CrashlyticsUtil.handleThrowable(throwable)*/ }
-        }
+    @JvmStatic
+    fun handleThrowable(throwable: Throwable?) {
+        throwable?.let { /*CrashlyticsUtil.handleThrowable(throwable)*/ }
     }
-
 }

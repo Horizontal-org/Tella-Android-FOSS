@@ -32,7 +32,7 @@ public class SignaturePresenter implements ISignaturePresenterContract.IPresente
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally(() -> view.onAddingEnd())
                         .subscribe(mediaFile -> view.onAddSuccess(mediaFile), throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onAddError(throwable);
                         })
         );

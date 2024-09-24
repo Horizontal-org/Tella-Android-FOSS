@@ -240,7 +240,7 @@ public class FormParser implements IFormParserContract.IFormParser {
     }
 
     private void viewFormParseError(Throwable throwable) {
-        CrashlyticsUtil.Companion.handleThrowable(throwable);
+        CrashlyticsUtil.handleThrowable(throwable);
         view.formParseError(throwable);
     }
 

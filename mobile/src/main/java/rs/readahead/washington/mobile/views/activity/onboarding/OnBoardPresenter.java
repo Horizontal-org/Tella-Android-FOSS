@@ -36,7 +36,7 @@ public class OnBoardPresenter implements IOnBoardPresenterContract.IPresenter {
                 .doFinally(() -> view.hideLoading())
                 .subscribe(server1 -> view.onCreatedTUServer(server1),
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onCreateTUServerError(throwable);
                         })
         );
@@ -53,7 +53,7 @@ public class OnBoardPresenter implements IOnBoardPresenterContract.IPresenter {
                 .doFinally(() -> view.hideLoading())
                 .subscribe(server1 -> view.onCreatedServer(server1),
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onCreateCollectServerError(throwable);
                         })
         );
@@ -68,7 +68,7 @@ public class OnBoardPresenter implements IOnBoardPresenterContract.IPresenter {
                         dataSource -> dataSource.createUWAZIServer(server))
                 .subscribe(server1 -> view.onCreatedUwaziServer(server1),
                         throwable -> {
-                            CrashlyticsUtil.Companion.handleThrowable(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onCreateCollectServerError(throwable);
                         })
         );

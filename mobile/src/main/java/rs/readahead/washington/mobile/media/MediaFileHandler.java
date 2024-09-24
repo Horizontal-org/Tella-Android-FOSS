@@ -93,7 +93,7 @@ public class MediaFileHandler {
             return FileUtil.mkdirs(tmpPath) && ret;
         } catch (Exception e) {
             Timber.e(e);
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
             return false;
         }
     }
@@ -200,7 +200,7 @@ public class MediaFileHandler {
                 MediaScannerConnection.scanFile(context, new String[]{file.toString()}, null, null);
             }
         } catch (VaultException e) {
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
         } finally {
             FileUtil.close(is);
             FileUtil.close(os);
@@ -392,7 +392,7 @@ public class MediaFileHandler {
                     .build(parentID)
                     .subscribeOn(Schedulers.io());
         } catch (Exception e) {
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
             Timber.e(e, MediaFileHandler.class.getName());
 
             throw e;
@@ -422,7 +422,7 @@ public class MediaFileHandler {
                     .subscribeOn(Schedulers.io());
 
         } catch (Exception e) {
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
             Timber.e(e, MediaFileHandler.class.getName());
 
             throw e;
@@ -465,7 +465,7 @@ public class MediaFileHandler {
                         .blockingGet();
             }
         } catch (IOException e) {
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
             Timber.e(e, MediaFileHandler.class.getName());
 
             throw e;

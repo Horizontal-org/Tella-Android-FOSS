@@ -78,10 +78,10 @@ public class CollectBlankFormListRefreshPresenter implements
                 .subscribe(listFormResult -> {
                     // log errors if any in result..
                     for (IErrorBundle error : listFormResult.getErrors()) {
-                        CrashlyticsUtil.Companion.handleThrowable(error.getException());
+                        CrashlyticsUtil.handleThrowable(error.getException());
                     }
                 }, throwable -> {
-                    CrashlyticsUtil.Companion.handleThrowable(throwable);
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onRefreshBlankFormsError(throwable);
                 })
         );

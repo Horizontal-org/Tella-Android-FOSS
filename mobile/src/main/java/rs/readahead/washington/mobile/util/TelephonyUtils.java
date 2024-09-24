@@ -39,7 +39,7 @@ public class TelephonyUtils {
                 addNew(list, cellInfoToString18(cellInfo));
             }
         } catch (Exception e) {
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
         }
 
         return list;

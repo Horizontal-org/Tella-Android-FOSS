@@ -58,7 +58,7 @@ public class CheckTUSServerPresenter implements
                         view.onServerCheckFailure(uploadProgressInfo.status);
                     }
                 }, throwable -> {
-                    CrashlyticsUtil.Companion.handleThrowable(throwable);
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onServerCheckError(throwable);
                 })
         );

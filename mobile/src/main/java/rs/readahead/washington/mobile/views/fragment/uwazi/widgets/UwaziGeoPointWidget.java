@@ -236,7 +236,7 @@ public class UwaziGeoPointWidget extends UwaziQuestionWidget implements ILocatio
                     C.SELECTED_LOCATION
             );
         } catch (Exception e) {
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
         }
     }
 

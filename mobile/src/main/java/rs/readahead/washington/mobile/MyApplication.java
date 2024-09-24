@@ -189,7 +189,7 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
             @Override
             public void accept(Throwable throwable) {
                 Timber.d(throwable, getClass().getName());
-                CrashlyticsUtil.Companion.handleThrowable(throwable);
+                CrashlyticsUtil.handleThrowable(throwable);
             }
         });
         bus = TellaBus.create();
@@ -291,7 +291,7 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
 
     @Override
     public void onUnSuccessfulUnlock(String tag, Throwable throwable) {
-        // CrashlyticsUtil.Companion.handleThrowable(throwable);
+        // CrashlyticsUtil.handleThrowable(throwable);
     }
 
     @Override

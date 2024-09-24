@@ -60,7 +60,7 @@ public class CheckOdkServerPresenter implements
                         view.onServerCheckSuccess(server);
                     }
                 }, throwable -> {
-                    CrashlyticsUtil.Companion.handleThrowable(throwable);
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onServerCheckError(throwable);
                 })
         );

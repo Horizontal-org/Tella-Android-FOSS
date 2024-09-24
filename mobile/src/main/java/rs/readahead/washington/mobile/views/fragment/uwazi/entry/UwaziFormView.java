@@ -191,7 +191,7 @@ public class UwaziFormView extends LinearLayout {
                 try {
                     return q.setBinaryData(data);
                 } catch (Exception e) {
-                    CrashlyticsUtil.Companion.handleThrowable(e);
+                    CrashlyticsUtil.handleThrowable(e);
                     Toast.makeText(getContext(), "Error attaching data", Toast.LENGTH_LONG).show();
                 } finally {
                     q.waitingForAData = false;

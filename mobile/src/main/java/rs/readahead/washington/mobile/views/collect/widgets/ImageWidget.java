@@ -122,7 +122,7 @@ public class ImageWidget extends MediaFileBinaryWidget {
                     C.MEDIA_FILE_ID
             );
         } catch (Exception e) {
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
             FormController.getActive().setIndexWaitingForData(null);
         }
     }
@@ -205,7 +205,7 @@ public class ImageWidget extends MediaFileBinaryWidget {
                     C.MEDIA_FILE_ID);
 
         } catch (Exception e) {
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
             FormController.getActive().setIndexWaitingForData(null);
         }
     }

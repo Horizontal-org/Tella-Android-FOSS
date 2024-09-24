@@ -29,7 +29,7 @@ public class CameraPresenter implements ICameraPresenterContract.IPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onAddingEnd())
                 .subscribe(bundle -> view.onAddSuccess(bundle.blockingGet()), throwable -> {
-                    CrashlyticsUtil.Companion.handleThrowable(throwable);
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onAddError(throwable);
                 })
         );
@@ -43,7 +43,7 @@ public class CameraPresenter implements ICameraPresenterContract.IPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onAddingEnd())
                 .subscribe(vaultFile -> view.onAddSuccess(vaultFile), throwable -> {
-                    CrashlyticsUtil.Companion.handleThrowable(throwable);
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onAddError(throwable);
                 })
         );

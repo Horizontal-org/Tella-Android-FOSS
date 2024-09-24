@@ -26,7 +26,7 @@ public class MetadataAttacher implements IMetadataAttachPresenterContract.IPrese
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updatedVaultFile -> view.onMetadataAttached(updatedVaultFile), throwable -> {
-                    CrashlyticsUtil.Companion.handleThrowable(throwable);
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onMetadataAttachError(throwable);
                 }));
     }

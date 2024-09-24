@@ -154,7 +154,7 @@ public class UwaziImageWidget extends UwaziFileBinaryWidget {
                     C.MEDIA_FILE_ID);
 
         } catch (Exception e) {
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
         }
     }
 
@@ -169,7 +169,7 @@ public class UwaziImageWidget extends UwaziFileBinaryWidget {
                     C.MEDIA_FILE_ID
             );
         } catch (Exception e) {
-            CrashlyticsUtil.Companion.handleThrowable(e);
+            CrashlyticsUtil.handleThrowable(e);
         }
     }
 
