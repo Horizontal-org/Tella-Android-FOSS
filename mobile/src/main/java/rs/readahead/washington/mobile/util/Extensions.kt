@@ -13,6 +13,7 @@ import android.view.accessibility.AccessibilityManager
 import android.widget.ImageView
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
@@ -142,5 +143,9 @@ fun Context.isScreenReaderOn(): Boolean {
 
 fun NavController.navigateSafe(destinationId: Int, bundle: Bundle? = null) {
     navigate(destinationId, bundle)
+}
+
+fun Window.fitSystemWindows() {
+    WindowCompat.setDecorFitsSystemWindows(this, false)
 }
 

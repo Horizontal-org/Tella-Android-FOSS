@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:keepScreenOn="true">
+    android:keepScreenOn="true"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:background="@color/wa_black"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:background="@color/wa_black">
+        android:paddingEnd="16dp">
 
         <ImageView
             android:id="@+id/close"
             style="@style/CameraTopImageStyle"
             android:layout_alignParentStart="true"
-            android:src="@drawable/ic_close_white"
             android:clickable="true"
-            android:focusable="true"
             android:contentDescription="@string/action_cancel"
-            />
+            android:focusable="true"
+            android:src="@drawable/ic_close_white" />
 
         <rs.readahead.washington.mobile.views.custom.CameraResolutionButton
             android:id="@+id/resolutionButton"
-            android:background="@color/wa_black"
-            android:visibility="gone"
             style="@style/CameraTopImageStyle"
-            android:contentDescription="@string/action_choose_resolution"
+            android:layout_marginStart="32dp"
             android:layout_toStartOf="@id/gridButton"
-            android:layout_marginStart="32dp"/>
+            android:background="@color/wa_black"
+            android:contentDescription="@string/action_choose_resolution"
+            android:visibility="gone" />
 
         <rs.readahead.washington.mobile.views.custom.CameraGridButton
             android:id="@+id/gridButton"
@@ -43,8 +42,8 @@
         <rs.readahead.washington.mobile.views.custom.CameraSwitchButton
             android:id="@+id/switchButton"
             style="@style/CameraTopImageStyle"
-            android:layout_toStartOf="@id/flashButton"
-            android:layout_marginStart="32dp"/>
+            android:layout_marginStart="32dp"
+            android:layout_toStartOf="@id/flashButton" />
 
         <rs.readahead.washington.mobile.views.custom.CameraFlashButton
             android:id="@+id/flashButton"
@@ -59,18 +58,18 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-       <!-- <com.otaliastudios.cameraview.CameraView
-            android:id="@+id/camera"
+        <androidx.camera.view.PreviewView
+            android:id="@+id/viewFinder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:keepScreenOn="true" /> -->
+            android:keepScreenOn="true" />
 
         <rs.readahead.washington.mobile.views.custom.CameraDurationTextView
             android:id="@+id/durationView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:padding="2dp"
             android:shadowDx="2"
@@ -81,15 +80,14 @@
         <FrameLayout
             android:layout_width="32dp"
             android:layout_height="250dp"
+            android:layout_alignParentBottom="true"
             android:layout_marginStart="40dp"
             android:contentDescription="@string/action_zoom"
-            android:layout_alignParentBottom="true"
             android:orientation="vertical">
 
             <SeekBar
                 android:id="@+id/camera_zoom"
                 style="@style/CameraZoomSeekBar"
-                android:contentDescription="@string/action_zoom"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -97,7 +95,8 @@
                 android:max="100"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:rotation="270" />
+                android:rotation="270"
+                android:visibility="gone" />
         </FrameLayout>
     </RelativeLayout>
 
@@ -123,10 +122,10 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="30dp"
             android:clickable="true"
+            android:contentDescription="@string/action_open_gallery"
             android:focusable="true"
             android:padding="10dp"
             android:src="@drawable/white"
-            android:contentDescription="@string/action_open_gallery"
             app:civ_border_color="@color/wa_gray"
             app:civ_border_width="2dp" />
     </RelativeLayout>
@@ -135,9 +134,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/camera_mode_links_margin"
-        android:layout_marginBottom="@dimen/camera_mode_links_margin"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:layout_marginBottom="48dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/photo_mode"
@@ -152,11 +151,11 @@
 
             <TextView
                 android:id="@+id/photo_text"
+                style="@style/CameraModeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/CameraModeText"
                 android:text="@string/camera_tab.title_photo"
-                android:textAlignment="center"/>
+                android:textAlignment="center" />
 
             <View
                 android:id="@+id/photo_line"
@@ -176,11 +175,12 @@
 
             <TextView
                 android:id="@+id/video_text"
+                style="@style/CameraModeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/CameraModeText"
                 android:text="@string/camera_tab.title_video"
-                android:textAlignment="center"/>
+                android:textAlignment="center" />
+
             <View
                 android:id="@+id/video_line"
                 style="@style/CameraModeLine" />

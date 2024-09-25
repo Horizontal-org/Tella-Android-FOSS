@@ -77,7 +77,6 @@ public class MediaFileHandler {
     private static final String CONTENT_SCHEME = "content";
     private static final String MIME_TYPE_COLUMN = "mime_type";
 
-
     public MediaFileHandler() {
     }
 
@@ -833,5 +832,16 @@ public class MediaFileHandler {
             file.mimeType = null;
         }
         return file;
+    }
+
+    public static byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len;
+
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
     }
 }
