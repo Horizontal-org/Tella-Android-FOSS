@@ -50,19 +50,6 @@ import com.google.gson.Gson
 import com.hzontal.tella_vault.VaultFile
 import com.hzontal.tella_vault.filter.FilterType
 import com.hzontal.utils.MediaFile
-/*import com.otaliastudios.cameraview.CameraException
-import com.otaliastudios.cameraview.CameraListener
-import com.otaliastudios.cameraview.CameraOptions
-import com.otaliastudios.cameraview.CameraView
-import com.otaliastudios.cameraview.PictureResult
-import com.otaliastudios.cameraview.VideoResult
-import com.otaliastudios.cameraview.controls.Facing
-import com.otaliastudios.cameraview.controls.Flash
-import com.otaliastudios.cameraview.controls.Grid
-import com.otaliastudios.cameraview.controls.Mode
-import com.otaliastudios.cameraview.gesture.Gesture
-import com.otaliastudios.cameraview.gesture.GestureAction
-import com.otaliastudios.cameraview.size.SizeSelector*/
 import dagger.hilt.android.AndroidEntryPoint
 import org.hzontal.shared_ui.bottomsheet.BottomSheetUtils
 import org.hzontal.shared_ui.utils.DialogUtils
@@ -99,7 +86,6 @@ import kotlin.math.min
 
 @AndroidEntryPoint
 class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IView {
-    //private lateinit var cameraView: CameraView
     private lateinit var gridButton: CameraGridButton
     private lateinit var switchButton: CameraSwitchButton
     private lateinit var flashButton: CameraFlashButton
@@ -123,7 +109,6 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
     private var capturedMediaFile: VaultFile? = null
     private var lastMediaFile: VaultFile? = null
     private var videoQualityDialog: AlertDialog? = null
-   // private var videoResolutionManager: VideoResolutionManager? = null
     private var lastClickTime = System.currentTimeMillis()
     private var currentRootParent: String? = null
     private var tempFile: File? = null
@@ -238,7 +223,6 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
         if (videoRecording) {
             captureButton.performClick()
         }
-      //  cameraView.close()
     }
 
     override fun onDestroy() {
@@ -345,21 +329,6 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
         onAddError(throwable)
     }
 
-   /* private fun initListeners() {
-        val listenersMap = mapOf(binding.close to { closeCamera() },
-            captureButton to { onCaptureClicked() },
-            binding.photoMode to { onPhotoClicked() },
-            binding.videoMode to { onVideoClicked() },
-            gridButton to { onGridClicked() },
-            switchButton to { onSwitchClicked() },
-            resolutionButton to { chooseVideoResolution() },
-            previewView to { onPreviewClicked() })
-
-        listenersMap.forEach { (view, action) ->
-            view.setOnClickListener { action() }
-        }
-    }*/
-
     private fun closeCamera() {
         onBackPressed()
     }
@@ -446,10 +415,7 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
         if (System.currentTimeMillis() - lastClickTime < CLICK_MODE_DELAY) {
             return
         }
-      /*  if (cameraView.mode == Mode.VIDEO) {
-            return
-        }
-        cameraView.mode = Mode.VIDEO*/
+        startVideo()
         turnFlashDown()
         captureButton.displayVideoButton()
         captureButton.contentDescription = context.getString(R.string.Uwazi_WidgetMedia_Take_Video)
@@ -580,7 +546,7 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
             }
 
             override fun onCameraError(exception: CameraException) {
-                Timber.e(exception) //TODO Crahslytics removed
+                Timber.e(exception)
             }
 
             override fun onCameraOpened(options: CameraOptions) {
@@ -1086,7 +1052,6 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
         checkMicPermission()
         try {
             if (recording != null) {
-                //animateRecord.cancel()
                 recording?.stop()
             }
 
@@ -1161,12 +1126,6 @@ class CameraActivity : MetadataActivity(), IMetadataAttachPresenterContract.IVie
             Timber.e("No audio recording permission")
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            // return
         }
     }
 }
