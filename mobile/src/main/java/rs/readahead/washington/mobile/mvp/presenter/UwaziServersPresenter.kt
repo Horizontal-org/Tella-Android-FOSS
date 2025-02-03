@@ -10,6 +10,7 @@ import rs.readahead.washington.mobile.data.database.UwaziDataSource
 import rs.readahead.washington.mobile.data.openrosa.OpenRosaService
 import rs.readahead.washington.mobile.domain.entity.UWaziUploadServer
 import rs.readahead.washington.mobile.mvp.contract.IUWAZIServersPresenterContract
+import timber.log.Timber
 
 class UwaziServersPresenter constructor(var view: IUWAZIServersPresenterContract.IView?) :
     IUWAZIServersPresenterContract.IPresenter {

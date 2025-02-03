@@ -33,7 +33,6 @@ import rs.readahead.washington.mobile.views.activity.QuestionAttachmentActivity;
 import rs.readahead.washington.mobile.views.activity.SignatureActivity;
 import rs.readahead.washington.mobile.views.activity.viewer.PhotoViewerActivity;
 
-
 /**
  * Based on ODK SignatureWidget.
  */

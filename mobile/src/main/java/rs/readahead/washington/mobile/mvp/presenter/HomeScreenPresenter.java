@@ -21,12 +21,13 @@ import rs.readahead.washington.mobile.data.sharedpref.Preferences;
 import rs.readahead.washington.mobile.data.sharedpref.SharedPrefs;
 import rs.readahead.washington.mobile.media.MediaFileHandler;
 import rs.readahead.washington.mobile.mvp.contract.IHomeScreenPresenterContract;
+import timber.log.Timber;
 
 
 public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresenter {
     private final Context appContext;
     private IHomeScreenPresenterContract.IView view;
-    private CompositeDisposable disposable;
+    private final CompositeDisposable disposable;
     private final KeyDataSource keyDataSource;
 
     public HomeScreenPresenter(IHomeScreenPresenterContract.IView view) {

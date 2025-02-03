@@ -15,12 +15,13 @@ import rs.readahead.washington.mobile.data.database.KeyDataSource;
 import rs.readahead.washington.mobile.data.openrosa.OpenRosaService;
 import rs.readahead.washington.mobile.domain.entity.collect.CollectServer;
 import rs.readahead.washington.mobile.mvp.contract.ICollectServersPresenterContract;
+import timber.log.Timber;
 
 
 public class CollectServersPresenter implements ICollectServersPresenterContract.IPresenter {
-    private KeyDataSource keyDataSource;
+    private final KeyDataSource keyDataSource;
     private ICollectServersPresenterContract.IView view;
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     //@Inject
     public CollectServersPresenter(ICollectServersPresenterContract.IView view) {

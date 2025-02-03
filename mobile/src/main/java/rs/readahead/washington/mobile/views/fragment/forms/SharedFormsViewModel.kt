@@ -296,7 +296,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                     CrashlyticsUtil.handleThrowable(
                         throwable
                             ?: throw NullPointerException("Expression 'throwable' must not be null")
-                    )
+                    )//TODO Crahslytics removed
                     onError.postValue(throwable)
                 }
             }
@@ -339,7 +339,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                 CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
-                )
+                )//TODO Crahslytics removed
                 onError.postValue(throwable)
             }
         )
@@ -378,7 +378,7 @@ class SharedFormsViewModel @Inject constructor(private val mApplication: Applica
                 CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
-                )
+                )//TODO Crahslytics removed
                 onFormDefError.postValue(throwable)
             }
         )

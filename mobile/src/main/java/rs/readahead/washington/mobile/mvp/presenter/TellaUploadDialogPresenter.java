@@ -12,6 +12,7 @@ import rs.readahead.washington.mobile.data.database.DataSource;
 import rs.readahead.washington.mobile.data.database.KeyDataSource;
 import rs.readahead.washington.mobile.domain.entity.reports.TellaReportServer;
 import rs.readahead.washington.mobile.mvp.contract.ITellaUploadDialogPresenterContract;
+import timber.log.Timber;
 
 
 public class TellaUploadDialogPresenter implements ITellaUploadDialogPresenterContract.IPresenter {

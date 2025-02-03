@@ -26,6 +26,7 @@ import rs.readahead.washington.mobile.mvp.contract.ISignaturePresenterContract;
 import rs.readahead.washington.mobile.mvp.presenter.SignaturePresenter;
 import rs.readahead.washington.mobile.util.DialogsUtil;
 import rs.readahead.washington.mobile.views.base_ui.BaseLockActivity;
+import timber.log.Timber;
 
 
 public class SignatureActivity extends BaseLockActivity implements

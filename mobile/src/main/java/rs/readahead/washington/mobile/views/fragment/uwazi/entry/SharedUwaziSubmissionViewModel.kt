@@ -73,7 +73,7 @@ class SharedUwaziSubmissionViewModel : ViewModel() {
                 CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
-                )
+                )//TODO Crahslytics removed
                 error.postValue(throwable)
             })
     }
@@ -139,7 +139,7 @@ class SharedUwaziSubmissionViewModel : ViewModel() {
                     CrashlyticsUtil.handleThrowable(
                         throwable
                             ?: throw NullPointerException("Expression 'throwable' must not be null")
-                    )
+                    )//TODO Crahslytics removed
                     error.postValue(throwable)
                     progress.postValue(EntityStatus.SUBMISSION_ERROR)
                 })
@@ -176,7 +176,7 @@ class SharedUwaziSubmissionViewModel : ViewModel() {
                     CrashlyticsUtil.handleThrowable(
                         throwable
                             ?: throw NullPointerException("Expression 'throwable' must not be null")
-                    )
+                    )//TODO Crahslytics removed
                     error.postValue(throwable)
                     progress.postValue(EntityStatus.SUBMISSION_ERROR)
                 })
@@ -294,7 +294,7 @@ class SharedUwaziSubmissionViewModel : ViewModel() {
             }
 
         } catch (e: Exception) {
-            Timber.d(e.message ?: "Error attaching files")
+            Timber.e(e.message ?: "Error attaching files")//TODO Crahslytics removed
         }
         return listAttachments.toList()
     }

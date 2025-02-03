@@ -532,7 +532,7 @@ public class MediaFileHandler {
         try {
             return MyApplication.rxVault.getStream(vaultFile);
         } catch (VaultException e) {
-            Timber.d(e, MediaFileHandler.class.getName());
+            Timber.e(e, MediaFileHandler.class.getName());//TODO Crahslytics removed
         }
 
         return null;
@@ -550,7 +550,7 @@ public class MediaFileHandler {
             return FileProvider.getUriForFile(context, EncryptedFileProvider.AUTHORITY,
                     getFile(mmf));
         } catch (Exception e) {
-            Timber.d(e);
+            Timber.e(e);//TODO Crahslytics removed
             return null;
         }
     }
@@ -574,7 +574,6 @@ public class MediaFileHandler {
         }
         return mmf;
     }
-
 
     public static File getTempFile() {
         if (tmpPath == null) {
@@ -607,7 +606,7 @@ public class MediaFileHandler {
         try {
             return MyApplication.rxVault.getOutStream(file);
         } catch (VaultException e) {
-            Timber.d(e, MediaFileHandler.class.getName());
+            Timber.e(e, MediaFileHandler.class.getName());//TODO Crahslytics removed
         }
 
         return null;

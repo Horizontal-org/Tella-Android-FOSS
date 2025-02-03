@@ -35,6 +35,7 @@ import rs.readahead.washington.mobile.util.LocationUtil;
 import rs.readahead.washington.mobile.views.activity.LocationMapActivity;
 import rs.readahead.washington.mobile.views.collect.widgets.QuestionWidget;
 import rs.readahead.washington.mobile.views.fragment.uwazi.entry.UwaziEntryPrompt;
+import timber.log.Timber;
 
 /**
  * Based on ODK GeoPointWidget.
@@ -54,8 +55,8 @@ public class UwaziGeoPointWidget extends UwaziQuestionWidget implements ILocatio
     TextView accuracy;
 
     private String locationString;
-    private String appearance;
-    private LocationGettingPresenter locationGettingPresenter;
+    private final String appearance;
+    private final LocationGettingPresenter locationGettingPresenter;
     private boolean locationGathering;
 
 

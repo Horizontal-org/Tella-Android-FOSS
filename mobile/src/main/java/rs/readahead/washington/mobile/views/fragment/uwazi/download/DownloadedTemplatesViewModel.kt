@@ -18,6 +18,7 @@ import rs.readahead.washington.mobile.domain.entity.uwazi.ListTemplateResult
 import rs.readahead.washington.mobile.domain.exception.NoConnectivityException
 import rs.readahead.washington.mobile.views.fragment.uwazi.download.adapter.ViewTemplateItem
 import rs.readahead.washington.mobile.views.fragment.uwazi.mappers.toViewTemplateItem
+import timber.log.Timber
 import java.util.ArrayList
 
 class DownloadedTemplatesViewModel : ViewModel(){

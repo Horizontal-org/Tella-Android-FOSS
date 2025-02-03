@@ -10,12 +10,13 @@ import rs.readahead.washington.mobile.data.upload.TUSClient;
 import rs.readahead.washington.mobile.domain.entity.reports.TellaReportServer;
 import rs.readahead.washington.mobile.domain.entity.UploadProgressInfo;
 import rs.readahead.washington.mobile.mvp.contract.ICheckTUSServerContract;
+import timber.log.Timber;
 
 
 public class CheckTUSServerPresenter implements
         ICheckTUSServerContract.IPresenter {
     private ICheckTUSServerContract.IView view;
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
     private boolean saveAnyway = false;
 
 

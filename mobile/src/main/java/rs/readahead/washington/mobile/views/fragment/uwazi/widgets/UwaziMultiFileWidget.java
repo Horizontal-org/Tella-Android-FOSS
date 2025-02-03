@@ -47,6 +47,7 @@ import rs.readahead.washington.mobile.views.collect.widgets.QuestionWidget;
 import rs.readahead.washington.mobile.views.custom.CollectAttachmentPreviewView;
 import rs.readahead.washington.mobile.views.fragment.uwazi.attachments.AttachmentsActivitySelector;
 import rs.readahead.washington.mobile.views.fragment.uwazi.entry.UwaziEntryPrompt;
+import timber.log.Timber;
 
 
 @SuppressLint("ViewConstructor")

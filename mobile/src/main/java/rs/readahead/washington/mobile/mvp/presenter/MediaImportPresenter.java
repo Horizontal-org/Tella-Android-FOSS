@@ -14,6 +14,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import rs.readahead.washington.mobile.media.MediaFileHandler;
 import rs.readahead.washington.mobile.mvp.contract.IMediaImportPresenterContract;
+import timber.log.Timber;
 
 
 public class MediaImportPresenter implements IMediaImportPresenterContract.IPresenter {

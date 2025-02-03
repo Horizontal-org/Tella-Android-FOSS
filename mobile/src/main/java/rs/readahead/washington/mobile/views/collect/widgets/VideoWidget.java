@@ -36,6 +36,7 @@ import rs.readahead.washington.mobile.views.activity.camera.CameraActivity;
 import rs.readahead.washington.mobile.views.base_ui.BaseActivity;
 import rs.readahead.washington.mobile.views.custom.CollectAttachmentPreviewView;
 import rs.readahead.washington.mobile.views.fragment.uwazi.attachments.AttachmentsActivitySelector;
+import timber.log.Timber;
 
 /**
  * Based on ODK VideoWidget.

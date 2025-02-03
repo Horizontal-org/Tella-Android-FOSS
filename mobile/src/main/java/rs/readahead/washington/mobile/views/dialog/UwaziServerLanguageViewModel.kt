@@ -51,7 +51,7 @@ class UwaziServerLanguageViewModel : ViewModel() {
                 CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
-                )
+                )//TODO Crahslytics removed
                 error.postValue(throwable)
             })
     }

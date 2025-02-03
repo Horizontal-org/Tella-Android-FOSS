@@ -24,6 +24,7 @@ import rs.readahead.washington.mobile.views.activity.viewer.AudioPlayActivity;
 import rs.readahead.washington.mobile.views.activity.viewer.PhotoViewerActivity;
 import rs.readahead.washington.mobile.views.activity.viewer.VideoViewerActivity;
 import rs.readahead.washington.mobile.views.collect.widgets.QuestionWidget;
+import timber.log.Timber;
 
 
 public class CollectAttachmentPreviewView extends LinearLayout implements ICollectAttachmentMediaFilePresenterContract.IView {

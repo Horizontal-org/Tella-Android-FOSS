@@ -18,7 +18,7 @@ import org.hzontal.shared_ui.breadcrumb.model.Item
 import rs.readahead.washington.mobile.R
 import rs.readahead.washington.mobile.databinding.FragmentAttachmentsSelectorBinding
 import rs.readahead.washington.mobile.util.setMargins
-import rs.readahead.washington.mobile.views.activity.camera.CameraActivity
+import rs.readahead.washington.mobile.views.activity.MEDIA_FILE_KEY
 import rs.readahead.washington.mobile.views.activity.viewer.AudioPlayActivity
 import rs.readahead.washington.mobile.views.activity.viewer.PhotoViewerActivity
 import rs.readahead.washington.mobile.views.activity.viewer.VideoViewerActivity
@@ -244,7 +244,7 @@ class AttachmentsActivitySelector : BaseActivity(), ISelectorVaultHandler, View.
             setResult(
                 RESULT_OK,
                 Intent().putExtra(
-                    CameraActivity.MEDIA_FILE_KEY,
+                    MEDIA_FILE_KEY,
                     attachmentsAdapter.selectedMediaFiles[0]
                 )
             )

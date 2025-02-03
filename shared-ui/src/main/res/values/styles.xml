@@ -130,6 +130,16 @@
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
     </style>
+    <style name="DialogBottomPopUpBackground">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">72dp</item>
+        <item name="android:layout_gravity">bottom</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:layout_marginBottom">54dp</item>
+        <item name="android:background">@drawable/pop_up_background</item>
+    </style>
 
     <style name="Tella_Progress_Circular">
         <item name="android:layout_width">40dp</item>

@@ -14,6 +14,7 @@ import rs.readahead.washington.mobile.data.database.UwaziDataSource;
 import rs.readahead.washington.mobile.domain.entity.reports.TellaReportServer;
 import rs.readahead.washington.mobile.domain.entity.UWaziUploadServer;
 import rs.readahead.washington.mobile.domain.entity.collect.CollectServer;
+import timber.log.Timber;
 
 public class OnBoardPresenter implements IOnBoardPresenterContract.IPresenter {
     private final KeyDataSource keyDataSource;

@@ -282,7 +282,7 @@ public class DialogsUtil {
                 .setCancelable(true)
                 .show();
     }
-
+/*
     public interface VideoSizeConsumer {
     //    void accept(SizeSelector size);
     }

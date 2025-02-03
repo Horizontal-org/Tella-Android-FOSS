@@ -4,15 +4,12 @@ import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.VaultFile;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import rs.readahead.washington.mobile.MyApplication;
-import rs.readahead.washington.mobile.data.database.KeyDataSource;
 import rs.readahead.washington.mobile.media.MediaFileHandler;
 import rs.readahead.washington.mobile.mvp.contract.ISignaturePresenterContract;
+import timber.log.Timber;
 
 
 public class SignaturePresenter implements ISignaturePresenterContract.IPresenter {

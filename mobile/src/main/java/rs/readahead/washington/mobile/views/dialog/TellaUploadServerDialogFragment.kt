@@ -16,10 +16,6 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.content.res.ResourcesCompat
-/*import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException
-import com.google.android.gms.common.GooglePlayServicesRepairableException
-import com.google.android.gms.security.ProviderInstaller*/
 import com.google.android.material.textfield.TextInputLayout
 import rs.readahead.washington.mobile.R
 import rs.readahead.washington.mobile.databinding.DialogCollectServerBinding
@@ -27,7 +23,6 @@ import rs.readahead.washington.mobile.domain.entity.UploadProgressInfo
 import rs.readahead.washington.mobile.domain.entity.reports.TellaReportServer
 import rs.readahead.washington.mobile.mvp.contract.ICheckTUSServerContract
 import rs.readahead.washington.mobile.mvp.presenter.CheckTUSServerPresenter
-import timber.log.Timber
 
 class TellaUploadServerDialogFragment : AppCompatDialogFragment(), ICheckTUSServerContract.IView {
 
@@ -217,21 +212,6 @@ class TellaUploadServerDialogFragment : AppCompatDialogFragment(), ICheckTUSServ
     }
 
     private fun checkServer(server: TellaReportServer, connectionRequired: Boolean) {
-        // lets go with sync solution as this will not influence UX too much here
-        /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1 &&
-            !securityProviderUpgradeAttempted && context != null
-        ) {
-            try {
-                ProviderInstaller.installIfNeeded(context)
-            } catch (e: GooglePlayServicesRepairableException) {
-                GoogleApiAvailability.getInstance()
-                    .showErrorNotification(context, e.connectionStatusCode)
-                securityProviderUpgradeAttempted = true
-                return
-            } catch (e: GooglePlayServicesNotAvailableException) {
-                Timber.d(e)
-            }
-        }*/
         if (presenter != null) {
             presenter!!.checkServer(server, connectionRequired)
         }

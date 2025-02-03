@@ -257,7 +257,10 @@ public class CollectServerDialogFragment extends AppCompatDialogFragment impleme
                 !securityProviderUpgradeAttempted && getContext() != null) {
             try {
                 ProviderInstaller.installIfNeeded(getContext());
-            } catch (GooglePlayServicesRepairableException e) {
+            } catch (Exception e) {
+                Timber.e(e);//TODO Crahslytics removed
+            }
+            /*(GooglePlayServicesRepairableException e) {
                 GoogleApiAvailability.getInstance()
                         .showErrorNotification(getContext(), e.getConnectionStatusCode());
                 securityProviderUpgradeAttempted = true;

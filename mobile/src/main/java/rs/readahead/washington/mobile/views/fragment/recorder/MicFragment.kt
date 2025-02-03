@@ -172,10 +172,6 @@ class MicFragment : MetadataBaseLockFragment(),
         viewModel.recordingStoppedLiveData.observe(viewLifecycleOwner, ::onRecordingStopped)
         viewModel.availableStorageLiveData.observe(viewLifecycleOwner, ::onAvailableStorage)
         viewModel.recordingErrorLiveData.observe(viewLifecycleOwner, ::onRecordingError)
-        viewModel.mediaFilesUploadScheduleError.observe(
-            viewLifecycleOwner,
-            ::onMediaFilesUploadScheduleError
-        )
         viewModel.addingInProgress.observe(viewLifecycleOwner) { isAdding ->
             callback?.setBackgroundWorkStatus(isAdding && !Preferences.isAnonymousMode())
         }
@@ -365,9 +361,6 @@ class MicFragment : MetadataBaseLockFragment(),
         DialogUtils.showBottomMessage(metadataActivity, message, false)
     }
 
-    private fun onMediaFilesUploadScheduleError(throwable: Throwable?) {
-    }
-
     private fun handleStop() {
         disablePause()
         notRecording = true
@@ -532,4 +525,5 @@ class MicFragment : MetadataBaseLockFragment(),
     private fun updateRecordingName() {
         recordingName.text = UUID.randomUUID().toString() + ".aac"
     }
+
 }

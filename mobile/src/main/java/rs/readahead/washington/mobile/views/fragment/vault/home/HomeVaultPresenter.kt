@@ -23,6 +23,7 @@ import rs.readahead.washington.mobile.data.sharedpref.Preferences
 import rs.readahead.washington.mobile.domain.entity.collect.CollectForm
 import rs.readahead.washington.mobile.domain.entity.uwazi.CollectTemplate
 import rs.readahead.washington.mobile.media.MediaFileHandler
+import timber.log.Timber
 
 class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
     IHomeVaultPresenter.IPresenter {

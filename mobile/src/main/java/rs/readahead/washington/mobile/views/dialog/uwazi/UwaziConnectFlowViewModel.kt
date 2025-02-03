@@ -15,6 +15,7 @@ import rs.readahead.washington.mobile.domain.entity.UWaziUploadServer
 import rs.readahead.washington.mobile.domain.entity.uwazi.Language
 import rs.readahead.washington.mobile.views.adapters.uwazi.ViewLanguageItem
 import rs.readahead.washington.mobile.views.fragment.uwazi.mappers.toViewLanguageItem
+import timber.log.Timber
 
 private const val TWO_FACTOR_AUTHENTICATION_CODE = 409
 private const val AUTHENTICATION_FAILED = 401
@@ -54,7 +55,7 @@ class UwaziConnectFlowViewModel : ViewModel() {
                 CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
-                )
+                )//TODO Crahslytics removed
                 _isPublic.postValue(false)
 
             })
@@ -82,7 +83,7 @@ class UwaziConnectFlowViewModel : ViewModel() {
                 CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
-                )
+                )//TODO Crahslytics removed
             })
     }
 
@@ -103,7 +104,7 @@ class UwaziConnectFlowViewModel : ViewModel() {
                 CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
-                )
+                )//TODO Crahslytics removed
             })
     }
 

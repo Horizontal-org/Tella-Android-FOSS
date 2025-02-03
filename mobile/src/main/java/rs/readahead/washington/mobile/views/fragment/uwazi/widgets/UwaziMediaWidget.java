@@ -41,6 +41,7 @@ import rs.readahead.washington.mobile.views.custom.CollectAttachmentPreviewView;
 import rs.readahead.washington.mobile.views.fragment.uwazi.attachments.AttachmentsActivitySelector;
 import rs.readahead.washington.mobile.views.fragment.uwazi.entry.UwaziEntryPrompt;
 import rs.readahead.washington.mobile.views.interfaces.ICollectEntryInterface;
+import timber.log.Timber;
 
 
 @SuppressLint("ViewConstructor")

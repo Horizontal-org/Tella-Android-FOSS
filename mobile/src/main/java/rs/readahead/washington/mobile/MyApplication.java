@@ -173,7 +173,6 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
         // todo: implement dagger2
         CommonPrefs.getInstance().init(this);
         SharedPrefs.getInstance().init(this);
-        configureCrashlytics();
         System.loadLibrary("sqlcipher");
 
 
@@ -215,7 +214,7 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
         TellaKeysUI.initialize(mainKeyStore, mainKeyHolder, unlockRegistry, this, Preferences.getFailedUnlockOption(), Preferences.getUnlockRemainingAttempts(), Preferences.isShowUnlockRemainingAttempts());
     }
 
-    private void configureCrashlytics() {
+    /*private void configureCrashlytics() {
         boolean enabled = (!BuildConfig.DEBUG && Preferences.isSubmittingCrashReports());
 
         //FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(enabled);
@@ -223,7 +222,7 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
         if (!enabled) {
             //FirebaseCrashlytics.getInstance().deleteUnsentReports();
         }
-    }
+    }*/
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void initializeLockConfigRegistry() {
@@ -272,7 +271,7 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
                 upgradeTella2(context);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.e(e);//TODO Crahslytics removed
         }
 
         startMainActivity(context);
@@ -285,7 +284,7 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
                 TellaUpgrader.upgradeV2(context, key);
             }
         } catch (LifecycleMainKey.MainKeyUnavailableException e) {
-            Timber.d(e);
+            Timber.e(e);//TODO Crahslytics removed
         }
     }
 

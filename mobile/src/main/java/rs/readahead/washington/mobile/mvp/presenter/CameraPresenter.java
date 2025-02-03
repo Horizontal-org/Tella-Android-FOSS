@@ -10,6 +10,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import rs.readahead.washington.mobile.media.MediaFileHandler;
 import rs.readahead.washington.mobile.mvp.contract.ICameraPresenterContract;
+import timber.log.Timber;
 
 
 public class CameraPresenter implements ICameraPresenterContract.IPresenter {

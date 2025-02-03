@@ -28,6 +28,7 @@ import rs.readahead.washington.mobile.views.fragment.uwazi.widgets.UwaziMultiFil
 import rs.readahead.washington.mobile.views.fragment.uwazi.widgets.UwaziQuestionWidget;
 import rs.readahead.washington.mobile.views.fragment.uwazi.widgets.UwaziRelationShipWidget;
 import rs.readahead.washington.mobile.views.fragment.uwazi.widgets.UwaziWidgetFactory;
+import timber.log.Timber;
 
 
 @SuppressLint("ViewConstructor")

@@ -20,6 +20,7 @@ import rs.readahead.washington.mobile.domain.entity.uwazi.UwaziEntityInstance
 import rs.readahead.washington.mobile.views.fragment.uwazi.adapters.ViewEntityInstanceItem
 import rs.readahead.washington.mobile.views.fragment.uwazi.mappers.toViewEntityInstanceItem
 import rs.readahead.washington.mobile.views.fragment.uwazi.mappers.toViewEntityTemplateItem
+import timber.log.Timber
 
 class SharedUwaziViewModel : ViewModel() {
 

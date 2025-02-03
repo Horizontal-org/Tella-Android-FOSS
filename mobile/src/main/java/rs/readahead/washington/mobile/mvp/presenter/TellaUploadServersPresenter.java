@@ -15,6 +15,7 @@ import rs.readahead.washington.mobile.data.database.KeyDataSource;
 import rs.readahead.washington.mobile.data.openrosa.OpenRosaService;
 import rs.readahead.washington.mobile.domain.entity.reports.TellaReportServer;
 import rs.readahead.washington.mobile.mvp.contract.ITellaUploadServersPresenterContract;
+import timber.log.Timber;
 
 
 public class TellaUploadServersPresenter implements ITellaUploadServersPresenterContract.IPresenter {

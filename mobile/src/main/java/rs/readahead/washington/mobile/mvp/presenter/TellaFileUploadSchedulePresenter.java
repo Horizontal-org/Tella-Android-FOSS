@@ -48,7 +48,7 @@ public class TellaFileUploadSchedulePresenter implements ITellaFileUploadSchedul
                 .flatMapCompletable(dataSource -> dataSource.scheduleUploadMediaFiles(mediaFiles))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-                    TellaUploadJob.scheduleJob();
+                    //TODO Implement with work lib
                     view.onMediaFilesUploadScheduled();
                 }, throwable -> {
                     CrashlyticsUtil.handleThrowable(throwable);
@@ -65,8 +65,7 @@ public class TellaFileUploadSchedulePresenter implements ITellaFileUploadSchedul
                 .flatMapCompletable(dataSource -> dataSource.scheduleUploadMediaFilesWithPriority(mediaFiles, uploadServerId, metadata))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-                    TellaUploadJob.cancelJob();
-                    TellaUploadJob.scheduleJob();
+                    //TODO Implement with work lib
                     view.onMediaFilesUploadScheduled();
                 }, throwable -> {
                     CrashlyticsUtil.handleThrowable(throwable);

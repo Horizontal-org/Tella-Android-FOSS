@@ -11,36 +11,14 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityManager
 import android.widget.ImageView
-import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
-/*import org. cleaninsights.sdk.Campaign
-import org.cleaninsights.sdk.CleanInsights
-import org.cleaninsights.sdk.CleanInsightsConfiguration*/
 import timber.log.Timber
-import java.net.URL
-
-
-/**
- * function that converts data from json to object
- * @param classMapper the class of T.
- * @param <T> the type of the desired object.
- * @return an object of type T from the string.
- */
-fun <T> String.fromJsonToObject(classMapper: Class<T>): T? {
-    return try {
-        Gson().fromJson(this, classMapper)
-    } catch (e: JsonParseException) {
-        Timber.e(e)
-        null
-    }
-}
 
 fun <T> String.fromJsonToObjectList(clazz: Class<T>?): List<T>? {
     return try {
@@ -78,14 +56,6 @@ fun Window.changeStatusColor(context: Context, color: Int) {
         addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         statusBarColor = context.resources.getColor(color)
-    }
-}
-
-fun View.setTint(@ColorRes colorRes: Int) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        background.setTintList(
-            ContextCompat.getColorStateList(context, colorRes)
-        );
     }
 }
 
@@ -148,4 +118,3 @@ fun NavController.navigateSafe(destinationId: Int, bundle: Bundle? = null) {
 fun Window.fitSystemWindows() {
     WindowCompat.setDecorFitsSystemWindows(this, false)
 }
-

@@ -163,7 +163,7 @@ public class Preferences {
     }
 
     public static boolean isSubmittingCrashReports() {
-        return getBoolean(SharedPrefs.SUBMIT_CRASH_REPORTS, true);
+        return getBoolean(SharedPrefs.SUBMIT_CRASH_REPORTS, false);
     }
 
     public static void setSubmittingCrashReports(boolean value) {

@@ -34,6 +34,7 @@ import rs.readahead.washington.mobile.odk.FormController;
 import rs.readahead.washington.mobile.util.C;
 import rs.readahead.washington.mobile.util.LocationUtil;
 import rs.readahead.washington.mobile.views.activity.LocationMapActivity;
+import timber.log.Timber;
 
 
 /**
@@ -55,7 +56,7 @@ public class GeoPointWidget extends QuestionWidget implements ILocationGettingPr
 
     private String locationString;
     private String appearance;
-    private LocationGettingPresenter locationGettingPresenter;
+    private final LocationGettingPresenter locationGettingPresenter;
     private boolean locationGathering;
 
 

@@ -9,6 +9,7 @@ import rs.readahead.washington.mobile.data.repository.UwaziRepository
 import rs.readahead.washington.mobile.domain.entity.UWaziUploadServer
 import rs.readahead.washington.mobile.domain.entity.UploadProgressInfo
 import rs.readahead.washington.mobile.mvp.contract.ICheckUwaziServerContract
+import timber.log.Timber
 
 class CheckUwaziServerPresenter constructor(private var view: ICheckUwaziServerContract.IView?) :
     ICheckUwaziServerContract.IPresenter {

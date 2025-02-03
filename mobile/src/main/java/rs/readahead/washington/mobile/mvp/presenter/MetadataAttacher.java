@@ -9,6 +9,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import rs.readahead.washington.mobile.MyApplication;
 import rs.readahead.washington.mobile.mvp.contract.IMetadataAttachPresenterContract;
+import timber.log.Timber;
 
 
 public class MetadataAttacher implements IMetadataAttachPresenterContract.IPresenter {
