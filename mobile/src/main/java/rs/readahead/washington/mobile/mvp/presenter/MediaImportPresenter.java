@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 
 import com.hzontal.tella_vault.VaultFile;
 
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -28,13 +30,13 @@ public class MediaImportPresenter implements IMediaImportPresenterContract.IPres
 
     @Override
     public void importImage(final Uri uri) {
-        disposables.add(Observable.fromCallable(() -> MediaFileHandler.importPhotoUri(view.getContext(), uri,null))
+        disposables.add(Observable.fromCallable(() -> MediaFileHandler.importPhotoUri(view.getContext(), uri,null).blockingGet())
                 .subscribeOn(Schedulers.computation())
                 .doOnSubscribe(disposable -> view.onImportStarted())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(vaultFile -> view.onMediaFileImported(vaultFile), throwable -> {
-                    Timber.e(throwable);//TODO Crahslytics removed
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onImportError(throwable);
                 })
         );
@@ -42,13 +44,13 @@ public class MediaImportPresenter implements IMediaImportPresenterContract.IPres
 
     @Override
     public void importVideo(final Uri uri) {
-        disposables.add(Observable.fromCallable(() -> MediaFileHandler.importVideoUri(view.getContext(), uri,null))
+        disposables.add(Observable.fromCallable(() -> MediaFileHandler.importVideoUri(view.getContext(), uri,null).blockingGet())
                 .subscribeOn(Schedulers.computation())
                 .doOnSubscribe(disposable -> view.onImportStarted())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(mediaHolder -> view.onMediaFileImported(mediaHolder), throwable -> {
-                    Timber.e(throwable);//TODO Crahslytics removed
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onImportError(throwable);
                 })
         );
@@ -76,13 +78,13 @@ public class MediaImportPresenter implements IMediaImportPresenterContract.IPres
 
     @Override
     public void importFile(final Uri uri) {
-        disposables.add(Observable.fromCallable(() -> MediaFileHandler.importVaultFileUri(view.getContext(), uri,null))
+        disposables.add(Observable.fromCallable(() -> MediaFileHandler.importVaultFileUri(view.getContext(), uri,null).blockingGet())
                 .subscribeOn(Schedulers.computation())
                 .doOnSubscribe(disposable -> view.onImportStarted())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> view.onImportEnded())
                 .subscribe(vaultFile -> view.onMediaFileImported(vaultFile), throwable -> {
-                    Timber.e(throwable);//TODO Crahslytics removed
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onImportError(throwable);
                 })
         );

@@ -17,12 +17,15 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+//import com.otaliastudios.cameraview.size.SizeSelector;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import rs.readahead.washington.mobile.R;
 import rs.readahead.washington.mobile.data.sharedpref.Preferences;
 import rs.readahead.washington.mobile.domain.entity.Server;
-import rs.readahead.washington.mobile.domain.entity.TellaUploadServer;
+import rs.readahead.washington.mobile.domain.entity.reports.TellaReportServer;
 import rs.readahead.washington.mobile.domain.entity.collect.CollectFormInstanceStatus;
 import rs.readahead.washington.mobile.domain.entity.ServerType;
 import rs.readahead.washington.mobile.views.custom.CameraPreviewAnonymousButton;
@@ -281,10 +284,10 @@ public class DialogsUtil {
     }
 /*
     public interface VideoSizeConsumer {
-        void accept(SizeSelector size);
+    //    void accept(SizeSelector size);
     }
 
-    public static AlertDialog showVideoResolutionDialog(Context context, VideoSizeConsumer consumer, VideoResolutionManager videoResolutionManager) {
+  /*  public static AlertDialog showVideoResolutionDialog(Context context, VideoSizeConsumer consumer, VideoResolutionManager videoResolutionManager) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.BrightBackgroundDarkLettersDialogTheme);
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -321,13 +324,13 @@ public class DialogsUtil {
         alertDialog.show();
 
         return alertDialog;
-    }
-*/
+    }*/
+
     public interface autoUploadServerConsumer {
         void accept(Server server);
     }
 
-    public static AlertDialog chooseAutoUploadServerDialog(Context context, autoUploadServerConsumer consumer, List<TellaUploadServer> tellaUploadServers, @NonNull DialogInterface.OnClickListener listener) {
+    public static AlertDialog chooseAutoUploadServerDialog(Context context, autoUploadServerConsumer consumer, List<TellaReportServer> tellaReportServers, @NonNull DialogInterface.OnClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.BrightBackgroundDarkLettersDialogTheme);
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -336,10 +339,10 @@ public class DialogsUtil {
         RadioGroup radioGroup = dialogView.findViewById(R.id.radio_group);
         TextView errorMessage = dialogView.findViewById(R.id.error_message);
 
-        for (int i = 0; i < tellaUploadServers.size(); i++) {
+        for (int i = 0; i < tellaReportServers.size(); i++) {
             AppCompatRadioButton button = (AppCompatRadioButton) inflater.inflate(R.layout.dialog_radio_button_item, null);
             button.setTag(i);
-            button.setText(tellaUploadServers.get(i).getName());
+            button.setText(tellaReportServers.get(i).getName());
             radioGroup.addView(button);
         }
 
@@ -356,8 +359,8 @@ public class DialogsUtil {
                 if (checkedRadioButtonId > 0) {
                     AppCompatRadioButton radioButton = radioGroup.findViewById(checkedRadioButtonId);
 
-                    TellaUploadServer tellaUploadServer = tellaUploadServers.get((int) radioButton.getTag());
-                    consumer.accept(tellaUploadServer);
+                    TellaReportServer tellaReportServer = tellaReportServers.get((int) radioButton.getTag());
+                    consumer.accept(tellaReportServer);
                 } else {
                     errorMessage.setVisibility(View.VISIBLE);
                 }

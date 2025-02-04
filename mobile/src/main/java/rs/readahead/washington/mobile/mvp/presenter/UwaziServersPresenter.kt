@@ -1,5 +1,6 @@
 package rs.readahead.washington.mobile.mvp.presenter
 
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -31,7 +32,7 @@ class UwaziServersPresenter constructor(var view: IUWAZIServersPresenterContract
                     )
                 }
             ) { throwable: Throwable? ->
-                Timber.e(throwable!!)//TODO Crahslytics removed
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onLoadUwaziServersError(throwable)
             }
         )
@@ -56,7 +57,7 @@ class UwaziServersPresenter constructor(var view: IUWAZIServersPresenterContract
                         )
                     },
                     { throwable: Throwable? ->
-                        Timber.e(throwable!!)//TODO Crahslytics removed
+                        CrashlyticsUtil.handleThrowable(throwable)
                         view?.onCreateUwaziServerError(throwable)
                     })
         )
@@ -74,7 +75,7 @@ class UwaziServersPresenter constructor(var view: IUWAZIServersPresenterContract
             .subscribe(
                 { server1 -> view?.onUpdatedUwaziServer(server1) }
             ) { throwable: Throwable? ->
-                Timber.e(throwable!!)//TODO Crahslytics removed
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onUpdateUwaziServerError(throwable)
             }
         )
@@ -95,7 +96,7 @@ class UwaziServersPresenter constructor(var view: IUWAZIServersPresenterContract
                     view?.onRemovedUwaziServer(server)
                 }
             ) { throwable: Throwable? ->
-                Timber.e(throwable!!)//TODO Crahslytics removed
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onRemoveUwaziServerError(throwable)
             }
         )

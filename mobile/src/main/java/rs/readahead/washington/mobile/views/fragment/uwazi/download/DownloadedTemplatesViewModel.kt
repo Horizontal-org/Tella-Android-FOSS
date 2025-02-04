@@ -3,6 +3,7 @@ package rs.readahead.washington.mobile.views.fragment.uwazi.download
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -61,7 +62,7 @@ class DownloadedTemplatesViewModel : ViewModel(){
             }
 
             ) { throwable: Throwable? ->
-                Timber.e(
+                CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
                 )
@@ -94,7 +95,7 @@ class DownloadedTemplatesViewModel : ViewModel(){
                         }
                     }}
             ) { throwable: Throwable? ->
-                Timber.e(throwable!!)
+                CrashlyticsUtil.handleThrowable(throwable)
                 error.postValue(throwable)
             }
         )
@@ -148,7 +149,7 @@ class DownloadedTemplatesViewModel : ViewModel(){
             if (throwable is NoConnectivityException) {
                 _connectionAvailable.postValue(true)
             } else {
-                Timber.e(
+                CrashlyticsUtil.handleThrowable(
                     throwable
                         ?: throw NullPointerException("Expression 'throwable' must not be null")
                 )

@@ -1,5 +1,7 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -59,7 +61,7 @@ public class CheckOdkServerPresenter implements
                         view.onServerCheckSuccess(server);
                     }
                 }, throwable -> {
-                    Timber.e(throwable);//TODO Crahslytics removed
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onServerCheckError(throwable);
                 })
         );

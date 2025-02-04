@@ -1,8 +1,7 @@
 package rs.readahead.washington.mobile;
 
-import static rs.readahead.washington.mobile.util.ExtensionsKt.createCleanInsightsInstance;
-
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -13,8 +12,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatDelegate;
+//import androidx.hilt.work.HiltWorkerFactory;
+import androidx.hilt.work.HiltWorkerFactory;
 import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.multidex.MultiDexApplication;
+import androidx.work.Configuration;
+//import androidx.work.Configuration;
 
 import com.bumptech.glide.Glide;
 import com.hzontal.tella_locking_ui.TellaKeysUI;
@@ -27,7 +30,11 @@ import com.hzontal.tella_locking_ui.ui.pin.PinUnlockActivity;
 import com.hzontal.tella_vault.Vault;
 import com.hzontal.tella_vault.rx.RxVault;
 
-import org.cleaninsights.sdk.CleanInsights;
+import org.hzontal.shared_ui.data.CommonPrefs;
+
+import net.zetetic.database.sqlcipher.SQLiteDatabase;
+
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import org.hzontal.tella.keys.MainKeyStore;
 import org.hzontal.tella.keys.TellaKeys;
 import org.hzontal.tella.keys.config.IUnlockRegistryHolder;
@@ -42,6 +49,9 @@ import org.hzontal.tella.keys.wrapper.UnencryptedKeyWrapper;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.HiltAndroidApp;
 import io.reactivex.functions.Consumer;
 import io.reactivex.plugins.RxJavaPlugins;
 import rs.readahead.washington.mobile.bus.TellaBus;
@@ -53,7 +63,6 @@ import rs.readahead.washington.mobile.javarosa.JavaRosa;
 import rs.readahead.washington.mobile.javarosa.PropertyManager;
 import rs.readahead.washington.mobile.media.MediaFileHandler;
 import rs.readahead.washington.mobile.util.C;
-import rs.readahead.washington.mobile.util.CleanInsightUtils;
 import rs.readahead.washington.mobile.util.LocaleManager;
 import rs.readahead.washington.mobile.util.TellaUpgrader;
 import rs.readahead.washington.mobile.views.activity.ExitActivity;
@@ -61,8 +70,8 @@ import rs.readahead.washington.mobile.views.activity.MainActivity;
 import rs.readahead.washington.mobile.views.activity.onboarding.OnBoardingActivity;
 import timber.log.Timber;
 
-
-public class MyApplication extends MultiDexApplication implements IUnlockRegistryHolder, CredentialsCallback {
+@HiltAndroidApp
+public class MyApplication extends MultiDexApplication implements IUnlockRegistryHolder, CredentialsCallback, Configuration.Provider {
     public static Vault vault;
     public static RxVault rxVault;
     private static TellaBus bus;
@@ -71,8 +80,9 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
     private static MainKeyStore mainKeyStore;
     private static UnlockRegistry unlockRegistry;
     private static KeyDataSource keyDataSource;
-    private static CleanInsights cleanInsights;
     private final Long start = System.currentTimeMillis();
+    @Inject
+    public HiltWorkerFactory workerFactory;
     Vault.Config vaultConfig;
 
     public static void startMainActivity(@NonNull Context context) {
@@ -94,8 +104,7 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
     }
 
     public static boolean isConnectedToInternet(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) return false;
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
@@ -104,18 +113,14 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
     public static void exit(Context context) {
         Intent intent = new Intent(context, ExitActivity.class);
 
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                Intent.FLAG_ACTIVITY_NO_ANIMATION |
-                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 
         context.startActivity(intent);
     }
 
     private static void maybeExcludeIntentFromRecents(Intent intent) {
         if (Preferences.isSecretModeActive()) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS/* |
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS/* |
                     Intent.FLAG_ACTIVITY_MULTIPLE_TASK*/);
         }
     }
@@ -142,12 +147,9 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
         TellaKeysUI.getMainKeyHolder().set(mainKey);
     }
 
-    public static CleanInsights getCleanInsights() {
-        return cleanInsights;
-    }
-
     @Override
     protected void attachBaseContext(Context newBase) {
+        CommonPrefs.getInstance().init(newBase);
         SharedPrefs.getInstance().init(newBase);
         super.attachBaseContext(LocaleManager.getInstance().getLocalizedContext(newBase));
     }
@@ -169,14 +171,24 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
             apiBuilder.setLogLevelFull();
         }
         // todo: implement dagger2
+        CommonPrefs.getInstance().init(this);
         SharedPrefs.getInstance().init(this);
-        //configureCrashlytics();
+        System.loadLibrary("sqlcipher");
+
+
+        // provide custom configuration
+     /*   Configuration myConfig = new Configuration.Builder()
+                .setMinimumLoggingLevel(android.util.Log.INFO)
+                .build();*/
+
+        //initialize WorkManager
+        //  WorkManager.initialize(this, myConfig);
 
         RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
             @Override
             public void accept(Throwable throwable) {
                 Timber.d(throwable, getClass().getName());
-                Timber.e(throwable);//TODO Crahslytics removed
+                CrashlyticsUtil.handleThrowable(throwable);
             }
         });
         bus = TellaBus.create();
@@ -199,17 +211,16 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
         //mainKeyHolder = new LifecycleMainKey(ProcessLifecycleOwner.get().getLifecycle(), LifecycleMainKey.NO_TIMEOUT);
         mainKeyHolder = new LifecycleMainKey(ProcessLifecycleOwner.get().getLifecycle(), Preferences.getLockTimeout());
         keyDataSource = new KeyDataSource(getApplicationContext());
-        TellaKeysUI.initialize(mainKeyStore, mainKeyHolder, unlockRegistry, this);
-        initCleanInsights();
+        TellaKeysUI.initialize(mainKeyStore, mainKeyHolder, unlockRegistry, this, Preferences.getFailedUnlockOption(), Preferences.getUnlockRemainingAttempts(), Preferences.isShowUnlockRemainingAttempts());
     }
 
     /*private void configureCrashlytics() {
         boolean enabled = (!BuildConfig.DEBUG && Preferences.isSubmittingCrashReports());
 
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(enabled);
+        //FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(enabled);
 
         if (!enabled) {
-            FirebaseCrashlytics.getInstance().deleteUnsentReports();
+            //FirebaseCrashlytics.getInstance().deleteUnsentReports();
         }
     }*/
 
@@ -220,23 +231,17 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
         PBEKeyWrapper pbeKeyWrapper = new PBEKeyWrapper();
         AndroidKeyStoreWrapper androidKeyStoreWrapper = new AndroidKeyStoreWrapper();
 
-        unlockRegistry.registerConfig(UnlockRegistry.Method.DISABLED,
-                new UnlockConfig(new UnencryptedUnlocker(), new UnencryptedKeyWrapper()));
+        unlockRegistry.registerConfig(UnlockRegistry.Method.DISABLED, new UnlockConfig(new UnencryptedUnlocker(), new UnencryptedKeyWrapper()));
 
-        unlockRegistry.registerConfig(UnlockRegistry.Method.TELLA_PIN,
-                new UnlockConfig(new AppCompatActivityUnlocker(unlockRegistry, PinUnlockActivity.class), pbeKeyWrapper));
+        unlockRegistry.registerConfig(UnlockRegistry.Method.TELLA_PIN, new UnlockConfig(new AppCompatActivityUnlocker(unlockRegistry, PinUnlockActivity.class), pbeKeyWrapper));
 
-        unlockRegistry.registerConfig(UnlockRegistry.Method.TELLA_PATTERN,
-                new UnlockConfig(new AppCompatActivityUnlocker(unlockRegistry, PatternUnlockActivity.class), pbeKeyWrapper));
+        unlockRegistry.registerConfig(UnlockRegistry.Method.TELLA_PATTERN, new UnlockConfig(new AppCompatActivityUnlocker(unlockRegistry, PatternUnlockActivity.class), pbeKeyWrapper));
 
-        unlockRegistry.registerConfig(UnlockRegistry.Method.TELLA_PASSWORD,
-                new UnlockConfig(new AppCompatActivityUnlocker(unlockRegistry, PasswordUnlockActivity.class), pbeKeyWrapper));
+        unlockRegistry.registerConfig(UnlockRegistry.Method.TELLA_PASSWORD, new UnlockConfig(new AppCompatActivityUnlocker(unlockRegistry, PasswordUnlockActivity.class), pbeKeyWrapper));
 
-        unlockRegistry.registerConfig(UnlockRegistry.Method.DEVICE_CREDENTIALS,
-                new UnlockConfig(new AppCompatActivityUnlocker(unlockRegistry, DeviceCredentialsUnlockActivity.class), androidKeyStoreWrapper));
+        unlockRegistry.registerConfig(UnlockRegistry.Method.DEVICE_CREDENTIALS, new UnlockConfig(new AppCompatActivityUnlocker(unlockRegistry, DeviceCredentialsUnlockActivity.class), androidKeyStoreWrapper));
 
-        unlockRegistry.registerConfig(UnlockRegistry.Method.DEVICE_CREDENTIALS_BIOMETRICS,
-                new UnlockConfig(new AppCompatActivityUnlocker(unlockRegistry, DeviceCredentialsUnlockActivity.class), androidKeyStoreWrapper));
+        unlockRegistry.registerConfig(UnlockRegistry.Method.DEVICE_CREDENTIALS_BIOMETRICS, new UnlockConfig(new AppCompatActivityUnlocker(unlockRegistry, DeviceCredentialsUnlockActivity.class), androidKeyStoreWrapper));
 
         // we need this to set one active unlocking method
         // in Tella1 this can be here and fixed, but in Tella2 we need to read saved active method
@@ -249,7 +254,6 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
         super.onLowMemory();
         super.onLowMemory();
         Glide.get(this).clearMemory();
-        persistCleanInsights();
     }
 
     @Override
@@ -286,7 +290,7 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
 
     @Override
     public void onUnSuccessfulUnlock(String tag, Throwable throwable) {
-        //TODO Crahslytics removed
+        // CrashlyticsUtil.handleThrowable(throwable);
     }
 
     @Override
@@ -304,34 +308,23 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
     }
 
     @Override
+    public void onFailedAttempts(long num) {
+        ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData();
+    }
+
+    @Override
+    public void saveRemainingAttempts(long num) {
+        Preferences.setUnlockRemainingAttempts(num);
+    }
+
+    @Override
     public UnlockRegistry getUnlockRegistry() {
         return unlockRegistry;
     }
 
-    private void initCleanInsights() {
-        if (Preferences.hasAcceptedImprovements()) {
-            try {
-                cleanInsights = createCleanInsightsInstance(getApplicationContext(), Preferences.getTimeAcceptedImprovements());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
+    @NonNull
     @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
-        persistCleanInsights();
-    }
-
-    private void persistCleanInsights() {
-        if (Preferences.hasAcceptedImprovements() && cleanInsights != null)
-            CleanInsightUtils.INSTANCE.measureTimeSpentEvent(start);
-    }
-
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
-        persistCleanInsights();
+    public Configuration getWorkManagerConfiguration() {
+        return new Configuration.Builder().setMinimumLoggingLevel(android.util.Log.DEBUG).setWorkerFactory(workerFactory).build();
     }
 }

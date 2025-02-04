@@ -69,7 +69,7 @@ public abstract class MetadataActivity extends BaseLockActivity implements
     private Sensor mAmbientTemperature;
     //private FusedLocationProviderClient fusedLocationProviderClient;
     private GpsMyLocationProvider locationProvider;
-   // private LocationCallback locationCallback;
+    // private LocationCallback locationCallback;
     private WifiManager wifiManager;
     private BroadcastReceiver wifiScanResultReceiver;
     private boolean locationListenerRegistered = false;
@@ -81,6 +81,7 @@ public abstract class MetadataActivity extends BaseLockActivity implements
     private AlertDialog locationAlertDialog;
     private Relay<MetadataHolder> metadataCancelRelay;
     private CompositeDisposable disposables;
+    private boolean inProgress = false;
 
     private static void acceptBetterLocation(Location location) {
         if (!LocationUtil.isBetterLocation(location, currentBestLocation)) {
@@ -358,10 +359,10 @@ public abstract class MetadataActivity extends BaseLockActivity implements
      */
     public Observable<MetadataHolder> observeMetadata() {
         return Observable.combineLatest(
-                observeLocationData().startWith(MyLocation.createEmpty()),
-                observeWifiData().startWith(Collections.<String>emptyList()),
-                MetadataHolder::new
-        )
+                        observeLocationData().startWith(MyLocation.createEmpty()),
+                        observeWifiData().startWith(Collections.<String>emptyList()),
+                        MetadataHolder::new
+                )
                 .filter(mh -> (!mh.getWifis().isEmpty() || !mh.getLocation().isEmpty()))
                 .take((5 * 60 * 1000) / LOCATION_REQUEST_INTERVAL) // approx max 5 min of trying limit
                 .takeUntil(mh -> !mh.getWifis().isEmpty() && !mh.getLocation().isEmpty());
@@ -416,6 +417,7 @@ public abstract class MetadataActivity extends BaseLockActivity implements
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> showMetadataProgressBarDialog())
+                .doOnNext(data -> setInProgress(true))
                 .takeUntil(metadataCancelRelay) // this observable emits when user press skip in dialog.
                 .doFinally(this::hideMetadataProgressBarDialog)
                 .subscribeWith(new DisposableObserver<MetadataHolder>() {
@@ -447,6 +449,7 @@ public abstract class MetadataActivity extends BaseLockActivity implements
                     @Override
                     public void onComplete() {
                         metadataAttacher.attachMetadata(vaultFile, metadata);
+                        setInProgress(false);
                     }
                 })
         );
@@ -492,6 +495,15 @@ public abstract class MetadataActivity extends BaseLockActivity implements
 
     interface LocationSettingsCheckDoneListener {
         void onContinue();
+    }
+
+
+    protected void setInProgress(boolean inProgress) {
+        this.inProgress = inProgress;
+    }
+
+    protected boolean isInProgress() {
+        return inProgress;
     }
 
    /* private static class MetadataLocationCallback extends LocationCallback {

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.VaultFile;
 import com.hzontal.tella_vault.filter.FilterType;
 
@@ -99,6 +100,8 @@ public class AudioWidget extends MediaFileBinaryWidget {
         clearButton.setId(QuestionWidget.newUniqueId());
         clearButton.setEnabled(!formEntryPrompt.isReadOnly());
         clearButton.setOnClickListener(v -> clearAnswer());
+        clearButton.setContentDescription(getContext().getString(R.string.action_cancel));
+
 
         attachmentPreview = view.findViewById(R.id.attachedMedia);
 
@@ -120,7 +123,7 @@ public class AudioWidget extends MediaFileBinaryWidget {
                     C.MEDIA_FILE_ID
             );*/
         } catch (Exception e) {
-            Timber.e(e);//TODO Crahslytics removed
+            CrashlyticsUtil.handleThrowable(e);
             FormController.getActive().setIndexWaitingForData(null);
         }
     }
@@ -203,7 +206,7 @@ public class AudioWidget extends MediaFileBinaryWidget {
                     C.MEDIA_FILE_ID);
 
         } catch (Exception e) {
-            Timber.e(e);//TODO Crahslytics removed
+            CrashlyticsUtil.handleThrowable(e);
             FormController.getActive().setIndexWaitingForData(null);
         }
     }

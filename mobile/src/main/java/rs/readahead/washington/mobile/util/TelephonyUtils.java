@@ -1,9 +1,7 @@
 package rs.readahead.washington.mobile.util;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.telephony.CellInfo;
 import android.telephony.CellInfoCdma;
 import android.telephony.CellInfoGsm;
@@ -11,6 +9,8 @@ import android.telephony.CellInfoLte;
 import android.telephony.CellInfoWcdma;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.TelephonyManager;
+
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,37 +33,20 @@ public class TelephonyUtils {
         }
 
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                if (!PermissionUtil.checkPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    return list;
-                }
+            if (!PermissionUtil.checkPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                return list;
+            }
 
-                for (CellInfo cellInfo : tm.getAllCellInfo()) {
-                    addNew(list, cellInfoToString18(cellInfo));
-                }
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                if (!PermissionUtil.checkPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    return list;
-                }
-
-                for (CellInfo cellInfo : tm.getAllCellInfo()) {
-                    addNew(list, cellInfoToString17(cellInfo));
-                }
-            } else {
-                //noinspection deprecation
-                //TODO check getNeighboringCellInfo
-              //  for (NeighboringCellInfo cellInfo : tm.getNeighboringCellInfo()) {
-                //    addNew(list, neighboringCellInfoToString(cellInfo));
-             //   }
+            for (CellInfo cellInfo : tm.getAllCellInfo()) {
+                addNew(list, cellInfoToString18(cellInfo));
             }
         } catch (Exception e) {
-            Timber.e(e);//TODO Crahslytics removed
+            CrashlyticsUtil.handleThrowable(e);
         }
 
         return list;
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private static String cellInfoToString18(CellInfo cellInfo) {
         if (cellInfo instanceof CellInfoWcdma) {
             CellInfoWcdma w = (CellInfoWcdma) cellInfo;
@@ -77,7 +60,6 @@ public class TelephonyUtils {
         return cellInfoToString17(cellInfo);
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private static String cellInfoToString17(CellInfo cellInfo) {
         if (cellInfo instanceof CellInfoLte) {
             CellInfoLte l = (CellInfoLte) cellInfo;

@@ -32,7 +32,6 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager.ImageModelRequest
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.gson.Gson
 import com.hzontal.tella_vault.VaultFile
@@ -42,7 +41,6 @@ import rs.readahead.washington.mobile.bus.event.CaptureEvent
 import rs.readahead.washington.mobile.data.sharedpref.Preferences
 import rs.readahead.washington.mobile.databinding.ActivityCameraBinding
 import rs.readahead.washington.mobile.media.MediaFileHandler
-import rs.readahead.washington.mobile.media.VaultFileUrlLoader
 import rs.readahead.washington.mobile.media.camera.LuminosityAnalyzer
 import rs.readahead.washington.mobile.media.camera.ThreadExecutor
 import rs.readahead.washington.mobile.mvp.contract.ICameraPresenterContract
@@ -50,7 +48,6 @@ import rs.readahead.washington.mobile.mvp.contract.IMetadataAttachPresenterContr
 import rs.readahead.washington.mobile.mvp.contract.ITellaFileUploadSchedulePresenterContract
 import rs.readahead.washington.mobile.mvp.presenter.CameraPresenter
 import rs.readahead.washington.mobile.mvp.presenter.MetadataAttacher
-import rs.readahead.washington.mobile.presentation.entity.VaultFileLoaderModel
 import rs.readahead.washington.mobile.util.*
 import rs.readahead.washington.mobile.views.custom.*
 import rs.readahead.washington.mobile.views.fragment.uwazi.attachments.VAULT_FILE_KEY
@@ -104,7 +101,6 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
 
     //private var videoResolutionManager: VideoResolutionManager? = null
     private var lastClickTime = System.currentTimeMillis()
-    private var glide: ImageModelRequest<VaultFileLoaderModel>? = null
     private var currentRootParent: String? = null
     private var tempFile: File? = null
     var recording: Recording? = null
@@ -141,10 +137,6 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
         if (intent.hasExtra(VAULT_CURRENT_ROOT_PARENT)) {
             currentRootParent = intent.getStringExtra(VAULT_CURRENT_ROOT_PARENT)
         }
-        val mediaFileHandler = MediaFileHandler()
-        val glideLoader = VaultFileUrlLoader(context.applicationContext, mediaFileHandler)
-        glide = Glide.with(context).using(glideLoader)
-
         setupCameraView()
         setupCameraModeButton()
         setupImagePreview()
@@ -437,10 +429,8 @@ class CameraActivity : MetadataActivity(), ICameraPresenterContract.IView,
     override fun onLastMediaFileSuccess(vaultFile: VaultFile) {
         if (intentMode != IntentMode.COLLECT) {
             previewView.visibility = View.VISIBLE
-            glide!!.load(VaultFileLoaderModel(vaultFile, VaultFileLoaderModel.LoadType.THUMBNAIL))
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .into(previewView)
+            Glide.with(this).load(vaultFile.thumb).diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true).into(previewView)
         }
     }
 

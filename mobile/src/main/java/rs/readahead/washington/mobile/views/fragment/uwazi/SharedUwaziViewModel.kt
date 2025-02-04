@@ -3,7 +3,7 @@ package rs.readahead.washington.mobile.views.fragment.uwazi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.hzontal.tella_vault.VaultFile
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -24,7 +24,7 @@ import timber.log.Timber
 
 class SharedUwaziViewModel : ViewModel() {
 
-    var error = MutableLiveData<Throwable>()
+    var error = MutableLiveData<Throwable?>()
     private val _templates = MutableLiveData<List<Any>>()
     val templates: LiveData<List<Any>> get() = _templates
     private val _progress = MutableLiveData<Boolean>()
@@ -47,7 +47,9 @@ class SharedUwaziViewModel : ViewModel() {
     val outboxInstances: LiveData<List<Any>> get() = _outboxInstances
     private var _instanceDeleteD = SingleLiveEvent<Boolean>()
     val instanceDeleteD: LiveData<Boolean> get() = _instanceDeleteD
+
     var onInstanceSuccess = SingleLiveEvent<UwaziEntityInstance>()
+
     var onGetInstanceError = SingleLiveEvent<Throwable>()
 
     init {
@@ -73,8 +75,8 @@ class SharedUwaziViewModel : ViewModel() {
                                 it
                             )
                         }, onFavoriteClicked = { toggleFavorite(it) },
-                           onOpenEntityClicked = {openEntity(it)}
-                            ))
+                            onOpenEntityClicked = { openEntity(it) }
+                        ))
                     }
                     _templates.postValue(resultList)
                 }
@@ -99,9 +101,13 @@ class SharedUwaziViewModel : ViewModel() {
                 { drafts: List<UwaziEntityInstance> ->
                     val resultList = mutableListOf<ViewEntityInstanceItem>()
                     drafts.map {
-                        resultList.add(it.toViewEntityInstanceItem (onMoreClicked = { onInstanceMoreClicked(it) },
-                        onOpenClicked = {openEntityInstance(it)}
-                            ))
+                        resultList.add(it.toViewEntityInstanceItem(onMoreClicked = {
+                            onInstanceMoreClicked(
+                                it
+                            )
+                        },
+                            onOpenClicked = { openEntityInstance(it) }
+                        ))
                     }
                     _draftInstances.postValue(resultList)
                 }
@@ -129,7 +135,7 @@ class SharedUwaziViewModel : ViewModel() {
                         resultList.add(it.toViewEntityInstanceItem(
                             onMoreClicked = { onInstanceMoreClicked(it) },
                             onOpenClicked = { getInstanceUwaziEntity(it.id) }
-                            )
+                        )
                         )
                     }
                     _submittedInstances.postValue(resultList)
@@ -155,13 +161,13 @@ class SharedUwaziViewModel : ViewModel() {
                 { outboxes: List<UwaziEntityInstance> ->
                     val resultList = mutableListOf<ViewEntityInstanceItem>()
                     outboxes.map {
-                        resultList.add(it.toViewEntityInstanceItem (onMoreClicked = {
+                        resultList.add(it.toViewEntityInstanceItem(onMoreClicked = {
                             onInstanceMoreClicked(
                                 it
                             )
                         },
-                            onOpenClicked = {openEntityInstance(it)}
-                            ))
+                            onOpenClicked = { openEntityInstance(it) }
+                        ))
                     }
                     _outboxInstances.postValue(resultList)
                 }
@@ -187,8 +193,8 @@ class SharedUwaziViewModel : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .flatMapSingle { dataSource: UwaziDataSource -> dataSource.toggleFavorite(template) }
             .subscribe({ listTemplates() }
-            ) { throwable: Throwable? ->
-                Timber.e(throwable!!)//TODO Crahslytics removed
+            ) { throwable: Throwable ->
+                CrashlyticsUtil.handleThrowable(throwable)
                 error.postValue(throwable)
             }
         )
@@ -208,7 +214,7 @@ class SharedUwaziViewModel : ViewModel() {
             .subscribe(
                 { listTemplates() }
             ) { throwable: Throwable? ->
-                Timber.e(throwable!!)//TODO Crahslytics removed
+                CrashlyticsUtil.handleThrowable(throwable)
                 error.postValue(throwable)
             }
         )
@@ -230,17 +236,17 @@ class SharedUwaziViewModel : ViewModel() {
                     _instanceDeleteD.postValue(true)
                 }
             ) { throwable: Throwable? ->
-                Timber.e(throwable!!)//TODO Crahslytics removed
+                CrashlyticsUtil.handleThrowable(throwable)
                 error.postValue(throwable)
             }
         )
     }
 
-    private fun openEntity(template: CollectTemplate){
+    private fun openEntity(template: CollectTemplate) {
         _openEntity.postValue(template)
     }
 
-    private fun openEntityInstance(entity: UwaziEntityInstance){
+    private fun openEntityInstance(entity: UwaziEntityInstance) {
         _openEntityInstance.postValue(entity)
     }
 
@@ -267,15 +273,15 @@ class SharedUwaziViewModel : ViewModel() {
                 onInstanceSuccess.postValue(
                     uwaziEntityInstance?.let { maybeCloneInstance(it) }
                 )
-            }) { throwable: Throwable? ->
-                Timber.e(throwable!!)//TODO Crahslytics removed
+            }) { throwable: Throwable ->
+                CrashlyticsUtil.handleThrowable(throwable)
                 onGetInstanceError.postValue(throwable)
             }
         )
     }
 
     private fun maybeCloneInstance(instance: UwaziEntityInstance): UwaziEntityInstance {
-        /*if (instance.status == UwaziEntityStatus.SUBMITTED) {
+        /*if (instance.status == EntityStatus.SUBMITTED) {
             instance.clonedId = instance.id // we are clone of submitted form
             instance.id = 0
             instance.status = UwaziEntityStatus.UNKNOWN

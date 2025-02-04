@@ -1,5 +1,8 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
+import com.hzontal.tella_vault.VaultFile;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -26,7 +29,7 @@ public class SignaturePresenter implements ISignaturePresenterContract.IPresente
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally(() -> view.onAddingEnd())
                         .subscribe(mediaFile -> view.onAddSuccess(mediaFile), throwable -> {
-                            Timber.e(throwable);//TODO Crahslytics removed
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onAddError(throwable);
                         })
         );

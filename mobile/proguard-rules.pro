@@ -57,14 +57,14 @@
 
 
 # Retain generated class which implement Unbinder.
--keep public class * implements butterknife.Unbinder { public <init>(**, android.view.View); }
+#-keep public class * implements butterknife.Unbinder { public <init>(**, android.view.View); }
 
 
 # Prevent obfuscation of types which use ButterKnife annotations since the simple name
 # is used to reflectively look up the generated ViewBinding.
--keep class butterknife.*
--keepclasseswithmembernames class * { @butterknife.* <methods>; }
--keepclasseswithmembernames class * { @butterknife.* <fields>; }
+#-keep class butterknife.*
+#-keepclasseswithmembernames class * { @butterknife.* <methods>; }
+#-keepclasseswithmembernames class * { @butterknife.* <fields>; }
 
 
 # simplexml
@@ -176,13 +176,10 @@
     public static <fields>;
 }
 
--keep class net.sqlcipher.** {
-    *;
-}
+-keep class net.zetetic.database.** { *; }
+-keep class net.zetetic.database.sqlcipher.** { *; }
 
--keep class net.sqlcipher.database.** {
-    *;
-}
+-dontwarn net.sqlcipher.**
 
 # odk collect
 -dontwarn com.google.**
@@ -199,3 +196,6 @@
 # slf4j
 -keep class org.slf4j.** { *; }
 -dontwarn org.slf4j.**
+
+# Android-Image-Cropper
+-keep class androidx.appcompat.widget.** { *; }
