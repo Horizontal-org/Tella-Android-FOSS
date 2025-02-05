@@ -1,4 +1,4 @@
-Android: Tella FOSS 2.11.0 - Released on February 3, 2025
+Android: Tella FOSS 2.11.0 
 Replaced Google Maps with OpenStreetMaps
 Added Android CameraX support
 Added support for privacy-preserving analytics. All analytics are disabled by default and opt-in.
