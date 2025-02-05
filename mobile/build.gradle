@@ -10,7 +10,7 @@ plugins {
 android {
     compileSdk versions.compileSdk
     defaultConfig {
-        applicationId "org.hzontal.tella"
+        applicationId "org.hzontal.tellaFOSS"
         minSdkVersion versions.minSdk
         compileSdkVersion versions.compileSdk
         targetSdkVersion versions.targetSdk
