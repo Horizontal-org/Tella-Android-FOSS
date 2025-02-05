@@ -1,5 +1,7 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
+
 import java.util.List;
 
 import io.reactivex.SingleSource;
@@ -37,7 +39,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                 .doFinally(() -> view.hideLoading())
                 .subscribe(list -> view.onServersLoaded(list),
                         throwable -> {
-                            Timber.e(throwable);//TODO Crahslytics removed
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onLoadServersError(throwable);
                         })
         );
@@ -53,7 +55,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                 .doFinally(() -> view.hideLoading())
                 .subscribe(server1 -> view.onCreatedServer(server1),
                         throwable -> {
-                            Timber.e(throwable);//TODO Crahslytics removed
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onCreateCollectServerError(throwable);
                         })
         );
@@ -72,7 +74,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                             view.onUpdatedServer(server1);
                         },
                         throwable -> {
-                            Timber.e(throwable);//TODO Crahslytics removed
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onUpdateServerError(throwable);
                         })
         );
@@ -90,7 +92,7 @@ public class CollectServersPresenter implements ICollectServersPresenterContract
                             view.onRemovedServer(server);
                         },
                         throwable -> {
-                            Timber.e(throwable);//TODO Crahslytics removed
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onRemoveServerError(throwable);
                         })
         );

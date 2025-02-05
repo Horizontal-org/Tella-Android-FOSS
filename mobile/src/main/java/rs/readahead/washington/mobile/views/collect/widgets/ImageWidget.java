@@ -13,14 +13,15 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.VaultFile;
 import com.hzontal.tella_vault.filter.FilterType;
 
 import org.hzontal.shared_ui.bottomsheet.VaultSheetUtils;
 import org.javarosa.form.api.FormEntryPrompt;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ import rs.readahead.washington.mobile.R;
 import rs.readahead.washington.mobile.media.MediaFileHandler;
 import rs.readahead.washington.mobile.odk.FormController;
 import rs.readahead.washington.mobile.util.C;
-import rs.readahead.washington.mobile.views.activity.CameraActivity;
+import rs.readahead.washington.mobile.views.activity.camera.CameraActivity;
 import rs.readahead.washington.mobile.views.base_ui.BaseActivity;
 import rs.readahead.washington.mobile.views.custom.CollectAttachmentPreviewView;
 import rs.readahead.washington.mobile.views.fragment.uwazi.attachments.AttachmentsActivitySelector;
@@ -97,6 +98,7 @@ public class ImageWidget extends MediaFileBinaryWidget {
         selectButton.setOnClickListener(v -> showSelectFilesSheet());
 
         clearButton = addButton(R.drawable.ic_cancel_rounded);
+        clearButton.setContentDescription(getContext().getString(R.string.action_cancel));
         clearButton.setId(QuestionWidget.newUniqueId());
         clearButton.setEnabled(!formEntryPrompt.isReadOnly());
         clearButton.setOnClickListener(v -> clearAnswer());
@@ -121,7 +123,7 @@ public class ImageWidget extends MediaFileBinaryWidget {
                     C.MEDIA_FILE_ID
             );
         } catch (Exception e) {
-            Timber.e(e);//TODO Crahslytics removed
+            CrashlyticsUtil.handleThrowable(e);
             FormController.getActive().setIndexWaitingForData(null);
         }
     }
@@ -204,7 +206,7 @@ public class ImageWidget extends MediaFileBinaryWidget {
                     C.MEDIA_FILE_ID);
 
         } catch (Exception e) {
-            Timber.e(e);//TODO Crahslytics removed
+            CrashlyticsUtil.handleThrowable(e);
             FormController.getActive().setIndexWaitingForData(null);
         }
     }

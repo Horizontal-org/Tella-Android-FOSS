@@ -1,5 +1,6 @@
 package rs.readahead.washington.mobile.mvp.presenter
 
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -47,8 +48,8 @@ class CheckUwaziServerPresenter constructor(private var view: ICheckUwaziServerC
                 }
                 view?.hideServerCheckLoading()
             }) { throwable: Throwable? ->
-                Timber.e(throwable?: throw NullPointerException("Expression 'throwable' must not be null")
-                )//TODO Crahslytics removed
+                CrashlyticsUtil.handleThrowable(throwable
+                    ?: throw NullPointerException("Expression 'throwable' must not be null"))
                 view?.onServerCheckError(throwable)
                 view?.onServerCheckFailure(UploadProgressInfo.Status.ERROR)
                 view?.hideServerCheckLoading()

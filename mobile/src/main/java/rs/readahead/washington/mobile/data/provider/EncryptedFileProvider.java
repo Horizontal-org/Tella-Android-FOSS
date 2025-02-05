@@ -8,36 +8,14 @@ import androidx.core.content.FileProvider;
 
 import com.hzontal.tella_vault.VaultException;
 
-import org.hzontal.tella.keys.key.LifecycleMainKey;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 
 import rs.readahead.washington.mobile.BuildConfig;
 import rs.readahead.washington.mobile.MyApplication;
-import rs.readahead.washington.mobile.util.LimitedInputStream;
-import rs.readahead.washington.mobile.util.Util;
 import timber.log.Timber;
 
 
@@ -110,7 +88,7 @@ public class EncryptedFileProvider extends FileProvider {
                 out.flush();
             } catch (IOException e) {
                 Timber.e(e, getClass().getSimpleName());
-                //FirebaseCrashlytics.getInstance().recordException(e);
+                //CrashlyticsUtil.handleThrowable(e);
             } finally {
                 try {
                     if (cipherInputStream != null) cipherInputStream.close();
@@ -148,7 +126,7 @@ public class EncryptedFileProvider extends FileProvider {
                 }
             } catch (IOException | VaultException e) {
                 Timber.e(e, getClass().getSimpleName());
-                //FirebaseCrashlytics.getInstance().recordException(e);
+                //CrashlyticsUtil.handleThrowable(e);
             } finally {
                 try {
                     in.close();

@@ -20,15 +20,6 @@
 # tella
 -keep class rs.readahead.washington.mobile.data.entity.** { *; }
 
-# evernote android-job
--dontwarn com.evernote.android.job.gcm.**
--dontwarn com.evernote.android.job.util.GcmAvailableHelper
--keep public class com.evernote.android.job.v21.PlatformJobService
--keep public class com.evernote.android.job.v14.PlatformAlarmService
--keep public class com.evernote.android.job.v14.PlatformAlarmReceiver
--keep public class com.evernote.android.job.JobBootReceiver
--keep public class com.evernote.android.job.JobRescheduleService
-
 # okhttp
 -dontwarn okhttp3.**
 -dontwarn okio.**
@@ -66,14 +57,14 @@
 
 
 # Retain generated class which implement Unbinder.
--keep public class * implements butterknife.Unbinder { public <init>(**, android.view.View); }
+#-keep public class * implements butterknife.Unbinder { public <init>(**, android.view.View); }
 
 
 # Prevent obfuscation of types which use ButterKnife annotations since the simple name
 # is used to reflectively look up the generated ViewBinding.
--keep class butterknife.*
--keepclasseswithmembernames class * { @butterknife.* <methods>; }
--keepclasseswithmembernames class * { @butterknife.* <fields>; }
+#-keep class butterknife.*
+#-keepclasseswithmembernames class * { @butterknife.* <methods>; }
+#-keepclasseswithmembernames class * { @butterknife.* <fields>; }
 
 
 # simplexml
@@ -102,17 +93,6 @@
 -dontwarn org.xmlpull.v1.**
 -dontnote org.xmlpull.v1.**
 -keep class org.xmlpull.** { *; }
-
-
-# android job
--dontwarn com.evernote.android.job.v24.**
--dontwarn com.evernote.android.job.gcm.**
--dontwarn com.evernote.android.job.util.GcmAvailableHelper
--keep public class com.evernote.android.job.v21.PlatformJobService
--keep public class com.evernote.android.job.v14.PlatformAlarmService
--keep public class com.evernote.android.job.v14.PlatformAlarmReceiver
--keep public class com.evernote.android.job.JobBootReceiver
--keep public class com.evernote.android.job.JobRescheduleService
 
 
 # crashalytics
@@ -196,13 +176,10 @@
     public static <fields>;
 }
 
--keep class net.sqlcipher.** {
-    *;
-}
+-keep class net.zetetic.database.** { *; }
+-keep class net.zetetic.database.sqlcipher.** { *; }
 
--keep class net.sqlcipher.database.** {
-    *;
-}
+-dontwarn net.sqlcipher.**
 
 # odk collect
 -dontwarn com.google.**
@@ -216,26 +193,9 @@
 
 -dontobfuscate
 
-# proofmode
--keep class org.witness.proofmode.** { *; }
--keep class org.spongycastle.** { *; }
--dontwarn org.spongycastle.**
-
-# bitcoinj
--keep,includedescriptorclasses class org.bitcoinj.wallet.Protos$** { *; }
--keepclassmembers class org.bitcoinj.wallet.Protos { com.google.protobuf.Descriptors$FileDescriptor descriptor; }
--keep,includedescriptorclasses class org.bitcoin.protocols.payments.Protos$** { *; }
--keepclassmembers class org.bitcoin.protocols.payments.Protos { com.google.protobuf.Descriptors$FileDescriptor descriptor; }
--dontwarn org.bitcoinj.store.WindowsMMapHack
--dontwarn org.bitcoinj.store.LevelDBBlockStore
--dontnote org.bitcoinj.crypto.DRMWorkaround
--dontnote org.bitcoinj.crypto.TrustStoreLoader$DefaultTrustStoreLoader
--dontnote com.subgraph.orchid.crypto.PRNGFixes
--dontwarn okio.DeflaterSink
--dontwarn okio.Okio
--dontnote com.squareup.okhttp.internal.Platform
--dontwarn org.bitcoinj.store.LevelDBFullPrunedBlockStore**
-
 # slf4j
 -keep class org.slf4j.** { *; }
 -dontwarn org.slf4j.**
+
+# Android-Image-Cropper
+-keep class androidx.appcompat.widget.** { *; }

@@ -1,5 +1,6 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.hzontal.tella_vault.rx.RxVault;
 
 import io.reactivex.Single;
@@ -41,7 +42,7 @@ public class AudioPlayPresenter implements
                         },
 
                         throwable -> {
-                            Timber.e(throwable);//TODO Crahslytics removed
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onMediaFileError(throwable);
                         }));
     }

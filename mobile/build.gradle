@@ -1,24 +1,42 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-
-ext {
-    supportLibVersion = "28.0.3"
-    permissionDispatcherVersion = "4.8.0"
-    leakCanaryVersion = '2.4'
-    butterknifeVersion = '10.1.0'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    //  id 'com.google.firebase.crashlytics'
+    //  id 'com.google.gms.google-services'
 }
 
 android {
-    compileSdkVersion 33
+    compileSdk versions.compileSdk
     defaultConfig {
-        applicationId "org.hzontal.tellaFOSS"
-        minSdkVersion 21
-        compileSdkVersion 33
-        targetSdkVersion 33
-        versionCode 143
-        versionName "2.0.15"
+        applicationId "org.hzontal.tella"
+        minSdkVersion versions.minSdk
+        compileSdkVersion versions.compileSdk
+        targetSdkVersion versions.targetSdk
+        versionCode 186
+        versionName "2.11.0"
         multiDexEnabled true
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
         // vectorDrawables.useSupportLibrary = true // don't care about apk size, care about crashes
+    }
+
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            universalApk true
+        }
+    }
+
+    configurations.all {
+        // resolutionStrategy.force "com.android.support:exifinterface:${supportLibVersion}"
+        // resolutionStrategy.force "com.android.support:animated-vector-drawble:${supportLibVersion}"
+        // resolutionStrategy.force "com.android.support:support-v13:${supportLibVersion}"
     }
 
     buildTypes {
@@ -38,97 +56,141 @@ android {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled = true
 
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '11'
     }
 
-    kotlinOptions {
-        jvmTarget = '1.8'
+// Apply JVM toolchain to enforce Java 17 for Kotlin
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
     }
+
     buildFeatures {
         viewBinding = true
     }
+    lintOptions {
+        checkReleaseBuilds false
+    }
+    hilt {
+        enableExperimentalClasspathAggregation = true
+        enableAggregatingTask = true
 
+    }
+    namespace 'rs.readahead.washington.mobile'
 }
 
 dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation 'androidx.multidex:multidex:2.0.1'
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$versions.desugar"
+    implementation "androidx.multidex:multidex:$versions.multidex"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':tella-vault')
-    implementation project(':clean-insights')
+    implementation project(':pdfviewer')
+
     api project(':tella-locking-ui')
 
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycleExtensions"
+    /*  implementation platform("com.google.firebase:firebase-bom:$versions.firebaseBom")
+      implementation 'com.google.firebase:firebase-crashlytics'*/
 
-    // implementation 'com.madgag.spongycastle:pg:1.54.0.0'// needed for above
+    api "androidx.navigation:navigation-fragment-ktx:$versions.navigationFragmentKtx"
+    api "androidx.navigation:navigation-ui-ktx:$versions.navigationUI"
+    implementation "androidx.appcompat:appcompat:$versions.appcompat"
+    implementation "androidx.cardview:cardview:$versions.cardview"
+    implementation "androidx.legacy:legacy-support-v4:$versions.legacyV4"
+    implementation "androidx.exifinterface:exifinterface:$versions.exifinterface"
+    /*  implementation "com.google.android.gms:play-services-location:$versions.googlePlayServices"
+      implementation "com.google.android.gms:play-services-maps:$versions.googlePlayServices"*/
+    // implementation "com.google.android.gms:play-services-gcm:$versions.googlePlayServices" // android-job, optional
 
-    api 'androidx.navigation:navigation-fragment-ktx:2.5.1'
-    api 'androidx.navigation:navigation-ui-ktx:2.5.1'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.exifinterface:exifinterface:1.3.3'
-
-    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:${retrofitVersion}"
-    implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
-    implementation("com.squareup.retrofit2:converter-simplexml:${retrofitVersion}") {
+    implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"
+    implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
+    implementation("com.squareup.retrofit2:converter-simplexml:${versions.retrofit}") {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'
     }
-    implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
+    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:$versions.retrofit2KotliCoroutinesAdapter"
 
-    implementation("org.permissionsdispatcher:permissionsdispatcher:${permissionDispatcherVersion}") {
+    apply plugin: 'kotlin-kapt'
+    implementation("com.github.permissions-dispatcher:permissionsdispatcher:$versions.permissionDispatcher") {
         exclude module: "support-v13"
     }
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.navigation:navigation-runtime:2.5.1'
-    implementation 'androidx.navigation:navigation-fragment:2.5.1'
-    implementation 'androidx.databinding:databinding-runtime:7.2.2'
-    implementation "androidx.work:work-runtime-ktx:2.7.1"
-    annotationProcessor "org.permissionsdispatcher:permissionsdispatcher-processor:${permissionDispatcherVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin"
+    implementation "androidx.navigation:navigation-runtime-ktx:$versions.navigationRuntime"
+    implementation "androidx.navigation:navigation-fragment-ktx:$versions.navigationFragment"
+    implementation "androidx.databinding:databinding-runtime:$versions.databindingRuntime"
 
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
-    implementation 'com.squareup:tape:1.2.3' // todo: follow this, v2 should be soon
-    implementation "com.jakewharton.timber:timber:4.7.1"
-    implementation 'net.zetetic:android-database-sqlcipher:3.5.9@aar'
-    implementation 'info.guardianproject.cacheword:cachewordlib:0.1.1'
-    implementation 'com.github.bumptech.glide:glide:3.7.0'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'com.jakewharton.rxrelay2:rxrelay:2.1.1'
+    implementation 'org.osmdroid:osmdroid-android:6.1.18'
 
-    implementation "com.jakewharton:butterknife:${butterknifeVersion}"
-    annotationProcessor "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
+    implementation "androidx.camera:camera-core:$versions.camerax"
+    implementation "androidx.camera:camera-camera2:$versions.camerax"
+    implementation "androidx.camera:camera-video:$versions.camerax"
+    implementation "androidx.camera:camera-extensions:$versions.camerax"
+    implementation "androidx.camera:camera-lifecycle:$versions.camerax"
+    implementation "androidx.camera:camera-view:$versions.camerax"
 
-    // digest auth
-    implementation 'com.burgstaller:okhttp-digest:1.15'
+    implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp3LoggingInterceptor"
+    implementation "com.squareup:tape:$versions.squareupTape" // todo: follow this, v2 should be soon
+    implementation "com.jakewharton.timber:timber:$versions.timber"
+//sqlite dependency
+    implementation "net.zetetic:sqlcipher-android:$versions.sqlcipher"
+    implementation "androidx.sqlite:sqlite-ktx:$versions.sqlite"
 
-    // collect
-  //  implementation group: 'org.getodk', name: 'javarosa', version: '3.5.0'
-    implementation "org.opendatakit:opendatakit-javarosa:2.6.0"
-    implementation 'net.sf.kxml:kxml2:2.3.0'
-    implementation "commons-io:commons-io:2.6"
+    implementation "info.guardianproject.cacheword:cachewordlib:$versions.cacheword"
+    implementation "com.github.bumptech.glide:glide:$versions.glide"
+    implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
+    implementation "com.jakewharton.rxrelay2:rxrelay:$versions.rxrelay"
 
-    // exo
-    implementation 'com.google.android.exoplayer:exoplayer:2.10.0'
+// digest auth
+    implementation "io.github.rburgst:okhttp-digest:$versions.burgstallerOkhttpDigest"
 
-    def camerax_version = '1.2.0-rc01'
-    implementation "androidx.camera:camera-core:$camerax_version"
-    implementation "androidx.camera:camera-camera2:$camerax_version"
-    implementation "androidx.camera:camera-video:$camerax_version"
-    implementation "androidx.camera:camera-extensions:$camerax_version"
-    implementation "androidx.camera:camera-lifecycle:$camerax_version"
-    implementation "androidx.camera:camera-view:$camerax_version"
+// collect
+//implementation group: "org.getodk", name: "javarosa", version: "$versions.javarosa"
+    implementation "org.opendatakit:opendatakit-javarosa:$versions.javarosa"
+    implementation "net.sf.kxml:kxml2:$versions.kxml2"
+    implementation "commons-io:commons-io:$versions.commonsIo"
+// exo
+    implementation "com.google.android.exoplayer:exoplayer:$versions.exoplayer"
 
-    implementation 'org.osmdroid:osmdroid-android:6.1.13'
+// camera
+    /*   implementation("com.otaliastudios:cameraview:$versions.cameraview") {
+           exclude module: "exifinterface"
+           exclude module: "animated-vector-drawble"
+       }*/
 
-    implementation 'com.simplify:ink:1.0.2'
-    implementation 'com.mikhaellopez:circularimageview:3.2.0'
-    implementation 'org.apache.directory.studio:org.apache.commons.io:2.4'
+//hilt
+    implementation "com.google.dagger:hilt-android:$versions.hilt_android"
+    kapt "com.google.dagger:hilt-android-compiler:$versions.hilt_android_compiler"
+//hilt-view-model
+    // implementation "androidx.hilt:hilt-lifecycle-viewmodel:$versions.hilt_viewmodel"
+    kapt "androidx.hilt:hilt-compiler:$versions.hilt_version"
+    //kapt "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.6.0"
 
-   // debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
+    implementation "com.github.nak5ive:ink-android:$versions.simplifyInk"
+    implementation "com.mikhaellopez:circularimageview:$versions.circularimageview"
+    implementation "org.apache.directory.studio:org.apache.commons.io:$versions.apacheCommonsIo"
+    implementation "com.github.ihsanbal:LoggingInterceptor:$versions.ihsanbalLoggingInterceptor"
+    //worker manager
+    implementation "androidx.work:work-runtime-ktx:$versions.workermanger"
+    implementation("androidx.hilt:hilt-work:$versions.hilt_version")
 
-    testImplementation 'junit:junit:4.13'
+//optional - RxJava2 support
+    implementation "androidx.work:work-rxjava2:$versions.workermanger"
+    // debugImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leakCanaryVersion"
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    testImplementation 'org.mockito:mockito-core:3.12.4'
+
+    testImplementation "junit:junit:$versions.junit"
+
+    implementation("com.vanniktech:android-image-cropper:4.3.3")
+}
+
+kapt {
+    correctErrorTypes true
 }

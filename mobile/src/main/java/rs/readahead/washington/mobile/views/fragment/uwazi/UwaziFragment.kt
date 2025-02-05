@@ -7,7 +7,11 @@ import com.google.android.material.tabs.TabLayoutMediator
 import rs.readahead.washington.mobile.R
 import rs.readahead.washington.mobile.databinding.FragmentUwaziBinding
 import rs.readahead.washington.mobile.views.base_ui.BaseBindingFragment
-import rs.readahead.washington.mobile.views.fragment.uwazi.viewpager.*
+import rs.readahead.washington.mobile.views.fragment.uwazi.viewpager.DRAFT_LIST_PAGE_INDEX
+import rs.readahead.washington.mobile.views.fragment.uwazi.viewpager.OUTBOX_LIST_PAGE_INDEX
+import rs.readahead.washington.mobile.views.fragment.uwazi.viewpager.SUBMITTED_LIST_PAGE_INDEX
+import rs.readahead.washington.mobile.views.fragment.uwazi.viewpager.TEMPLATES_LIST_PAGE_INDEX
+import rs.readahead.washington.mobile.views.fragment.uwazi.viewpager.ViewPagerAdapter
 
 class UwaziFragment : BaseBindingFragment<FragmentUwaziBinding>(FragmentUwaziBinding::inflate) {
 
@@ -16,43 +20,46 @@ class UwaziFragment : BaseBindingFragment<FragmentUwaziBinding>(FragmentUwaziBin
     }
 
     private fun initView() {
-        val viewPagerAdapter  = ViewPagerAdapter(this)
-        with(binding!!){
+        val viewPagerAdapter = ViewPagerAdapter(this)
+        with(binding) {
             viewPager.apply {
                 offscreenPageLimit = 4
                 isSaveEnabled = false
                 adapter = viewPagerAdapter
             }
             // Set the text for each tab
-          TabLayoutMediator(tabs, viewPager) { tab, position ->
+            TabLayoutMediator(tabs, viewPager) { tab, position ->
                 tab.text = getTabTitle(position)
 
             }.attach()
 
             tabs.setTabTextColors(
-                ContextCompat.getColor(activity, R.color.wa_white_44),
-                ContextCompat.getColor(activity, R.color.wa_white)
-                )
+                ContextCompat.getColor(baseActivity, R.color.wa_white_50),
+                ContextCompat.getColor(baseActivity, R.color.wa_white)
+            )
 
             fabButton.setOnClickListener {
-                nav().navigate(R.id.action_uwaziScreen_to_uwaziDownloadScreen)
+                navManager().navigateFromUwaziScreenToDownloadScreen()
             }
         }
 
-        SharedLiveData.updateViewPagerPosition.observe(activity,{ position ->
-             when (position) {
+        SharedLiveData.updateViewPagerPosition.observe(baseActivity) { position ->
+            when (position) {
                 TEMPLATES_LIST_PAGE_INDEX -> setCurrentTab(TEMPLATES_LIST_PAGE_INDEX)
                 DRAFT_LIST_PAGE_INDEX -> setCurrentTab(DRAFT_LIST_PAGE_INDEX)
                 OUTBOX_LIST_PAGE_INDEX -> setCurrentTab(OUTBOX_LIST_PAGE_INDEX)
                 SUBMITTED_LIST_PAGE_INDEX -> setCurrentTab(SUBMITTED_LIST_PAGE_INDEX)
             }
-        })
+        }
 
+        binding.toolbar.backClickListener = { nav().popBackStack() }
     }
 
-    private fun setCurrentTab(position: Int){
-        binding?.viewPager?.post {
-            binding?.viewPager?.setCurrentItem(position, true)
+    private fun setCurrentTab(position: Int) {
+        if (isViewInitialized) {
+            binding.viewPager.post {
+                binding.viewPager.setCurrentItem(position, true)
+            }
         }
     }
 

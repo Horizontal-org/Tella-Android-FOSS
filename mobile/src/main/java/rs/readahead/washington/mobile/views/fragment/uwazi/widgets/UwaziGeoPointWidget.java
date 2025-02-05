@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import com.google.gson.internal.LinkedTreeMap;
 import com.hzontal.tella_vault.MyLocation;
 
@@ -178,6 +179,7 @@ public class UwaziGeoPointWidget extends UwaziQuestionWidget implements ILocatio
         selectButton = addButton(R.drawable.gps_fixed_icon_white);
         selectButton.setId(QuestionWidget.newUniqueId());
         selectButton.setEnabled(!isReadonly());
+        selectButton.setContentDescription(getContext().getString(R.string.action_show_location));
         selectButton.setOnClickListener(v -> {
             if (APPEARANCE_MAP.equalsIgnoreCase(appearance)) {
                 showLocationMapActivity(true);
@@ -195,6 +197,7 @@ public class UwaziGeoPointWidget extends UwaziQuestionWidget implements ILocatio
         clearButton = addButton(R.drawable.ic_cancel_rounded);
         clearButton.setId(QuestionWidget.newUniqueId());
         clearButton.setEnabled(!isReadonly());
+        clearButton.setContentDescription(getContext().getString(R.string.action_cancel));
         clearButton.setOnClickListener(v -> clearAnswer());
 
         progressBar = view.findViewById(R.id.progressBar);
@@ -234,7 +237,7 @@ public class UwaziGeoPointWidget extends UwaziQuestionWidget implements ILocatio
                     C.SELECTED_LOCATION
             );
         } catch (Exception e) {
-            Timber.e(e);//TODO Crahslytics removed
+            CrashlyticsUtil.handleThrowable(e);
         }
     }
 

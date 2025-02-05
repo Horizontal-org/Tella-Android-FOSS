@@ -1,7 +1,7 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
 import java.util.List;
-
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers;
 import rs.readahead.washington.mobile.MyApplication;
 import rs.readahead.washington.mobile.data.database.DataSource;
 import rs.readahead.washington.mobile.data.database.KeyDataSource;
-import rs.readahead.washington.mobile.domain.entity.TellaUploadServer;
+import rs.readahead.washington.mobile.domain.entity.reports.TellaReportServer;
 import rs.readahead.washington.mobile.mvp.contract.ITellaUploadDialogPresenterContract;
 import timber.log.Timber;
 
@@ -30,11 +30,11 @@ public class TellaUploadDialogPresenter implements ITellaUploadDialogPresenterCo
         disposables.add(keyDataSource.getDataSource()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMapSingle((Function<DataSource, SingleSource<List<TellaUploadServer>>>)
+                .flatMapSingle((Function<DataSource, SingleSource<List<TellaReportServer>>>)
                         DataSource::listTellaUploadServers)
                 .subscribe(list -> view.onServersLoaded(list),
                         throwable -> {
-                            Timber.e(throwable);//TODO Crahslytics removed
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onServersLoadError(throwable);
                         })
         );

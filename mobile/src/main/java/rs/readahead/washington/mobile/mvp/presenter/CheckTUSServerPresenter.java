@@ -1,12 +1,13 @@
 package rs.readahead.washington.mobile.mvp.presenter;
 
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import rs.readahead.washington.mobile.MyApplication;
 import rs.readahead.washington.mobile.data.openrosa.OpenRosaService;
 import rs.readahead.washington.mobile.data.upload.TUSClient;
-import rs.readahead.washington.mobile.domain.entity.TellaUploadServer;
+import rs.readahead.washington.mobile.domain.entity.reports.TellaReportServer;
 import rs.readahead.washington.mobile.domain.entity.UploadProgressInfo;
 import rs.readahead.washington.mobile.mvp.contract.ICheckTUSServerContract;
 import timber.log.Timber;
@@ -24,7 +25,7 @@ public class CheckTUSServerPresenter implements
     }
 
     @Override
-    public void checkServer(final TellaUploadServer server, boolean connectionRequired) {
+    public void checkServer(final TellaReportServer server, boolean connectionRequired) {
         if (! MyApplication.isConnectedToInternet(view.getContext())) {
             if (saveAnyway && !connectionRequired) {
                 server.setChecked(false);
@@ -58,7 +59,7 @@ public class CheckTUSServerPresenter implements
                         view.onServerCheckFailure(uploadProgressInfo.status);
                     }
                 }, throwable -> {
-                    Timber.e(throwable);//TODO Crahslytics removed
+                    CrashlyticsUtil.handleThrowable(throwable);
                     view.onServerCheckError(throwable);
                 })
         );

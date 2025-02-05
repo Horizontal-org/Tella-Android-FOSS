@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import org.hzontal.shared_ui.utils.CrashlyticsUtil;
+
 import io.reactivex.Completable;
 import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -28,7 +30,6 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
     private final CompositeDisposable disposable;
     private final KeyDataSource keyDataSource;
 
-
     public HomeScreenPresenter(IHomeScreenPresenterContract.IView view) {
         this.view = view;
         appContext = view.getContext().getApplicationContext();
@@ -51,7 +52,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                     } else {
 
                         if (Preferences.isEraseForms()) {
-                            dataSource.deleteForms();
+                            dataSource.deleteFormsAndRelatedTables();
                         }
 
                     }
@@ -78,7 +79,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                 .subscribe(
                         num -> view.onCountTUServersEnded(num),
                         throwable -> {
-                            Timber.e(throwable);//TODO Crahslytics removed
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onCountTUServersFailed(throwable);
                         }
                 )
@@ -94,7 +95,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                 .subscribe(
                         num -> view.onCountCollectServersEnded(num),
                         throwable -> {
-                            Timber.e(throwable);//TODO Crahslytics removed
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onCountCollectServersFailed(throwable);
                         }
                 )
@@ -110,7 +111,7 @@ public class HomeScreenPresenter implements IHomeScreenPresenterContract.IPresen
                 .subscribe(
                         num -> view.onCountUwaziServersEnded(num),
                         throwable -> {
-                            Timber.e(throwable);
+                            CrashlyticsUtil.handleThrowable(throwable);
                             view.onCountUwaziServersFailed(throwable);
                         }
                 )

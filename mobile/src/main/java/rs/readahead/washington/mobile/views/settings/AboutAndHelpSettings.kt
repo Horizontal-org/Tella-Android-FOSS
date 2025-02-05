@@ -27,7 +27,7 @@ class AboutAndHelpSettings : BaseFragment() {
     }
 
     override fun initView(view: View) {
-        (activity as OnFragmentSelected?)?.setToolbarLabel(R.string.settings_about_app_bar)
+        (baseActivity as OnFragmentSelected?)?.setToolbarLabel(R.string.settings_about_app_bar)
 
         binding?.version?.setText(
             String.format(
@@ -42,7 +42,7 @@ class AboutAndHelpSettings : BaseFragment() {
         }
 
         binding?.contactUs?.setOnClickListener {
-            Util.startBrowserIntent(context, getString(R.string.config_contact_url))
+            Util.startSendMailIntent(context, getString(R.string.config_contact_url))
         }
 
         binding?.privacyPolicy?.setOnClickListener {

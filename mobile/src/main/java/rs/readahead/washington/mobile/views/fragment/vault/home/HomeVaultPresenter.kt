@@ -3,7 +3,7 @@ package rs.readahead.washington.mobile.views.fragment.vault.home
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-
+import org.hzontal.shared_ui.utils.CrashlyticsUtil
 import com.hzontal.tella_vault.VaultFile
 import com.hzontal.tella_vault.filter.FilterType
 import com.hzontal.tella_vault.filter.Limits
@@ -20,7 +20,6 @@ import rs.readahead.washington.mobile.data.database.DataSource
 import rs.readahead.washington.mobile.data.database.KeyDataSource
 import rs.readahead.washington.mobile.data.database.UwaziDataSource
 import rs.readahead.washington.mobile.data.sharedpref.Preferences
-import rs.readahead.washington.mobile.data.sharedpref.SharedPrefs
 import rs.readahead.washington.mobile.domain.entity.collect.CollectForm
 import rs.readahead.washington.mobile.domain.entity.uwazi.CollectTemplate
 import rs.readahead.washington.mobile.media.MediaFileHandler
@@ -44,12 +43,11 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
         disposable.dispose()
         view = null
     }
-
     override fun executePanicMode() {
         keyDataSource.dataSource
             .subscribeOn(Schedulers.io())
             .flatMapCompletable { dataSource: DataSource ->
-                if (SharedPrefs.getInstance().isEraseGalleryActive) {
+                if (Preferences.isDeleteGalleryEnabled()) {
                     rxVault?.destroy()?.blockingAwait()
                     MediaFileHandler.destroyGallery(appContext!!)
                 }
@@ -57,7 +55,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                     dataSource.deleteDatabase()
                 } else {
                     if (Preferences.isEraseForms()) {
-                        dataSource.deleteForms()
+                        dataSource.deleteFormsAndRelatedTables()
                     }
                 }
                 clearSharedPreferences()
@@ -72,22 +70,49 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
     }
 
     override fun countTUServers() {
+        disposable.add(keyDataSource.dataSource
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMapSingle { obj: DataSource -> obj.listTellaUploadServers() }
+            .subscribe(
+                { servers ->
+                    view?.onCountTUServersEnded(servers)
+                }
+            ) { throwable: Throwable? ->
+                CrashlyticsUtil.handleThrowable(throwable)
+                view?.onCountUwaziServersFailed(throwable)
+            }
+        )
     }
 
     override fun countCollectServers() {
         disposable.add(keyDataSource.dataSource
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .flatMapSingle { obj: DataSource -> obj.countCollectServers() }
+            .flatMapSingle { obj: DataSource -> obj.listCollectServers() }
             .subscribe(
-                { num: Long? ->
-                    view?.onCountCollectServersEnded(
-                        num
-                    )
+                { servers ->
+                    view?.onCountCollectServersEnded(servers)
                 }
             ) { throwable: Throwable? ->
-                Timber.e(throwable!!)//TODO Crahslytics removed
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onCountCollectServersFailed(throwable)
+            }
+        )
+    }
+
+    override fun countUwaziServers() {
+        disposable.add(keyDataSource.uwaziDataSource
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMapSingle { obj: UwaziDataSource -> obj.listUwaziServers() }
+            .subscribe(
+                { servers ->
+                    view?.onCountUwaziServersEnded(servers)
+                }
+            ) { throwable: Throwable? ->
+                CrashlyticsUtil.handleThrowable(throwable)
+                view?.onCountUwaziServersFailed(throwable)
             }
         )
     }
@@ -110,7 +135,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                 .subscribe(
                     { num: Int? -> view?.onMediaExported(num!!) }
                 ) { throwable: Throwable? ->
-                    Timber.e(throwable!!)//TODO Crahslytics removed
+                    CrashlyticsUtil.handleThrowable(throwable)
                     view?.onExportError(throwable)
                 }
         )
@@ -128,7 +153,7 @@ class HomeVaultPresenter constructor(var view: IHomeVaultPresenter.IView?) :
                     )
                 }
             ) { throwable: Throwable? ->
-                Timber.e(throwable!!)//TODO Crahslytics removed
+                CrashlyticsUtil.handleThrowable(throwable)
                 view?.onGetFilesError(throwable)
             }?.let { disposables.add(it) }
     }
