@@ -1,3 +1,4 @@
+<img src="https://github.com/Horizontal-org/Tella-Android/blob/master/docs/feature_image.png" alt="Tella" width="350"/>
 <img src="docs/Tella2.0-feature.png" alt="Tella" width="350"/>
 
 ## Table of Contents
