@@ -1,0 +1,2 @@
+ Tella 2.11.1
+ Fixed F-Droid compliance issues. Removed Google dependencies.

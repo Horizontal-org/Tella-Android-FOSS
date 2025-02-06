@@ -3,7 +3,6 @@ package rs.readahead.washington.mobile.views.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -18,10 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/*import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.security.ProviderInstaller;*/
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +35,6 @@ import rs.readahead.washington.mobile.domain.entity.collect.CollectServer;
 import rs.readahead.washington.mobile.mvp.contract.ICheckOdkServerContract;
 import rs.readahead.washington.mobile.mvp.presenter.CheckOdkServerPresenter;
 import org.hzontal.shared_ui.buttons.PanelToggleButton;
-import timber.log.Timber;
 
 
 public class CollectServerDialogFragment extends AppCompatDialogFragment implements

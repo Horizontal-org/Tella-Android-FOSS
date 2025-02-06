@@ -3,8 +3,6 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
-    //  id 'com.google.firebase.crashlytics'
-    //  id 'com.google.gms.google-services'
 }
 
 android {
@@ -14,8 +12,8 @@ android {
         minSdkVersion versions.minSdk
         compileSdkVersion versions.compileSdk
         targetSdkVersion versions.targetSdk
-        versionCode 186
-        versionName "2.11.0"
+        versionCode 187
+        versionName "2.11.1"
         multiDexEnabled true
 
         ndk {
@@ -94,18 +92,12 @@ dependencies {
     api project(':tella-locking-ui')
 
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycleExtensions"
-    /*  implementation platform("com.google.firebase:firebase-bom:$versions.firebaseBom")
-      implementation 'com.google.firebase:firebase-crashlytics'*/
-
     api "androidx.navigation:navigation-fragment-ktx:$versions.navigationFragmentKtx"
     api "androidx.navigation:navigation-ui-ktx:$versions.navigationUI"
     implementation "androidx.appcompat:appcompat:$versions.appcompat"
     implementation "androidx.cardview:cardview:$versions.cardview"
     implementation "androidx.legacy:legacy-support-v4:$versions.legacyV4"
     implementation "androidx.exifinterface:exifinterface:$versions.exifinterface"
-    /*  implementation "com.google.android.gms:play-services-location:$versions.googlePlayServices"
-      implementation "com.google.android.gms:play-services-maps:$versions.googlePlayServices"*/
-    // implementation "com.google.android.gms:play-services-gcm:$versions.googlePlayServices" // android-job, optional
 
     implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
     implementation "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}"

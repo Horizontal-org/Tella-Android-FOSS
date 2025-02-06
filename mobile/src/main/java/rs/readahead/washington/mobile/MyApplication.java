@@ -214,15 +214,6 @@ public class MyApplication extends MultiDexApplication implements IUnlockRegistr
         TellaKeysUI.initialize(mainKeyStore, mainKeyHolder, unlockRegistry, this, Preferences.getFailedUnlockOption(), Preferences.getUnlockRemainingAttempts(), Preferences.isShowUnlockRemainingAttempts());
     }
 
-    /*private void configureCrashlytics() {
-        boolean enabled = (!BuildConfig.DEBUG && Preferences.isSubmittingCrashReports());
-
-        //FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(enabled);
-
-        if (!enabled) {
-            //FirebaseCrashlytics.getInstance().deleteUnsentReports();
-        }
-    }*/
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void initializeLockConfigRegistry() {
