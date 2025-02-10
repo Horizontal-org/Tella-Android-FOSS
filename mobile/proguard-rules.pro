@@ -199,3 +199,6 @@
 
 # Android-Image-Cropper
 -keep class androidx.appcompat.widget.** { *; }
+
+-keep class androidx.** { *; }
+-dontwarn androidx.**
