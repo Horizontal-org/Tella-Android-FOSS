@@ -18,18 +18,11 @@ android {
         multiDexEnabled true
         aaptOptions {
             cruncherEnabled = false
+            additionalParameters "--no-compress", "png"
         }
             vectorDrawables.generatedDensities = []
 
         // vectorDrawables.useSupportLibrary = true // don't care about apk size, care about crashes
-    }
-
-
-
-    configurations.all {
-        // resolutionStrategy.force "com.android.support:exifinterface:${supportLibVersion}"
-        // resolutionStrategy.force "com.android.support:animated-vector-drawble:${supportLibVersion}"
-        // resolutionStrategy.force "com.android.support:support-v13:${supportLibVersion}"
     }
 
     buildTypes {
