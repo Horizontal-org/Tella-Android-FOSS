@@ -15,6 +15,9 @@ android {
 
     }
 
+    aaptOptions {
+        cruncherEnabled = false
+    }
 
     buildTypes {
         release {
