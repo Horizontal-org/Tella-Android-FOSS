@@ -30,6 +30,9 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    aaptOptions {
+        cruncherEnabled = false
+    }
     namespace 'org.hzontal.shared_ui'
 }
 

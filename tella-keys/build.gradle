@@ -26,6 +26,9 @@ android {
     kotlinOptions {
         jvmTarget = '11'
     }
+    aaptOptions {
+        cruncherEnabled = false
+    }
     namespace 'org.hzontal.tella.keys'
 }
 
