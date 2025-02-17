@@ -19,8 +19,7 @@ android {
         aaptOptions {
             cruncherEnabled = false
         }
-            vectorDrawables.generatedDensities = []
-
+       vectorDrawables.generatedDensities = []
         // vectorDrawables.useSupportLibrary = true // don't care about apk size, care about crashes
     }
 
@@ -108,7 +107,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$versions.navigationFragment"
     implementation "androidx.databinding:databinding-runtime:$versions.databindingRuntime"
 
-    implementation 'org.osmdroid:osmdroid-android:6.1.18'
+    implementation 'org.osmdroid:osmdroid-android:6.1.20'
 
     implementation "androidx.camera:camera-core:$versions.camerax"
     implementation "androidx.camera:camera-camera2:$versions.camerax"
@@ -162,7 +161,7 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:$versions.workermanger"
     implementation("androidx.hilt:hilt-work:$versions.hilt_version")
 
-//optional - RxJava2 support
+    //optional - RxJava2 support
     implementation "androidx.work:work-rxjava2:$versions.workermanger"
     // debugImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leakCanaryVersion"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
@@ -175,34 +174,4 @@ dependencies {
 
 kapt {
     correctErrorTypes true
-}
-
-
-import com.android.tools.profgen.ArtProfileKt
-import com.android.tools.profgen.ArtProfileSerializer
-import com.android.tools.profgen.DexFile
-
-project.afterEvaluate {
-    tasks.each { task ->
-        if (task.name.startsWith("compile") && task.name.endsWith("ReleaseArtProfile")) {
-            task.doLast {
-                outputs.files.each { file ->
-                    if (file.name.endsWith(".profm")) {
-                        println("Sorting ${file} ...")
-                        def version = ArtProfileSerializer.values().last()
-                        def profile = ArtProfileKt.ArtProfile(file)
-                        def keys = new ArrayList(profile.profileData.keySet())
-                        def sortedData = new LinkedHashMap()
-                        Collections.sort keys, new DexFile.Companion()
-                        keys.each { key -> sortedData[key] = profile.profileData[key] }
-                        new FileOutputStream(file).with {
-                            write(version.magicBytes$profgen)
-                            write(version.versionBytes$profgen)
-                            version.write$profgen(it, sortedData, "")
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
