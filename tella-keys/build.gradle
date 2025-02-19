@@ -10,10 +10,12 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        vectorDrawables.generatedDensities = []
     }
 
     buildTypes {
         release {
+            crunchPngs false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -28,6 +30,8 @@ android {
     }
     aaptOptions {
         cruncherEnabled = false
+        useNewCruncher = false
+        noCompress 'png'
     }
     namespace 'org.hzontal.tella.keys'
 }

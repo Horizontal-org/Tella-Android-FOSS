@@ -18,9 +18,18 @@ android {
         multiDexEnabled true
         aaptOptions {
             cruncherEnabled = false
+            useNewCruncher = false
+            noCompress 'png'
         }
-       vectorDrawables.generatedDensities = []
+        vectorDrawables.generatedDensities = []
         // vectorDrawables.useSupportLibrary = true // don't care about apk size, care about crashes
+
+        dependenciesInfo {
+            // Disables dependency metadata when building APKs.
+            includeInApk = false
+            // Disables dependency metadata when building Android App Bundles.
+            includeInBundle = false
+        }
     }
 
     buildTypes {
@@ -28,11 +37,13 @@ android {
             debuggable true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            crunchPngs false
         }
         release {
             debuggable false
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            crunchPngs false
         }
 
     }
@@ -117,7 +128,8 @@ dependencies {
     implementation "androidx.camera:camera-view:$versions.camerax"
 
     implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp3LoggingInterceptor"
-    implementation "com.squareup:tape:$versions.squareupTape" // todo: follow this, v2 should be soon
+    implementation "com.squareup:tape:$versions.squareupTape"
+    // todo: follow this, v2 should be soon
     implementation "com.jakewharton.timber:timber:$versions.timber"
 //sqlite dependency
     implementation "net.zetetic:sqlcipher-android:$versions.sqlcipher"
