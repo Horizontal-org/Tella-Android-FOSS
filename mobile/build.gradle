@@ -78,6 +78,13 @@ android {
     }
     packagingOptions {
         exclude 'META-INF/services/java.time.zone.ZoneRulesProvider'
+        exclude 'META-INF/*.version'
+        exclude 'META-INF/*.properties'
+        exclude 'META-INF/*.kotlin_module'
+        exclude 'META-INF/*.sf'
+        exclude 'META-INF/*.rsa'
+        exclude 'META-INF/*.mf'
+        exclude 'META-INF/services/*'
     }
     namespace 'rs.readahead.washington.mobile'
 }
