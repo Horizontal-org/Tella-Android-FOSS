@@ -1,3 +1,8 @@
+> [!WARNING]
+> This repo is archived - Tella Android has now an unified code repository that generates both the Android and Android FOSS versions of Tella.
+--> https://github.com/Horizontal-org/Tella-Android/
+
+
 <img src="https://github.com/Horizontal-org/Tella-Android/blob/master/docs/feature_image.png" alt="Tella" width="350"/>
 <img src="docs/Tella2.0-feature.png" alt="Tella" width="350"/>
 
